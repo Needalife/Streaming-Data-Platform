@@ -1,15 +1,17 @@
-const express = require("express")
-const cors = require("cors")
-const connect = require("./connect")
-require('dotenv').config({ path: './config.env' });
+import express from "express";
+import dotenv from "dotenv";
+import path from "path";
 
-const app = express()
-const PORT = process.env.PORT
+import { connectDB } from "./db/db.js";
 
-app.use(cors())
-app.use(express.json())
+dotenv.config();
+
+const app = express();
+const PORT = process.env.PORT || 3000;
+
+app.use(express.json());
 
 app.listen(PORT, () => {
-    connect.connectToServer()
-    console.log(`Server is running on port ${PORT}`)
-})
+  connectDB();
+  console.log(`Server is running on port ${PORT}`);
+});
