@@ -9,7 +9,14 @@ This project consists of a backend and frontend setup to manage and visualize da
    ```bash
    cd backend
 
-2. npm install
-3. nodemon .
+2. Install packages
+
+    ```bash
+    npm install
+
+3. Run backend
+
+    ```bash
+    nodemon .
 
 ## Frontend Setup
