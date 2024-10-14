@@ -24,3 +24,6 @@ dist-ssr
 *.sw?
 
 .env
+
+test.py
+client.properties
