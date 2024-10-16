@@ -32,17 +32,24 @@ export default function NavItem({ icon, title, description, active, navSize }) {
             backgroundColor={active && "#AEC8CA"}
             p={3}
             borderRadius={8}
-            _hover={{ textDecor: 'none', backgroundColor: "#AEC8CA" }}
+            _hover={{
+              textDecor: 'none',
+              background: "linear-gradient(to bottom, #a65ffc, #679cf6)",
+              color: "white",
+            }}
             w={navSize === "large" ? "100%" : "auto"}
             cursor="pointer"
           >
             <Flex>
-              <Icon as={icon} fontSize="xl" color={active ? "#82AAAD" : "gray.500"} />
+              <Icon
+                as={icon}
+                fontSize={{ base: "lg", md: "xl", lg: "2xl", xl: "3xl" }}
+                color="inherit"
+              />
               <Text
                 ml={5}
                 display={navSize === "small" ? "none" : "flex"}
-                color={active ? "#82AAAD" : "gray.500"}  // Set default color
-                _hover={{ color: active ? "#82AAAD" : "gray.500" }} // Keep color on hover
+                color="inherit"
               >
                 {title}
               </Text>
