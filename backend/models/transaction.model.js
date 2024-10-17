@@ -1,12 +1,6 @@
 import mongoose from "mongoose";
 
 const transactionSchema = new mongoose.Schema({
-  key: {
-    type: String,
-    required: true,
-  },
-  value: [
-    {
       transaction_id: {
         type: String,
         required: true,
@@ -30,11 +24,9 @@ const transactionSchema = new mongoose.Schema({
       timestamp: {
         type: String,
         required: true,
-      },
-    },
-  ],
+      }
 });
 
-const Transaction = mongoose.model("Transaction", transactionSchema, "messages");
+const Transaction = mongoose.model("Transaction", transactionSchema, "transactions");
 
 export default Transaction;
