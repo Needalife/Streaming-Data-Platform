@@ -8,9 +8,10 @@ import {
   PopoverContent,
   Box,
 } from '@chakra-ui/react';
+import { Link } from 'react-router-dom';  // Import Link from react-router-dom
 import NavHoverBox from '../components/NavHoverBox';
 
-export default function NavItem({ icon, title, description, active, navSize }) {
+export default function NavItem({ icon, title, description, active, navSize, to }) {
   const [isOpen, setIsOpen] = useState(false);
 
   const openPopover = () => setIsOpen(true);
@@ -28,7 +29,8 @@ export default function NavItem({ icon, title, description, active, navSize }) {
       <Popover isOpen={isOpen} placement="right">
         <PopoverTrigger>
           <Box
-            as="a"
+            as={Link}
+            to={to}
             backgroundColor={active && "#AEC8CA"}
             p={3}
             borderRadius={8}
