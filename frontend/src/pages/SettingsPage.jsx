@@ -9,30 +9,44 @@ import { FiEdit2 } from 'react-icons/fi';
 
 export default function SettingsPage() {
   return (
-    <Flex p={8} flex="1" bg="gray.100" alignItems="center" justifyContent="center" minH="100vh" position="relative">
-      <Heading size="xl" position="absolute" top="20px" left="40px">
+    <Flex
+      p={{ base: 4, md: 8 }}
+      flex="1"
+      bg="gray.100"
+      alignItems="center"
+      justifyContent="center"
+      minH="100vh"
+      position="relative"
+    >
+      <Heading
+        size="xl"
+        position="absolute"
+        top={{ base: '20px', md: '40px' }}
+        left={{ base: '20px', md: '40px' }}
+        fontSize={{ base: '2xl', md: '3xl' }}
+      >
         Settings
       </Heading>
       <Box
-        p={8}
+        p={{ base: 4, md: 8 }}
         bg="white"
         borderRadius="lg"
         boxShadow="lg"
-        maxW="1200px"
+        maxW={{ base: '100%', md: '800px', lg: '1200px' }}
         w="90%"
-        minH="800px"
+        minH={{ base: '600px', md: '800px' }}
         position="relative"
         pt={10}
       >
         <Tabs variant="enclosed" colorScheme="blue">
           <TabList>
-            <Tab fontSize="lg" _focus={{ boxShadow: 'none', outline: 'none' }}>
+            <Tab fontSize={{ base: 'md', md: 'lg' }} _focus={{ boxShadow: 'none', outline: 'none' }}>
               Edit Profile
             </Tab>
-            <Tab fontSize="lg" _focus={{ boxShadow: 'none', outline: 'none' }}>
+            <Tab fontSize={{ base: 'md', md: 'lg' }} _focus={{ boxShadow: 'none', outline: 'none' }}>
               Preferences
             </Tab>
-            <Tab fontSize="lg" _focus={{ boxShadow: 'none', outline: 'none' }}>
+            <Tab fontSize={{ base: 'md', md: 'lg' }} _focus={{ boxShadow: 'none', outline: 'none' }}>
               Security
             </Tab>
           </TabList>
@@ -40,7 +54,7 @@ export default function SettingsPage() {
           <TabPanels>
             <TabPanel>
               <Flex alignItems="center" mb={6}>
-                <Avatar size="2xl" src="avatar-1.jpg" />
+                <Avatar size={{ base: 'lg', md: '2xl' }} src="avatar-1.jpg" />
                 <IconButton
                   aria-label="Edit avatar"
                   icon={<FiEdit2 />}
@@ -48,40 +62,40 @@ export default function SettingsPage() {
                   bg="white"
                   borderRadius="full"
                   boxShadow="md"
-                  size="lg"
+                  size={{ base: 'md', md: 'lg' }}
                 />
               </Flex>
               <Grid templateColumns={{ base: '1fr', md: '1fr 1fr' }} gap={8} p={4}>
                 <FormControl id="name">
-                  <FormLabel fontSize="lg">Your Name</FormLabel>
+                  <FormLabel fontSize={{ base: 'md', md: 'lg' }}>Your Name</FormLabel>
                   <Input placeholder="John Doe" size="lg" />
                 </FormControl>
                 <FormControl id="username">
-                  <FormLabel fontSize="lg">User Name</FormLabel>
+                  <FormLabel fontSize={{ base: 'md', md: 'lg' }}>User Name</FormLabel>
                   <Input placeholder="johndoe123" size="lg" />
                 </FormControl>
                 <FormControl id="email">
-                  <FormLabel fontSize="lg">Email</FormLabel>
+                  <FormLabel fontSize={{ base: 'md', md: 'lg' }}>Email</FormLabel>
                   <Input type="email" placeholder="johndoe@example.com" size="lg" />
                 </FormControl>
                 <FormControl id="password">
-                  <FormLabel fontSize="lg">Password</FormLabel>
+                  <FormLabel fontSize={{ base: 'md', md: 'lg' }}>Password</FormLabel>
                   <Input type="password" placeholder="********" size="lg" />
                 </FormControl>
                 <FormControl id="presentAddress">
-                  <FormLabel fontSize="lg">Present Address</FormLabel>
+                  <FormLabel fontSize={{ base: 'md', md: 'lg' }}>Present Address</FormLabel>
                   <Input placeholder="123 Main St" size="lg" />
                 </FormControl>
                 <FormControl id="city">
-                  <FormLabel fontSize="lg">City</FormLabel>
+                  <FormLabel fontSize={{ base: 'md', md: 'lg' }}>City</FormLabel>
                   <Input placeholder="New York" size="lg" />
                 </FormControl>
                 <FormControl id="postalCode">
-                  <FormLabel fontSize="lg">Postal Code</FormLabel>
+                  <FormLabel fontSize={{ base: 'md', md: 'lg' }}>Postal Code</FormLabel>
                   <Input placeholder="10001" size="lg" />
                 </FormControl>
                 <FormControl id="country">
-                  <FormLabel fontSize="lg">Country</FormLabel>
+                  <FormLabel fontSize={{ base: 'md', md: 'lg' }}>Country</FormLabel>
                   <Input placeholder="United States" size="lg" />
                 </FormControl>
               </Grid>
@@ -90,14 +104,14 @@ export default function SettingsPage() {
             <TabPanel>
               <Grid templateColumns={{ base: '1fr', md: '1fr 1fr' }} gap={8} p={4}>
                 <FormControl>
-                  <FormLabel fontSize="lg">Currency</FormLabel>
+                  <FormLabel fontSize={{ base: 'md', md: 'lg' }}>Currency</FormLabel>
                   <Select placeholder="Select Currency" size="lg">
                     <option>US Dollar</option>
                     <option>Euro</option>
                   </Select>
                 </FormControl>
                 <FormControl>
-                  <FormLabel fontSize="lg">Time Zone</FormLabel>
+                  <FormLabel fontSize={{ base: 'md', md: 'lg' }}>Time Zone</FormLabel>
                   <Select placeholder="Select Time Zone" size="lg">
                     <option>(GMT+00:00) UTC</option>
                     <option>(GMT-08:00) Pacific Time</option>
@@ -106,7 +120,7 @@ export default function SettingsPage() {
               </Grid>
               <Stack spacing={6} mt={6} p={4}>
                 <FormControl display="flex" alignItems="center">
-                  <FormLabel fontSize="lg" mb="0">Notification</FormLabel>
+                  <FormLabel fontSize={{ base: 'md', md: 'lg' }} mb="0">Notification</FormLabel>
                   <Switch colorScheme="blue" size="lg" />
                 </FormControl>
               </Stack>
@@ -114,7 +128,7 @@ export default function SettingsPage() {
             
             <TabPanel>
               <Stack spacing={6} mt={6} p={4}>
-                <Text fontSize="lg" fontWeight="bold">
+                <Text fontSize={{ base: 'md', md: 'lg' }} fontWeight="bold">
                   Two-factor Authentication
                 </Text>
                 <FormControl>
@@ -127,16 +141,16 @@ export default function SettingsPage() {
                 </FormControl>
               </Stack>
 
-              <Text fontSize="lg" fontWeight="bold" mt={8} p={4}>
+              <Text fontSize={{ base: 'md', md: 'lg' }} fontWeight="bold" mt={8} p={4}>
                 Change Password
               </Text>
               <Grid templateColumns={{ base: '1fr', md: '1fr' }} gap={6} p={4}>
                 <FormControl id="currentPassword">
-                  <FormLabel fontSize="lg">Current Password</FormLabel>
+                  <FormLabel fontSize={{ base: 'md', md: 'lg' }}>Current Password</FormLabel>
                   <Input type="password" placeholder="********" size="lg" />
                 </FormControl>
                 <FormControl id="newPassword">
-                  <FormLabel fontSize="lg">New Password</FormLabel>
+                  <FormLabel fontSize={{ base: 'md', md: 'lg' }}>New Password</FormLabel>
                   <Input type="password" placeholder="********" size="lg" />
                 </FormControl>
               </Grid>
