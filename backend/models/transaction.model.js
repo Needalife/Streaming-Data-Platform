@@ -1,30 +1,30 @@
 import mongoose from "mongoose";
 
 const transactionSchema = new mongoose.Schema({
-      transaction_id: {
+    transaction_id: {
         type: String,
         required: true,
-      },
-      name: {
+    },
+    name: {
         type: String,
         required: true,
-      },
-      type: {
+    },
+    type: {
         type: String,
         required: true,
-      },
-      status: {
+    },
+    status: {
         type: String,
         required: true,
-      },
-      email: {
+    },
+    email: {
         type: String,
         required: true,
-      },
-      timestamp: {
+    },
+    timestamp: {
         type: Date,
         required: true,
-      }
+    }
 });
 
 const Transaction = mongoose.model("Transaction", transactionSchema, "transactions");

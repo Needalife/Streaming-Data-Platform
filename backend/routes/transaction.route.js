@@ -7,10 +7,10 @@ import {
 
 const router = express.Router();
 
-router.get('/all',getAllTransactions);
+router.get('/all', getAllTransactions);
 
-router.get('/latest',getLatestTransactionsByAmount);
+router.get('/latest', getLatestTransactionsByAmount);
 
-router.get('/date-range',getTransactionsByDate);
+router.get('/date-range', getTransactionsByDate);
 
 export default router;
