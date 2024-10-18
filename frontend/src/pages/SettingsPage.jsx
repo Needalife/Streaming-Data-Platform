@@ -26,9 +26,15 @@ export default function SettingsPage() {
       >
         <Tabs variant="enclosed" colorScheme="blue">
           <TabList>
-            <Tab fontSize="lg">Edit Profile</Tab>
-            <Tab fontSize="lg">Preferences</Tab>
-            <Tab fontSize="lg">Security</Tab>
+            <Tab fontSize="lg" _focus={{ boxShadow: 'none', outline: 'none' }}>
+              Edit Profile
+            </Tab>
+            <Tab fontSize="lg" _focus={{ boxShadow: 'none', outline: 'none' }}>
+              Preferences
+            </Tab>
+            <Tab fontSize="lg" _focus={{ boxShadow: 'none', outline: 'none' }}>
+              Security
+            </Tab>
           </TabList>
           
           <TabPanels>
