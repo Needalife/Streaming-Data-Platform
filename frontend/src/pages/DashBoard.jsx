@@ -1,11 +1,11 @@
 import React from 'react'
-import SearchTimeDate from '../components/SearchTimeDate'
-import FilterByStatus from '../components/FilterByStatus'
-import FilterByPrice from '../components/FilterByPrice'
-import DataTable from '../components/DataTable'
+import SearchTimeDate from '../components/dashboard/SearchTimeDate'
+import FilterByStatus from '../components/dashboard/FilterByStatus'
+import FilterByPrice from '../components/dashboard/FilterByPrice'
+import DataTable from '../components/dashboard/DataTable'
+import SearchBar from '../components/dashboard/SearchBar'
 
 import { useEffect, useState } from 'react';
-import SearchBar from '../components/SearchBar'
 
 const DashBoard = () => {
     const [data, setData] = useState([]);

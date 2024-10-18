@@ -14,12 +14,10 @@ const DataTable = ({ data = [] }) => {
         return `${hours}:${minutes} ${month} ${day}, ${year}`;
     };
 
-    // Capitalize the first letter of the status
     const formatStatus = (status) => {
         return status.charAt(0).toUpperCase() + status.slice(1);
     };
 
-    // Handlers for each action
     const handleView = (item) => {
         alert(`Viewing details for: ${item.name}`);
     };
