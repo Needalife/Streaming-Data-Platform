@@ -9,7 +9,7 @@ import { FiEdit2 } from 'react-icons/fi';
 
 export default function SettingsPage() {
   return (
-    <Flex p={8} flex="1" bg="gray.50" alignItems="center" justifyContent="center" minH="100vh" position="relative">
+    <Flex p={8} flex="1" bg="gray.100" alignItems="center" justifyContent="center" minH="100vh" position="relative">
       <Heading size="xl" position="absolute" top="20px" left="40px">
         Settings
       </Heading>
@@ -113,11 +113,24 @@ export default function SettingsPage() {
             </TabPanel>
             
             <TabPanel>
-              <FormControl display="flex" alignItems="center" mb={6} p={4}>
-                <FormLabel fontSize="lg">Two-factor Authentication</FormLabel>
-                <Switch colorScheme="blue" size="lg" />
-              </FormControl>
-              <Grid templateColumns={{ base: '1fr', md: '1fr 1fr' }} gap={8} p={4}>
+              <Stack spacing={6} mt={6} p={4}>
+                <Text fontSize="lg" fontWeight="bold">
+                  Two-factor Authentication
+                </Text>
+                <FormControl>
+                  <Flex alignItems="center" gap={4}>
+                    <Switch colorScheme="blue" size="lg" />
+                    <Text fontSize="md" color="gray.600">
+                      Enable or disable two-factor authentication
+                    </Text>
+                  </Flex>
+                </FormControl>
+              </Stack>
+
+              <Text fontSize="lg" fontWeight="bold" mt={8} p={4}>
+                Change Password
+              </Text>
+              <Grid templateColumns={{ base: '1fr', md: '1fr' }} gap={6} p={4}>
                 <FormControl id="currentPassword">
                   <FormLabel fontSize="lg">Current Password</FormLabel>
                   <Input type="password" placeholder="********" size="lg" />

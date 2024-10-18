@@ -7,8 +7,9 @@ import {
   PopoverTrigger,
   PopoverContent,
   Box,
+  Portal,
 } from '@chakra-ui/react';
-import { Link } from 'react-router-dom';  // Import Link from react-router-dom
+import { Link } from 'react-router-dom';
 import NavHoverBox from '../components/NavHoverBox';
 
 export default function NavItem({ icon, title, description, active, navSize, to }) {
@@ -58,16 +59,18 @@ export default function NavItem({ icon, title, description, active, navSize, to 
             </Flex>
           </Box>
         </PopoverTrigger>
-        <PopoverContent
-          py={0}
-          border="none"
-          w={200}
-          h={200}
-          ml={5}
-          boxShadow="lg"
-        >
-          <NavHoverBox title={title} icon={icon} description={description} />
-        </PopoverContent>
+        <Portal>
+          <PopoverContent
+            py={0}
+            border="none"
+            w={200}
+            h={200}
+            ml={5}
+            boxShadow="lg"
+          >
+            <NavHoverBox title={title} icon={icon} description={description} />
+          </PopoverContent>
+        </Portal>
       </Popover>
     </Flex>
   );
