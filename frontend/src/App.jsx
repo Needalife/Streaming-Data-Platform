@@ -9,9 +9,9 @@ function App() {
   return (
     <ChakraProvider>
       <Router>
-        <Flex h="100vh">
+        <Flex className="h-screen">
           <Sidebar />
-          <Box flex="1" bg="gray.50">
+          <Box className="flex-1 bg-gray-50">
             <Routes>
               <Route path="/" element={<HomePage />} />
               <Route path="/settings" element={<SettingsPage />} />

@@ -20,19 +20,20 @@ export default function NavItem({ icon, title, description, active, navSize, to 
 
   return (
     <Flex
-      mt={30}
+      mt={8}
       flexDir="column"
       w="100%"
       alignItems={navSize === "small" ? "center" : "flex-start"}
       onMouseEnter={openPopover}
       onMouseLeave={closePopover}
+      className="transition-all duration-300"
     >
       <Popover isOpen={isOpen} placement="right">
         <PopoverTrigger>
           <Box
             as={Link}
             to={to}
-            backgroundColor={active && "#AEC8CA"}
+            backgroundColor={active ? "#AEC8CA" : undefined}
             p={3}
             borderRadius={8}
             _hover={{
@@ -42,17 +43,20 @@ export default function NavItem({ icon, title, description, active, navSize, to 
             }}
             w={navSize === "large" ? "100%" : "auto"}
             cursor="pointer"
+            className="transition-colors duration-300"
           >
             <Flex>
               <Icon
                 as={icon}
                 fontSize={{ base: "lg", md: "xl", lg: "2xl", xl: "3xl" }}
                 color="inherit"
+                className="transition-transform duration-200"
               />
               <Text
                 ml={5}
                 display={navSize === "small" ? "none" : "flex"}
                 color="inherit"
+                className="text-base md:text-lg"
               >
                 {title}
               </Text>
@@ -67,6 +71,7 @@ export default function NavItem({ icon, title, description, active, navSize, to 
             h={200}
             ml={5}
             boxShadow="lg"
+            className="bg-white"
           >
             <NavHoverBox title={title} icon={icon} description={description} />
           </PopoverContent>

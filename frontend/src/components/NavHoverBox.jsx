@@ -11,8 +11,9 @@ export default function NavHoverBox({ title, icon, description }) {
     <>
       <Flex
         pos="absolute"
-        mt="calc(100px - 7.5px)"
-        ml="-10px"
+        top="50%" // Centers it vertically with respect to the parent element
+        left="-10px" // Adjust this value to move the triangle closer to the NavItem
+        transform="translateY(-50%)" // Centers the triangle with the hover box vertically
         width={0}
         height={0}
         borderTop="10px solid transparent"
@@ -29,6 +30,7 @@ export default function NavHoverBox({ title, icon, description }) {
         borderRadius="10px"
         color="#fff"
         textAlign="center"
+        boxShadow="md"
       >
         <Icon as={icon} fontSize="3xl" mb={4} />
         <Heading size="md" fontWeight="normal">{title}</Heading>

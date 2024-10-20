@@ -14,11 +14,9 @@ import NavItem from './NavItem';
 export default function Sidebar() {
   return (
     <Flex
-      pos="sticky"
+      position="sticky"
       left="0"
-      h="95vh"
-      marginTop="2.5vh"
-      boxShadow="0 4px 12px 0 rgba(0, 0, 0, 0.05)"
+      className="h-[95vh] mt-[2.5vh] shadow-lg"
       borderRadius="15px"
       minW="75px"
       maxW="75px"
