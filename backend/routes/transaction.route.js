@@ -1,19 +1,20 @@
 import express from "express";
 import {
-    deleteTransactionById,
-    getAllTransactions,
-    getLatestTransactionsByAmount,
-    getTransactionsByDate,
+  deleteTransactionById,
+  getAllTransactions,
+  getLatestTransactionsByAmount,
+  getTransactionsByDate,
 } from "../controller/transaction.controller.js";
+import { requireAuth } from "../middleware/auth.middleware.js";
 
 const router = express.Router();
 
-router.get('/all', getAllTransactions);
+router.get("/all", getAllTransactions);
 
-router.get('/latest', getLatestTransactionsByAmount);
+router.get("/latest", getLatestTransactionsByAmount);
 
-router.get('/date-range', getTransactionsByDate);
+router.get("/date-range", getTransactionsByDate);
 
-router.delete('/:id',deleteTransactionById);
+router.delete("/:id", deleteTransactionById);
 
 export default router;
