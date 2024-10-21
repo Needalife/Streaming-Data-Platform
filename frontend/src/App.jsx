@@ -6,21 +6,21 @@ import SettingsPage from './pages/SettingsPage';
 import HomePage from './pages/HomePage';
 
 function App() {
-  return (
-    <ChakraProvider>
-      <Router>
-        <Flex className="h-screen">
-          <Sidebar />
-          <Box className="flex-1 bg-gray-50">
-            <Routes>
-              <Route path="/" element={<HomePage />} />
-              <Route path="/settings" element={<SettingsPage />} />
-            </Routes>
-          </Box>
-        </Flex>
-      </Router>
-    </ChakraProvider>
-  );
+    return (
+        <ChakraProvider>
+            <Router>
+                <Flex className="h-screen">
+                    <Sidebar />
+                    <Box className="flex-1 bg-gray-50">
+                        <Routes>
+                            <Route path="/" element={<HomePage />} />
+                            <Route path="/settings" element={<SettingsPage />} />
+                        </Routes>
+                    </Box>
+                </Flex>
+            </Router>
+        </ChakraProvider>
+    );
 }
 
 export default App;
