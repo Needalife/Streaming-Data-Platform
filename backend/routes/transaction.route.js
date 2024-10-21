@@ -4,6 +4,8 @@ import {
     getAllTransactions,
     getLatestTransactionsByAmount,
     getTransactionsByDate,
+    getTransactionsByName,
+    downloadTransactionById
 } from "../controller/transaction.controller.js";
 
 const router = express.Router();
@@ -14,6 +16,10 @@ router.get('/latest', getLatestTransactionsByAmount);
 
 router.get('/date-range', getTransactionsByDate);
 
-router.delete('/:id',deleteTransactionById);
+router.get('/search', getTransactionsByName);
+
+router.get('/:id/download', downloadTransactionById);
+
+router.delete('/:id', deleteTransactionById);
 
 export default router;

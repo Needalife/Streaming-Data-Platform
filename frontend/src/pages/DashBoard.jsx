@@ -1,37 +1,92 @@
 import React, { useEffect, useState } from 'react';
-import SearchTimeDate from '../components/dashboard/SearchTimeDate';
-import FilterByStatus from '../components/dashboard/FilterByStatus';
-import FilterByPrice from '../components/dashboard/FilterByPrice';
+import Filters from '../components/dashboard/Filters';
 import DataTable from '../components/dashboard/DataTable';
 import SearchBar from '../components/dashboard/SearchBar';
 
-import { getAllTransactions } from '../api';
+import { getAllTransactions } from '../api/transaction';
+import { getTransactionsByName } from '../api/transaction';
 
 const DashBoard = () => {
     const [data, setData] = useState([]);
+    const [filteredData, setFilteredData] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [selectedDate, setSelectedDate] = useState(null);
+    const [selectedStatuses, setSelectedStatuses] = useState(['All']);
+    const [selectedType, setSelectedType] = useState('All');
+
+    const fetchData = async () => {
+        setLoading(true);
+        const response = await getAllTransactions();
+
+        if (response.success) {
+            setData(response.data);
+            setFilteredData(response.data);
+        } else {
+            setError(response.message);
+        }
+
+        setLoading(false);
+    };
 
     useEffect(() => {
-        const fetchData = async () => {
-            setLoading(true);
-            const response = await getAllTransactions();
-
-            if (response.success) {
-                setData(response.data);
-            } else {
-                setError(response.message);
-            }
-
-            setLoading(false);
-        };
-
         fetchData();
     }, []);
 
-    const handleSearchComplete = (searchResults) => {
-        setData(searchResults);
+    const handleDateFilter = () => {
+        let filtered = data;
+
+        if (selectedDate) {
+            filtered = filtered.filter((item) => {
+                const itemDate = new Date(item.timestamp);
+                return (
+                    itemDate.getDate() === selectedDate.getDate() &&
+                    itemDate.getMonth() === selectedDate.getMonth() &&
+                    itemDate.getFullYear() === selectedDate.getFullYear()
+                );
+            });
+        }
+
+        if (!selectedStatuses.includes('All')) {
+            filtered = filtered.filter((item) => selectedStatuses.includes(item.status));
+        }
+
+        if (selectedType !== 'All') {
+            filtered = filtered.filter((item) => item.type === selectedType);
+        }
+
+        setFilteredData(filtered);
     };
+
+    const handleDateChange = (date) => {
+        setSelectedDate(date);
+    };
+
+    const handleStatusChange = (statuses) => {
+        setSelectedStatuses(statuses);
+    };
+
+    const handleTypeChange = (type) => {
+        setSelectedType(type);
+    };
+
+    const handleSearch = async (searchTerm) => {
+        if (searchTerm.trim() === '') {
+            await fetchData();
+        } else {
+            const response = await getTransactionsByName(searchTerm);
+            if (response.success) {
+                setFilteredData(response.data);
+            } else {
+                setFilteredData([]);
+                setError(response.message);
+            }
+        }
+    };
+
+    useEffect(() => {
+        handleDateFilter();
+    }, [selectedDate, selectedStatuses, selectedType, data]);
 
     if (loading) {
         return <div>Loading...</div>;
@@ -42,31 +97,22 @@ const DashBoard = () => {
     }
 
     return (
-        <div className="space-y-6 bg-gray-100">
+        <div className="bg-gray-100">
             <div className="flex justify-between items-center">
                 <h1 className="font-bold text-3xl p-8">Query Dashboard</h1>
-                <SearchBar />
-            </div>
-
-            <div className="flex space-x-4 p-6">
-                <div className="flex-1">
-                    <SearchTimeDate className="w-full" />
-                </div>
-
-                <div className="bg-white rounded-lg shadow-md w-1/3">
-                    <div className="flex items-start justify-between ">
-                        <div className="flex-1">
-                            <FilterByStatus />
-                        </div>
-                        <div className="flex-1">
-                            <FilterByPrice />
-                        </div>
-                    </div>
-                </div>
+                <SearchBar placeholder="Search by name" onSearch={handleSearch} />
             </div>
 
             <div className="p-6 rounded-lg shadow-md">
-                <DataTable data={data} />
+                <Filters
+                    onDateChange={handleDateChange}
+                    onStatusChange={handleStatusChange}
+                    onTypeChange={handleTypeChange}
+                />
+            </div>
+
+            <div className="p-6 rounded-lg shadow-md">
+                <DataTable data={filteredData} refreshData={fetchData} />
             </div>
         </div>
     );
