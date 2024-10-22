@@ -13,7 +13,7 @@ function App() {
                     <Sidebar />
                     <Box className="flex-1 bg-gray-50">
                         <Routes>
-                            <Route path="/" element={<DashBoard />} />
+                            <Route path="/dashboard" element={<DashBoard />} />
                             <Route path="/settings" element={<SettingsPage />} />
                         </Routes>
                     </Box>

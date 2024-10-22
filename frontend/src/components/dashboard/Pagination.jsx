@@ -38,6 +38,8 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
 
     return (
         <div className="flex justify-between items-center mt-4">
+            {/* Spacer */}
+            <div className="flex-grow"></div>
             <div className="flex space-x-2">
                 {/* First page btn */}
                 <button
@@ -57,14 +59,11 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
                 </button>
             </div>
 
-            {/* Spacer */}
-            <div className="flex-grow"></div>
-
             {/* Pagination */}
             <div className="flex space-x-2">
                 <div className="flex items-center">
                     <BsThreeDots
-                        className={`${(currentPage <= 4) ? 'opacity-0' : 'opacity-100'}`} />
+                        className={`${(currentPage <= 4) ? 'opacity-0 ml-6' : 'opacity-100 ml-6'}`} />
                 </div>
                 {getPageNumbers().map((page, index) => (
                     <React.Fragment key={index}>
@@ -78,12 +77,10 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
                 ))}
                 <div className="flex items-center">
                     <BsThreeDots
-                        className={`${(currentPage > totalPages - 4) ? 'opacity-0' : 'opacity-100'}`} />
+                        className={`${(currentPage > totalPages - 4) ? 'opacity-0 mr-6' : 'opacity-100 mr-6'}`} />
                 </div>
             </div>
 
-            {/* Spacer */}
-            <div className="flex-grow"></div>
 
             <div className="flex space-x-2">
                 {/* Next page btn */}
@@ -103,6 +100,8 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
                     <MdOutlineKeyboardDoubleArrowRight />
                 </button>
             </div>
+            {/* Spacer */}
+            <div className="flex-grow"></div>
         </div>
     );
 };
