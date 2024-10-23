@@ -28,3 +28,7 @@ dist-ssr
 test.py
 client.properties
 backend/bcryptTest.js
+
+*storybook.log
+
+stories/
