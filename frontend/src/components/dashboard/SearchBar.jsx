@@ -17,7 +17,7 @@ const SearchBar = ({ placeholder, onSearch }) => {
         <div className="p-8">
             <form
                 onSubmit={handleSubmit}
-                className="relative flex items-center justify-center mt-5 w-64"
+                className="relative flex items-center justify-center w-64"
             >
                 <input
                     type="text"
