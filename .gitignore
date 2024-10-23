@@ -32,3 +32,4 @@ backend/bcryptTest.js
 *storybook.log
 
 stories/
+/frontend/.storybook
