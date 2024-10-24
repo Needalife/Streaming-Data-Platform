@@ -27,3 +27,5 @@ dist-ssr
 
 test.py
 client.properties
+
+/backend/config
