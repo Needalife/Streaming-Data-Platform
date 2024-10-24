@@ -124,17 +124,18 @@ export const downloadTransactionById = async (req, res) => {
             return res.status(404).json({ success: false, message: "Transaction not found" });
         }
 
-        const transactionText = `
-            Transaction ID: ${transaction._id}
-            Name: ${transaction.name}
-            Status: ${transaction.status}
-            Type: ${transaction.type}
-            Timestamp: ${new Date(transaction.timestamp).toLocaleString()}
-        `;
+        const transactionJson = {
+            transaction_id: transaction._id,
+            name: transaction.name,
+            type: transaction.type,
+            status: transaction.status,
+            email: transaction.email,
+            timestamp: new Date(transaction.timestamp).toISOString(),
+        };
 
         res.setHeader('Content-disposition', `attachment; filename=transaction_${transaction._id}.txt`);
         res.setHeader('Content-type', 'text/plain');
-        res.send(transactionText);
+        res.send(JSON.stringify(transactionJson, null, 2));
     } catch (error) {
         res.status(500).json({ success: false, message: "Server error" });
         console.log(`Error downloading transaction: ${error}`);

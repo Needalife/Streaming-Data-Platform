@@ -39,10 +39,36 @@ export const getAllFunctionMetrics = async (req, res) => {
                 const [timeSeries] = await client.listTimeSeries(request);
 
                 if (timeSeries.length > 0) {
-                    const points = timeSeries.map((series) => ({
-                        value: series.points[0].value.doubleValue || series.points[0].value.int64Value,
-                        timestamp: series.points[0].interval.endTime.seconds,
-                    }));
+                    const points = timeSeries.map((series) => {
+                        let value = series.points[0].value.doubleValue || series.points[0].value.int64Value;
+
+                        // Convert metrics based on their type
+                        switch (metricName) {
+                            case 'invocations_per_second':
+                                // If the metric is for invocations per second, calculate the rate
+                                const startTime = series.points[0].interval.startTime.seconds;
+                                const endTime = series.points[0].interval.endTime.seconds;
+                                const timeInterval = endTime - startTime;
+                                value = timeInterval > 0 ? value / timeInterval : value;
+                                break;
+                            case 'memory_utilization':
+                                // Convert bytes to MiB
+                                value = value / (1024 * 1024);
+                                break;
+                            case 'execution_time':
+                                // Convert milliseconds to seconds
+                                value = value / 1000;
+                                break;
+                            default:
+                                break;
+                        }
+
+                        return {
+                            value,
+                            timestamp: series.points[0].interval.endTime.seconds,
+                        };
+                    });
+
                     metrics[metricName] = points;
                 } else {
                     metrics[metricName] = null;
@@ -51,7 +77,6 @@ export const getAllFunctionMetrics = async (req, res) => {
 
             allMetrics.push(metrics);
         }
-
 
         res.status(200).json({ success: true, data: allMetrics });
     } catch (error) {

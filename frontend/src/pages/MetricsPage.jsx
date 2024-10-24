@@ -41,8 +41,8 @@ const CloudFunctionMetrics = () => {
                 {
                     label: label,
                     data: values,
-                    borderColor: 'rgba(75, 192, 192, 1)',
-                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    borderColor: '#679cf6',
+                    backgroundColor: 'rgba(103, 156, 246, 0.2)',
                 },
             ],
         };
@@ -62,22 +62,22 @@ const CloudFunctionMetrics = () => {
             {/* 2x2 grid */}
             <div className="grid grid-cols-2 gap-6">
                 <MetricGraph
-                    title="Invocation Count"
+                    title="Invocations/Second"
                     metricData={metrics[0].invocations_per_second}
                     chartData={chartData}
                 />
                 <MetricGraph
-                    title="Execution Time"
+                    title="Execution time"
                     metricData={metrics[0].execution_time}
                     chartData={chartData}
                 />
                 <MetricGraph
-                    title="Memory Utilization"
+                    title="Memory utilization"
                     metricData={metrics[0].memory_utilization}
                     chartData={chartData}
                 />
                 <MetricGraph
-                    title="Instance Count"
+                    title="Instance count"
                     metricData={metrics[0].instance_count}
                     chartData={chartData}
                 />
