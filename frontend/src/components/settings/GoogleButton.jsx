@@ -1,7 +1,7 @@
 import { FcGoogle } from 'react-icons/fc';
 import { Button, Icon, Text } from '@chakra-ui/react';
 
-const GoogleSignInButton = () => (
+const GoogleButton = ({ text }) => (
   <Button
     width="full"
     height="52px"
@@ -12,8 +12,8 @@ const GoogleSignInButton = () => (
     fontWeight="normal"
     fontSize="md"
   >
-    <Text fontSize="md" color="gray.700">Sign in with Google</Text>
+    <Text fontSize="md" color="gray.700">{text}</Text>
   </Button>
 );
 
-export default GoogleSignInButton;
+export default GoogleButton;
