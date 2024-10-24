@@ -140,3 +140,24 @@ export const downloadTransactionById = async (req, res) => {
         console.log(`Error downloading transaction: ${error}`);
     }
 };
+
+export const sse = (req, res) => {
+    res.setHeader('Content-Type', 'text/event-stream');
+    res.setHeader('Cache-Control', 'no-cache');
+    res.setHeader('Connection', 'keep-alive');
+    res.flushHeaders();  // Flush headers to establish the connection
+
+    const changeStream = Transaction.watch();
+
+    changeStream.on('change', (change) => {
+        // Send only insert operations as SSE events
+        if (change.operationType === 'insert') {
+            res.write(`data: ${JSON.stringify(change.fullDocument)}\n\n`);
+        }
+    });
+
+    req.on('close', () => {
+        console.log('SSE client disconnected');
+        changeStream.close();
+    });
+};

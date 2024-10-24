@@ -5,7 +5,8 @@ import {
     getLatestTransactionsByAmount,
     getTransactionsByDate,
     getTransactionsByName,
-    downloadTransactionById
+    downloadTransactionById,
+    sse
 } from "../controller/transaction.controller.js";
 
 const router = express.Router();
@@ -21,5 +22,7 @@ router.get('/search', getTransactionsByName);
 router.get('/:id/download', downloadTransactionById);
 
 router.delete('/:id', deleteTransactionById);
+
+router.get('/sse', sse);
 
 export default router;
