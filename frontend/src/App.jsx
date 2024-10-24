@@ -4,6 +4,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Sidebar from './components/Sidebar';
 import SettingsPage from './pages/SettingsPage';
 import QueryBoard from './pages/QueryBoard';
+import HomePage from './pages/HomePage';
 
 function App() {
     return (
@@ -13,6 +14,7 @@ function App() {
                     <Sidebar />
                     <Box className="flex-1 bg-gray-50">
                         <Routes>
+                            <Route path="/" element={<HomePage />} />
                             <Route path="/queryboard" element={<QueryBoard />} />
                             <Route path="/settings" element={<SettingsPage />} />
                         </Routes>
