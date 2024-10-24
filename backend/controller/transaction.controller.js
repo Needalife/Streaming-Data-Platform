@@ -158,6 +158,8 @@ export const sse = (req, res) => {
 
     req.on('close', () => {
         console.log('SSE client disconnected');
-        changeStream.close();
+        if (!changeStream.closed) {
+            changeStream.close();
+        }
     });
 };

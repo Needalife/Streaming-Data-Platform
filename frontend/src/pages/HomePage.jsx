@@ -9,7 +9,6 @@ import {
   Legend,
   ResponsiveContainer,
 } from "recharts";
-import axios from "axios";
 
 export default function HomePage() {
   const [data, setData] = useState([]);
@@ -89,7 +88,7 @@ export default function HomePage() {
 
   return (
     <div className="p-6 bg-gray-100 min-h-screen">
-      <h2 className="text-3xl font-bold mb-20">Dashboard</h2>
+      <h2 className="text-4xl font-bold mb-20">Dashboard</h2>
       <div className="grid grid-cols-1 gap-6 mb-6">
         <div className="bg-white p-4 shadow rounded-lg">
           <h3 className="text-lg font-bold mb-4">Total Transactions</h3>
