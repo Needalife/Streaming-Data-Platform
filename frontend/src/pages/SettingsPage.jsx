@@ -32,35 +32,47 @@ export default function SettingsPage() {
       <Box
         p={{ base: 4, md: 8 }}
         bg="white"
-        borderRadius="lg"
+        borderRadius="xl"
         boxShadow="lg"
-        maxW={{ base: '100%', md: '800px', lg: '1200px' }}
+        maxW={{ base: '100%', md: '1000px', lg: '1200px' }}
         w="90%"
         minH={{ base: '600px', md: '800px' }}
         position="relative"
         pt={10}
         className="shadow-md"
       >
-        <Tabs variant="enclosed" colorScheme="blue">
+        <Tabs variant="unstyled">
           <TabList>
             <Tab
               fontSize={{ base: 'md', md: 'lg' }}
+              borderRadius="0"
+              marginRight="20px"
+              color="gray.500"
               _focus={{ boxShadow: 'none', outline: 'none' }}
-              className="text-lg md:text-xl"
+              _selected={{ color: 'blue.500', borderBottom: '4px solid', borderBottomColor: 'blue.500'}}
+              _hover={{ color: 'blue.500', borderColor: 'white'}}
             >
               Edit Profile
             </Tab>
             <Tab
               fontSize={{ base: 'md', md: 'lg' }}
+              borderRadius="0"
+              marginRight="20px"
+              color="gray.500"
               _focus={{ boxShadow: 'none', outline: 'none' }}
-              className="text-lg md:text-xl"
+              _selected={{ color: 'blue.500', borderBottom: '4px solid', borderBottomColor: 'blue.500'}}
+              _hover={{ color: 'blue.500', borderColor: 'white'}}
             >
               Preferences
             </Tab>
             <Tab
               fontSize={{ base: 'md', md: 'lg' }}
+              borderRadius="0"
+              marginRight="20px"
+              color="gray.500"
               _focus={{ boxShadow: 'none', outline: 'none' }}
-              className="text-lg md:text-xl"
+              _selected={{ color: 'blue.500', borderBottom: '4px solid', borderBottomColor: 'blue.500'}}
+              _hover={{ color: 'blue.500', borderColor: 'white'}}
             >
               Security
             </Tab>
@@ -68,54 +80,57 @@ export default function SettingsPage() {
 
           <TabPanels>
             <TabPanel>
-              <Flex alignItems="center" mb={6} className="mb-6">
-                <Avatar size={{ base: 'lg', md: '2xl' }} src="avatar-1.jpg" />
+              <Flex alignItems="flex-start" mb={6} className="mb-6">
+                <Avatar size={{ base: 'lg', md: '2xl' }} src="avatar-1.jpg" mt={6} />
                 <IconButton
                   aria-label="Edit avatar"
-                  icon={<FiEdit2 />}
+                  icon={<FiEdit2 color="white" />}
                   ml={-12}
-                  mt={6}
-                  bg="white"
+                  mt={100}
+                  bg="blue.500"
                   borderRadius="full"
                   boxShadow="md"
                   size={{ base: 'md', md: 'lg' }}
                   className="shadow-md"
+                  _hover={{ bg: 'blue.600' }}
                 />
-              </Flex>
+              <Box ml={4} flex="1">
               <Grid templateColumns={{ base: '1fr', md: '1fr 1fr' }} gap={8} className="p-4">
                 <FormControl id="name">
                   <FormLabel className="text-lg md:text-xl">Your Name</FormLabel>
-                  <Input placeholder="John Doe" size="lg" className="border-gray-300" />
+                  <Input placeholder="Your name" size="lg" className="border-gray-300" />
                 </FormControl>
                 <FormControl id="username">
                   <FormLabel className="text-lg md:text-xl">User Name</FormLabel>
-                  <Input placeholder="johndoe123" size="lg" className="border-gray-300" />
+                  <Input placeholder="Your user name" size="lg" className="border-gray-300" />
                 </FormControl>
                 <FormControl id="email">
                   <FormLabel className="text-lg md:text-xl">Email</FormLabel>
-                  <Input type="email" placeholder="johndoe@example.com" size="lg" className="border-gray-300" />
+                  <Input type="email" placeholder="Your email" size="lg" className="border-gray-300" />
                 </FormControl>
                 <FormControl id="password">
                   <FormLabel className="text-lg md:text-xl">Password</FormLabel>
-                  <Input type="password" placeholder="********" size="lg" className="border-gray-300" />
+                  <Input type="password" placeholder="Your password" size="lg" className="border-gray-300" />
                 </FormControl>
-                <FormControl id="presentAddress">
-                  <FormLabel className="text-lg md:text-xl">Present Address</FormLabel>
-                  <Input placeholder="123 Main St" size="lg" className="border-gray-300" />
+                <FormControl id="dob">
+                  <FormLabel className="text-lg md:text-xl">Date of Birth</FormLabel>
+                  <Input type="date" size="lg" className="border-gray-300" />
+                </FormControl>
+                <FormControl id="address">
+                  <FormLabel className="text-lg md:text-xl">Address</FormLabel>
+                  <Input placeholder="Your address" size="lg" className="border-gray-300" />
                 </FormControl>
                 <FormControl id="city">
                   <FormLabel className="text-lg md:text-xl">City</FormLabel>
-                  <Input placeholder="New York" size="lg" className="border-gray-300" />
-                </FormControl>
-                <FormControl id="postalCode">
-                  <FormLabel className="text-lg md:text-xl">Postal Code</FormLabel>
-                  <Input placeholder="10001" size="lg" className="border-gray-300" />
+                  <Input placeholder="Your city" size="lg" className="border-gray-300" />
                 </FormControl>
                 <FormControl id="country">
                   <FormLabel className="text-lg md:text-xl">Country</FormLabel>
-                  <Input placeholder="United States" size="lg" className="border-gray-300" />
+                  <Input placeholder="Your Country" size="lg" className="border-gray-300" />
                 </FormControl>
               </Grid>
+              </Box>
+              </Flex>
             </TabPanel>
 
             <TabPanel>
