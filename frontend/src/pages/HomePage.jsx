@@ -7,6 +7,7 @@ import {
   CartesianGrid,
   Tooltip,
   Legend,
+  ResponsiveContainer,
 } from "recharts";
 import axios from "axios";
 
@@ -15,15 +16,12 @@ export default function HomePage() {
 
   useEffect(() => {
     const today = new Date().toISOString().slice(0, 10);
-
     const savedData = localStorage.getItem(today);
     if (savedData) {
       setData(JSON.parse(savedData));
     }
 
-    const eventSource = new EventSource(
-      "http://localhost:3000/api/transactions/sse"
-    );
+    const eventSource = new EventSource("http://localhost:3000/api/transactions/sse");
 
     eventSource.onmessage = (event) => {
       const newTransaction = JSON.parse(event.data);
@@ -59,52 +57,70 @@ export default function HomePage() {
   const LineChartComponent = ({ title, dataKey, color }) => (
     <div className="p-4 bg-white shadow rounded-lg">
       <h3 className="text-lg font-bold mb-4">{title}</h3>
-      <LineChart
-        width={750}
-        height={520}
-        data={data}
-        margin={{ top: 20, right: 20, bottom: 20, left: 20 }}
-      >
-        <CartesianGrid strokeDasharray="3 3" />
-        <XAxis
-          dataKey="timestamp"
-          tickFormatter={(tick) => new Date(tick).toLocaleTimeString()}
-        />
-        <YAxis />
-        <Tooltip />
-        <Legend />
-        <Line type="monotone" dataKey={dataKey} stroke={color} name={title} />
-      </LineChart>
+      <ResponsiveContainer width="100%" height={400}>
+        <LineChart
+          data={data}
+          margin={{ top: 20, right: 30, left: 0, bottom: 20 }}
+        >
+          <CartesianGrid strokeDasharray="3 3" stroke="#e0e0e0" />
+          <XAxis
+            dataKey="timestamp"
+            tickFormatter={(tick) => new Date(tick).toLocaleTimeString()}
+            tick={{ fill: "#666" }}
+          />
+          <YAxis tick={{ fill: "#666" }} />
+          <Tooltip
+            contentStyle={{ backgroundColor: "#fff", borderRadius: "8px" }}
+            labelFormatter={(label) => `Time: ${new Date(label).toLocaleTimeString()}`}
+          />
+          <Legend wrapperStyle={{ paddingTop: "10px" }} />
+          <Line
+            type="monotone"
+            dataKey={dataKey}
+            stroke={color}
+            strokeWidth={2}
+            dot={{ r: 4 }}
+            activeDot={{ r: 6 }}
+          />
+        </LineChart>
+      </ResponsiveContainer>
     </div>
   );
 
   return (
     <div className="p-6 bg-gray-100 min-h-screen">
-      <h2 className="text-3xl font-bold mb-6">Dashboard</h2>
+      <h2 className="text-3xl font-bold mb-20">Dashboard</h2>
       <div className="grid grid-cols-1 gap-6 mb-6">
         <div className="bg-white p-4 shadow rounded-lg">
           <h3 className="text-lg font-bold mb-4">Total Transactions</h3>
-          <LineChart
-            width={2400}
-            height={500}
-            data={data}
-            margin={{ top: 20, right: 20, bottom: 20, left: 20 }}
-          >
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis
-              dataKey="timestamp"
-              tickFormatter={(tick) => new Date(tick).toLocaleTimeString()}
-            />
-            <YAxis />
-            <Tooltip />
-            <Legend />
-            <Line
-              type="monotone"
-              dataKey="total"
-              stroke="#8884d8"
-              name="Total Transactions"
-            />
-          </LineChart>
+          <ResponsiveContainer width="100%" height={500}>
+            <LineChart
+              data={data}
+              margin={{ top: 20, right: 30, left: 0, bottom: 20 }}
+            >
+              <CartesianGrid strokeDasharray="3 3" stroke="#e0e0e0" />
+              <XAxis
+                dataKey="timestamp"
+                tickFormatter={(tick) => new Date(tick).toLocaleTimeString()}
+                tick={{ fill: "#666" }}
+              />
+              <YAxis tick={{ fill: "#666" }} />
+              <Tooltip
+                contentStyle={{ backgroundColor: "#fff", borderRadius: "8px" }}
+                labelFormatter={(label) => `Time: ${new Date(label).toLocaleTimeString()}`}
+              />
+              <Legend wrapperStyle={{ paddingTop: "10px" }} />
+              <Line
+                type="monotone"
+                dataKey="total"
+                stroke="#8884d8"
+                strokeWidth={2}
+                dot={{ r: 4 }}
+                activeDot={{ r: 6 }}
+                name="Total Transactions"
+              />
+            </LineChart>
+          </ResponsiveContainer>
         </div>
       </div>
       <div className="grid grid-cols-3 gap-6">
