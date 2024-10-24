@@ -12,7 +12,7 @@ This project consists of a backend and frontend setup to manage and visualize da
 2. Install packages
 
     ```bash
-    npm install
+    npm i
 
 3. Run backend
 
@@ -20,3 +20,18 @@ This project consists of a backend and frontend setup to manage and visualize da
     nodemon .
 
 ## Frontend Setup
+
+1. Navigate to the frontend directory:
+
+   ```bash
+   cd frontend
+
+2. Install packages
+
+    ```bash
+    npm i
+
+3. Run backend
+
+    ```bash
+    node run dev

@@ -8,14 +8,15 @@ import {
     downloadTransactionById,
     sse
 } from "../controller/transaction.controller.js";
+import { requireAuth } from "../middleware/auth.middleware.js";
 
 const router = express.Router();
 
-router.get('/all', getAllTransactions);
+router.get("/all", getAllTransactions);
 
-router.get('/latest', getLatestTransactionsByAmount);
+router.get("/latest", getLatestTransactionsByAmount);
 
-router.get('/date-range', getTransactionsByDate);
+router.get("/date-range", getTransactionsByDate);
 
 router.get('/search', getTransactionsByName);
 
