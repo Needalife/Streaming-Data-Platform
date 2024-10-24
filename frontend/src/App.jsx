@@ -3,7 +3,7 @@ import { ChakraProvider, Flex, Box } from '@chakra-ui/react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Sidebar from './components/Sidebar';
 import SettingsPage from './pages/SettingsPage';
-import DashBoard from './pages/DashBoard';
+import QueryBoard from './pages/QueryBoard';
 
 function App() {
     return (
@@ -13,7 +13,7 @@ function App() {
                     <Sidebar />
                     <Box className="flex-1 bg-gray-50">
                         <Routes>
-                            <Route path="/dashboard" element={<DashBoard />} />
+                            <Route path="/queryboard" element={<QueryBoard />} />
                             <Route path="/settings" element={<SettingsPage />} />
                         </Routes>
                     </Box>

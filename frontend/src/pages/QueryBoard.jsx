@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import Filters from '../components/dashboard/Filters';
-import DataTable from '../components/dashboard/DataTable';
-import SearchBar from '../components/dashboard/SearchBar';
+import Filters from '../components/queryboard/Filters';
+import DataTable from '../components/queryboard/DataTable';
+import SearchBar from '../components/queryboard/SearchBar';
 
 import { getAllTransactions } from '../api/transaction';
 import { getTransactionsByName } from '../api/transaction';
 
-const DashBoard = () => {
+const QueryBoard = () => {
     const [data, setData] = useState([]);
     const [filteredData, setFilteredData] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -99,7 +99,7 @@ const DashBoard = () => {
     return (
         <div className="bg-gray-100">
             <div className="flex justify-between items-center">
-                <h1 className="font-bold text-3xl p-8">Query Dashboard</h1>
+                <h1 className="font-bold text-3xl p-8">Query Board</h1>
                 <SearchBar placeholder="Search by name" onSearch={handleSearch} />
             </div>
 
@@ -118,4 +118,4 @@ const DashBoard = () => {
     );
 };
 
-export default DashBoard;
+export default QueryBoard;
