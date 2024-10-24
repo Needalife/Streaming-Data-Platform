@@ -133,7 +133,7 @@ export const downloadTransactionById = async (req, res) => {
             timestamp: new Date(transaction.timestamp).toISOString(),
         };
 
-        res.setHeader('Content-disposition', `attachment; filename=transaction_${transaction._id}.txt`);
+        res.setHeader('Content-disposition', `attachment; filename=transaction_${transaction._id}.json`);
         res.setHeader('Content-type', 'text/plain');
         res.send(JSON.stringify(transactionJson, null, 2));
     } catch (error) {
