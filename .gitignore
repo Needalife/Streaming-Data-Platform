@@ -27,3 +27,4 @@ dist-ssr
 
 test.py
 client.properties
+/backend/config/service-account.json

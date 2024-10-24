@@ -4,6 +4,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Sidebar from './components/Sidebar';
 import SettingsPage from './pages/SettingsPage';
 import QueryBoard from './pages/QueryBoard';
+import MetricsPage from './pages/MetricsPage';
 
 function App() {
     return (
@@ -15,6 +16,7 @@ function App() {
                         <Routes>
                             <Route path="/queryboard" element={<QueryBoard />} />
                             <Route path="/settings" element={<SettingsPage />} />
+                            <Route path="/metrics" element={<MetricsPage />} />
                         </Routes>
                     </Box>
                 </Flex>
