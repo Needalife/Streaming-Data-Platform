@@ -5,6 +5,7 @@ import Sidebar from './components/Sidebar';
 import SettingsPage from './pages/SettingsPage';
 import QueryBoard from './pages/QueryBoard';
 import HomePage from './pages/HomePage';
+import MetricsPage from './pages/MetricsPage';
 
 function App() {
     return (
@@ -17,6 +18,7 @@ function App() {
                             <Route path="/" element={<HomePage />} />
                             <Route path="/queryboard" element={<QueryBoard />} />
                             <Route path="/settings" element={<SettingsPage />} />
+                            <Route path="/metrics" element={<MetricsPage />} />
                         </Routes>
                     </Box>
                 </Flex>
