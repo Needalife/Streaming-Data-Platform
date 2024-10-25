@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { getAllFunctionMetrics } from '../api/metrics';
-import FunctionButton from '../components//metrics/FunctionButton';
+import FunctionButton from '../components/metrics/FunctionButton';
 import MetricGraph from '../components/metrics/MetricGraph';
 import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend } from 'chart.js';
+import { MdNavigateNext } from "react-icons/md";
+import { MdNavigateBefore } from "react-icons/md";
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
-// Cloud funtcions names
+// Cloud function names
 const cloudFunctionNames = ['kafka-producer', 'kafka-consumer', 'mongo-kafka-delete', 'confluent-manager'];
 
 const CloudFunctionMetrics = () => {
@@ -27,6 +29,18 @@ const CloudFunctionMetrics = () => {
 
         fetchMetrics();
     }, [selectedFunction]);
+
+    const handleNext = () => {
+        const currentIndex = cloudFunctionNames.indexOf(selectedFunction);
+        const nextIndex = (currentIndex + 1) % cloudFunctionNames.length; // Wrap around
+        setSelectedFunction(cloudFunctionNames[nextIndex]);
+    };
+
+    const handlePrevious = () => {
+        const currentIndex = cloudFunctionNames.indexOf(selectedFunction);
+        const prevIndex = (currentIndex - 1 + cloudFunctionNames.length) % cloudFunctionNames.length; // Wrap around
+        setSelectedFunction(cloudFunctionNames[prevIndex]);
+    };
 
     if (error) return <p>{error}</p>;
     if (!metrics) return <p>Loading metrics...</p>;
@@ -49,12 +63,11 @@ const CloudFunctionMetrics = () => {
     };
 
     return (
-        <div className="h-screen flex flex-col p-4">
-            {/* Title */}
-            <h1 className="font-bold text-3xl p-4 flex-shrink-0">Metrics</h1>
+        <div className="flex flex-col p-4 h-full">
+            <h1 className="font-bold text-3xl p-4">Metrics</h1>
 
             {/* GCF buttons */}
-            <div className="flex justify-center mb-4 flex-shrink-0">
+            <div className="flex justify-center">
                 <FunctionButton
                     cloudFunctionNames={cloudFunctionNames}
                     selectedFunction={selectedFunction}
@@ -62,28 +75,49 @@ const CloudFunctionMetrics = () => {
                 />
             </div>
 
-            {/* 2x2 grid for graphs */}
-            <div className="flex-1 grid grid-cols-2 gap-6">
-                <MetricGraph
-                    title="Invocations/Second"
-                    metricData={metrics[0].invocations_per_second}
-                    chartData={chartData}
-                />
-                <MetricGraph
-                    title="Execution time"
-                    metricData={metrics[0].execution_time}
-                    chartData={chartData}
-                />
-                <MetricGraph
-                    title="Memory utilization"
-                    metricData={metrics[0].memory_utilization}
-                    chartData={chartData}
-                />
-                <MetricGraph
-                    title="Instance count"
-                    metricData={metrics[0].instance_count}
-                    chartData={chartData}
-                />
+            <div className="flex-1 flex">
+                <div className="flex items-center">
+                    <button
+                        className="bg-blue-500 text-white text-2xl px-2 py-2 rounded-full hover:bg-blue-600 mr-8 ml-4"
+                        onClick={handlePrevious}
+                        style={{ height: 'fit-content' }}
+                    >
+                        <MdNavigateBefore />
+                    </button>
+                </div>
+
+                {/* 2x2 grid for graphs */}
+                <div className="flex-1 grid grid-cols-2 gap-10 pb-8">
+                    <MetricGraph
+                        title="Invocations/Second"
+                        metricData={metrics[0].invocations_per_second}
+                        chartData={chartData}
+                    />
+                    <MetricGraph
+                        title="Execution time"
+                        metricData={metrics[0].execution_time}
+                        chartData={chartData}
+                    />
+                    <MetricGraph
+                        title="Memory utilization"
+                        metricData={metrics[0].memory_utilization}
+                        chartData={chartData}
+                    />
+                    <MetricGraph
+                        title="Instance count"
+                        metricData={metrics[0].instance_count}
+                        chartData={chartData}
+                    />
+                </div>
+                <div className="flex items-center">
+                    <button
+                        className="bg-blue-500 text-white text-2xl px-2 py-2 rounded-full hover:bg-blue-600 mr-4 ml-8"
+                        onClick={handleNext}
+                        style={{ height: 'fit-content' }}
+                    >
+                        <MdNavigateNext />
+                    </button>
+                </div>
             </div>
         </div>
     );
