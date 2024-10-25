@@ -6,7 +6,8 @@ import {
     getTransactionsByDate,
     getTransactionsByName,
     downloadTransactionById,
-    sse
+    sse,
+    getRecentTransactions
 } from "../controller/transaction.controller.js";
 import { requireAuth } from "../middleware/auth.middleware.js";
 
@@ -25,5 +26,7 @@ router.get('/:id/download', downloadTransactionById);
 router.delete('/:id', deleteTransactionById);
 
 router.get('/sse', sse);
+
+router.get("/recent", getRecentTransactions);
 
 export default router;

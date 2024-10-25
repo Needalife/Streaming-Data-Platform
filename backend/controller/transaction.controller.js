@@ -164,3 +164,19 @@ export const sse = (req, res) => {
         }
     });
 };
+
+export const getRecentTransactions = async (req, res) => {
+    try {
+        const now = new Date();
+        const twoHoursAgo = new Date(now.getTime() - 2 * 60 * 60 * 1000);
+
+        const transactions = await Transaction.find({
+            timestamp: { $gte: twoHoursAgo }
+        }).sort({ timestamp: 1 });
+
+        res.status(200).json({ success: true, data: transactions });
+    } catch (error) {
+        console.error(`Error fetching recent transactions: ${error.message}`);
+        res.status(500).json({ success: false, message: error.message });
+    }
+};

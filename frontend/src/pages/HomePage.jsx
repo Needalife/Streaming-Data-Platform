@@ -10,6 +10,7 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import { format } from "date-fns";
+import axios from "axios";
 
 export default function HomePage() {
   const [data, setData] = useState([]);
@@ -20,12 +21,52 @@ export default function HomePage() {
     return date.toISOString();
   };
 
+  const filterRecentData = (allData) => {
+    const now = new Date();
+    const twoHoursAgo = new Date(now.getTime() - 2 * 60 * 60 * 1000);
+    return allData.filter((entry) => new Date(entry.timestamp) >= twoHoursAgo);
+  };
+
+  const aggregateData = (transactions) => {
+    const groupedData = transactions.reduce((acc, transaction) => {
+      const roundedTimestamp = roundToMinute(transaction.timestamp);
+      const existing = acc.find((entry) => entry.timestamp === roundedTimestamp);
+
+      if (existing) {
+        existing.total += 1;
+        existing[transaction.status.toLowerCase()] += 1;
+      } else {
+        acc.push({
+          timestamp: roundedTimestamp,
+          total: 1,
+          success: transaction.status === "success" ? 1 : 0,
+          ongoing: transaction.status === "ongoing" ? 1 : 0,
+          error: transaction.status === "error" ? 1 : 0,
+        });
+      }
+      return acc;
+    }, []);
+
+    return filterRecentData(groupedData);
+  };
+
   useEffect(() => {
-    const today = new Date().toISOString().slice(0, 10);
-    const savedData = localStorage.getItem(today);
-    if (savedData) {
-      setData(JSON.parse(savedData));
-    }
+    const fetchRecentTransactions = async () => {
+      try {
+        const response = await axios.get("http://localhost:3000/api/transactions/recent");
+        console.log("Fetched recent transactions:", response.data);
+
+        if (response.data.success) {
+          const aggregatedData = aggregateData(response.data.data);
+          console.log("Aggregated and filtered initial data:", aggregatedData);
+          setData(aggregatedData);
+        }
+      } catch (error) {
+        console.error("Error fetching recent transactions:", error);
+      }
+    };
+
+    fetchRecentTransactions();
 
     const eventSource = new EventSource("http://localhost:3000/api/transactions/sse");
 
@@ -52,11 +93,9 @@ export default function HomePage() {
           });
         }
 
-        localStorage.setItem(today, JSON.stringify(updatedData));
-
-        const now = new Date();
-        const twoHoursAgo = new Date(now.getTime() - 2 * 60 * 60 * 1000);
-        return updatedData.filter((entry) => new Date(entry.timestamp) >= twoHoursAgo);
+        const filteredData = filterRecentData(updatedData);
+        console.log("Updated data after new transaction:", filteredData);
+        return filteredData;
       });
     };
 
