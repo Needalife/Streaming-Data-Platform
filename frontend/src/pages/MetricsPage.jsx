@@ -43,7 +43,19 @@ const CloudFunctionMetrics = () => {
     };
 
     if (error) return <p>{error}</p>;
-    if (!metrics) return <p>Loading metrics...</p>;
+    if (!metrics) {
+        return (
+            <div style={{
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                height: '100vh',
+                textAlign: 'center'
+            }}>
+                <p>Loading metrics...</p>
+            </div>
+        );
+    }
 
     // Define chartData as a function that returns the chart configuration
     const chartData = (metricPoints, label, unit) => {
@@ -96,10 +108,10 @@ const CloudFunctionMetrics = () => {
 
     return (
         <div className="flex flex-col p-4 h-full">
-            <h1 className="font-bold text-3xl p-4">Metrics</h1>
+            <h1 className="text-3xl p-4">Metrics</h1>
 
             {/* GCF buttons */}
-            <div className="flex justify-center">
+            <div className="mb-8 flex justify-center">
                 <FunctionButton
                     cloudFunctionNames={cloudFunctionNames}
                     selectedFunction={selectedFunction}

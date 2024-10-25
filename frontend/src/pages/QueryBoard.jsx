@@ -89,7 +89,17 @@ const QueryBoard = () => {
     }, [selectedDate, selectedStatuses, selectedType, data]);
 
     if (loading) {
-        return <div>Loading...</div>;
+        return (
+            <div style={{
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                height: '100vh',
+                textAlign: 'center'
+            }}>
+                <p>Loading query...</p>
+            </div>
+        );
     }
 
     if (error) {
@@ -99,7 +109,7 @@ const QueryBoard = () => {
     return (
         <div className="bg-gray-100">
             <div className="flex justify-between items-center">
-                <h1 className="text-3xl p-8">Query Board</h1>
+                <h1 className="text-3xl p-8">Queryboard</h1>
                 <SearchBar placeholder="Search by name" onSearch={handleSearch} />
             </div>
 
