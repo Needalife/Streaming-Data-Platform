@@ -17,7 +17,6 @@ function App() {
                         <Box className="flex-1 bg-gray-50">
                             <Routes>
                                 <Route path="/" element={<HomePage />} />
-                                <Route path="/dashboard" element={<DashBoard />} />
                                 <Route path="/queryboard" element={<QueryBoard />} />
                                 <Route path="/metrics" element={<MetricsPage />} />
                                 <Route path="/settings" element={<SettingsPage />} />

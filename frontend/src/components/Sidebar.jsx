@@ -39,8 +39,8 @@ export default function Sidebar() {
                 flex="1"
             >
                 <NavItem navSize="small" icon={VscGraph} title="Home" description="Home Dashboard" as={Link} to="/" />
-                <NavItem navSize="small" icon={RiMenuSearchLine} title="Query" description="Search and query" />
-                <NavItem navSize="small" icon={BsBoundingBox} title="Metrics" description="View metrics" />
+                <NavItem navSize="small" icon={RiMenuSearchLine} title="Query" description="Search and query" as={Link} to="/queryboard" />
+                <NavItem navSize="small" icon={BsBoundingBox} title="Metrics" description="View metrics" as={Link} to="/metrics" />
                 <NavItem navSize="small" icon={FiSettings} title="Settings" description="Change your settings" as={Link} to="/settings" />
                 <NavItem navSize="small" icon={RiLogoutBoxLine} title="Log out" description="Log out from your account" />
             </Flex>
