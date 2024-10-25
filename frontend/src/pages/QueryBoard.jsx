@@ -99,7 +99,7 @@ const QueryBoard = () => {
     return (
         <div className="bg-gray-100">
             <div className="flex justify-between items-center">
-                <h1 className="font-bold text-3xl p-8">Query Board</h1>
+                <h1 className="text-3xl p-8">Query Board</h1>
                 <SearchBar placeholder="Search by name" onSearch={handleSearch} />
             </div>
 

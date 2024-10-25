@@ -49,18 +49,21 @@ const CloudFunctionMetrics = () => {
     };
 
     return (
-        <div className="p-4">
-            <h1 className="font-bold text-3xl p-8">Metrics</h1>
+        <div className="h-screen flex flex-col p-4">
+            {/* Title */}
+            <h1 className="font-bold text-3xl p-4 flex-shrink-0">Metrics</h1>
 
             {/* GCF buttons */}
-            <FunctionButton
-                cloudFunctionNames={cloudFunctionNames}
-                selectedFunction={selectedFunction}
-                setSelectedFunction={setSelectedFunction}
-            />
+            <div className="flex justify-center mb-4 flex-shrink-0">
+                <FunctionButton
+                    cloudFunctionNames={cloudFunctionNames}
+                    selectedFunction={selectedFunction}
+                    setSelectedFunction={setSelectedFunction}
+                />
+            </div>
 
-            {/* 2x2 grid */}
-            <div className="grid grid-cols-2 gap-6">
+            {/* 2x2 grid for graphs */}
+            <div className="flex-1 grid grid-cols-2 gap-6">
                 <MetricGraph
                     title="Invocations/Second"
                     metricData={metrics[0].invocations_per_second}
