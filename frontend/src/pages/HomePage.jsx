@@ -9,9 +9,16 @@ import {
   Legend,
   ResponsiveContainer,
 } from "recharts";
+import { format } from "date-fns";
 
 export default function HomePage() {
   const [data, setData] = useState([]);
+
+  const roundToMinute = (timestamp) => {
+    const date = new Date(timestamp);
+    date.setSeconds(0, 0);
+    return date.toISOString();
+  };
 
   useEffect(() => {
     const today = new Date().toISOString().slice(0, 10);
@@ -24,6 +31,8 @@ export default function HomePage() {
 
     eventSource.onmessage = (event) => {
       const newTransaction = JSON.parse(event.data);
+      newTransaction.timestamp = roundToMinute(newTransaction.timestamp);
+
       setData((prevData) => {
         const updatedData = [...prevData];
         const existingEntry = updatedData.find(
@@ -44,7 +53,10 @@ export default function HomePage() {
         }
 
         localStorage.setItem(today, JSON.stringify(updatedData));
-        return updatedData;
+
+        const now = new Date();
+        const twoHoursAgo = new Date(now.getTime() - 2 * 60 * 60 * 1000);
+        return updatedData.filter((entry) => new Date(entry.timestamp) >= twoHoursAgo);
       });
     };
 
@@ -57,29 +69,28 @@ export default function HomePage() {
     <div className="p-4 bg-white shadow rounded-lg">
       <h3 className="text-lg font-bold mb-4">{title}</h3>
       <ResponsiveContainer width="100%" height={400}>
-        <LineChart
-          data={data}
-          margin={{ top: 20, right: 30, left: 0, bottom: 20 }}
-        >
+        <LineChart data={data} margin={{ top: 20, right: 30, left: 0, bottom: 20 }}>
           <CartesianGrid strokeDasharray="3 3" stroke="#e0e0e0" />
           <XAxis
             dataKey="timestamp"
-            tickFormatter={(tick) => new Date(tick).toLocaleTimeString()}
+            tickFormatter={(tick) => format(new Date(tick), 'hh:mm a')}
             tick={{ fill: "#666" }}
+            interval="preserveStartEnd"
+            tickCount={6}
           />
-          <YAxis tick={{ fill: "#666" }} />
+          <YAxis domain={['auto', 'auto']} tick={{ fill: "#666" }} />
           <Tooltip
-            contentStyle={{ backgroundColor: "#fff", borderRadius: "8px" }}
-            labelFormatter={(label) => `Time: ${new Date(label).toLocaleTimeString()}`}
+            contentStyle={{ backgroundColor: "#fff", borderRadius: "8px", padding: "5px" }}
+            labelFormatter={(label) => `Time: ${format(new Date(label), 'hh:mm a')}`}
           />
           <Legend wrapperStyle={{ paddingTop: "10px" }} />
           <Line
-            type="monotone"
+            type="monotoneX"
             dataKey={dataKey}
             stroke={color}
             strokeWidth={2}
-            dot={{ r: 4 }}
-            activeDot={{ r: 6 }}
+            dot={{ r: 3 }}
+            activeDot={{ r: 5 }}
           />
         </LineChart>
       </ResponsiveContainer>
@@ -93,29 +104,28 @@ export default function HomePage() {
         <div className="bg-white p-4 shadow rounded-lg">
           <h3 className="text-lg font-bold mb-4">Total Transactions</h3>
           <ResponsiveContainer width="100%" height={500}>
-            <LineChart
-              data={data}
-              margin={{ top: 20, right: 30, left: 0, bottom: 20 }}
-            >
+            <LineChart data={data} margin={{ top: 20, right: 30, left: 0, bottom: 20 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="#e0e0e0" />
               <XAxis
                 dataKey="timestamp"
-                tickFormatter={(tick) => new Date(tick).toLocaleTimeString()}
+                tickFormatter={(tick) => format(new Date(tick), 'hh:mm a')}
                 tick={{ fill: "#666" }}
+                interval="preserveStartEnd"
+                tickCount={6}
               />
-              <YAxis tick={{ fill: "#666" }} />
+              <YAxis domain={['auto', 'auto']} tick={{ fill: "#666" }} />
               <Tooltip
-                contentStyle={{ backgroundColor: "#fff", borderRadius: "8px" }}
-                labelFormatter={(label) => `Time: ${new Date(label).toLocaleTimeString()}`}
+                contentStyle={{ backgroundColor: "#fff", borderRadius: "8px", padding: "5px" }}
+                labelFormatter={(label) => `Time: ${format(new Date(label), 'hh:mm a')}`}
               />
               <Legend wrapperStyle={{ paddingTop: "10px" }} />
               <Line
-                type="monotone"
+                type="monotoneX"
                 dataKey="total"
                 stroke="#8884d8"
                 strokeWidth={2}
-                dot={{ r: 4 }}
-                activeDot={{ r: 6 }}
+                dot={{ r: 3 }}
+                activeDot={{ r: 5 }}
                 name="Total Transactions"
               />
             </LineChart>
@@ -123,21 +133,9 @@ export default function HomePage() {
         </div>
       </div>
       <div className="grid grid-cols-3 gap-6">
-        <LineChartComponent
-          title="Success Transactions"
-          dataKey="success"
-          color="#82ca9d"
-        />
-        <LineChartComponent
-          title="Ongoing Transactions"
-          dataKey="ongoing"
-          color="#ffc658"
-        />
-        <LineChartComponent
-          title="Error Transactions"
-          dataKey="error"
-          color="#ff4d4f"
-        />
+        <LineChartComponent title="Success Transactions" dataKey="success" color="#82ca9d" />
+        <LineChartComponent title="Ongoing Transactions" dataKey="ongoing" color="#ffc658" />
+        <LineChartComponent title="Error Transactions" dataKey="error" color="#ff4d4f" />
       </div>
     </div>
   );
