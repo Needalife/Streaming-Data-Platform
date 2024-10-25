@@ -32,20 +32,21 @@ const CloudFunctionMetrics = () => {
 
     const handleNext = () => {
         const currentIndex = cloudFunctionNames.indexOf(selectedFunction);
-        const nextIndex = (currentIndex + 1) % cloudFunctionNames.length; // Wrap around
+        const nextIndex = (currentIndex + 1) % cloudFunctionNames.length;
         setSelectedFunction(cloudFunctionNames[nextIndex]);
     };
 
     const handlePrevious = () => {
         const currentIndex = cloudFunctionNames.indexOf(selectedFunction);
-        const prevIndex = (currentIndex - 1 + cloudFunctionNames.length) % cloudFunctionNames.length; // Wrap around
+        const prevIndex = (currentIndex - 1 + cloudFunctionNames.length) % cloudFunctionNames.length;
         setSelectedFunction(cloudFunctionNames[prevIndex]);
     };
 
     if (error) return <p>{error}</p>;
     if (!metrics) return <p>Loading metrics...</p>;
 
-    const chartData = (metricPoints, label) => {
+    // Define chartData as a function that returns the chart configuration
+    const chartData = (metricPoints, label, unit) => {
         const labels = metricPoints.map(point => new Date(point.timestamp * 1000).toLocaleTimeString());
         const values = metricPoints.map(point => point.value);
 
@@ -59,8 +60,39 @@ const CloudFunctionMetrics = () => {
                     backgroundColor: 'rgba(103, 156, 246, 0.2)',
                 },
             ],
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: {
+                        type: 'time',
+                        time: {
+                            unit: 'minute',
+                            stepSize: 10,
+                            tooltipFormat: 'HH:mm:ss',
+                        },
+                        title: {
+                            display: true,
+                            text: 'Time',
+                        },
+                    },
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: `${label} (${unit})`,
+                        },
+                        ticks: {
+                            callback: function (value) {
+                                return `${value} ${unit}`;
+                            },
+                        },
+                    },
+                },
+            },
         };
     };
+
 
     return (
         <div className="flex flex-col p-4 h-full">
@@ -92,23 +124,28 @@ const CloudFunctionMetrics = () => {
                         title="Invocations/Second"
                         metricData={metrics[0].invocations_per_second}
                         chartData={chartData}
+                        unit="/s"
                     />
                     <MetricGraph
-                        title="Execution time"
+                        title="Execution Time"
                         metricData={metrics[0].execution_time}
                         chartData={chartData}
+                        unit="s"
                     />
                     <MetricGraph
-                        title="Memory utilization"
+                        title="Memory Utilization"
                         metricData={metrics[0].memory_utilization}
                         chartData={chartData}
+                        unit="MiB"
                     />
                     <MetricGraph
-                        title="Instance count"
+                        title="Instance Count"
                         metricData={metrics[0].instance_count}
                         chartData={chartData}
+                        unit="counts"
                     />
                 </div>
+
                 <div className="flex items-center">
                     <button
                         className="bg-blue-500 text-white text-2xl px-2 py-2 rounded-full hover:bg-blue-600 mr-4 ml-8"

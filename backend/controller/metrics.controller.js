@@ -19,6 +19,9 @@ export const getAllFunctionMetrics = async (req, res) => {
             instance_count: 'cloudfunctions.googleapis.com/function/instance_count',
         };
 
+        const now = Date.now() / 1000;
+        const interval = now - (15 * 60);
+
         for (const functionName of functionNames) {
             const metrics = { functionName };
 
@@ -28,47 +31,68 @@ export const getAllFunctionMetrics = async (req, res) => {
                     filter: `metric.type="${metricType}" AND resource.labels.function_name="${functionName}"`,
                     interval: {
                         startTime: {
-                            seconds: Date.now() / 1000 - 60 * 5,  // Fetch data for the last 5 minutes
+                            seconds: interval,
                         },
                         endTime: {
-                            seconds: Date.now() / 1000,  // Now
+                            seconds: now,
                         },
                     },
                 };
 
+                if (metricName === 'memory_utilization') {
+                    request.aggregation = {
+                        alignmentPeriod: {
+                            seconds: 60,
+                        },
+                        perSeriesAligner: 'ALIGN_DELTA',
+                        crossSeriesReducer: 'REDUCE_PERCENTILE_99',
+                        groupByFields: [],
+                    };
+                }
+
+                if (metricName === 'execution_time') {
+                    request.aggregation = {
+                        alignmentPeriod: {
+                            seconds: 60,
+                        },
+                        perSeriesAligner: 'ALIGN_DELTA',
+                        crossSeriesReducer: 'REDUCE_PERCENTILE_99',
+                        groupByFields: [],
+                    };
+                }
+
                 const [timeSeries] = await client.listTimeSeries(request);
 
                 if (timeSeries.length > 0) {
-                    const points = timeSeries.map((series) => {
-                        let value = series.points[0].value.doubleValue || series.points[0].value.int64Value;
+                    const points = timeSeries.flatMap((series) =>
+                        series.points.map((point) => {
+                            let value = point.value.doubleValue || point.value.int64Value;
 
-                        // Convert metrics based on their type
-                        switch (metricName) {
-                            case 'invocations_per_second':
-                                // If the metric is for invocations per second, calculate the rate
-                                const startTime = series.points[0].interval.startTime.seconds;
-                                const endTime = series.points[0].interval.endTime.seconds;
-                                const timeInterval = endTime - startTime;
-                                value = timeInterval > 0 ? value / timeInterval : value;
-                                break;
-                            case 'memory_utilization':
-                                // Convert bytes to MiB
-                                value = value / (1024 * 1024);
-                                break;
-                            case 'execution_time':
-                                // Convert milliseconds to seconds
-                                value = value / 1000;
-                                break;
-                            default:
-                                break;
-                        }
+                            switch (metricName) {
+                                case 'invocations_per_second':
+                                    const startTime = point.interval.startTime.seconds;
+                                    const endTime = point.interval.endTime.seconds;
+                                    const timeInterval = endTime - startTime;
+                                    value = timeInterval > 0 ? value / timeInterval : value;
+                                    break;
+                                case 'memory_utilization':
+                                    value = value / (1024 * 1024);
+                                    break;
+                                case 'execution_time':
+                                    value = value / 1000000000;
+                                    break;
+                                default:
+                                    break;
+                            }
 
-                        return {
-                            value,
-                            timestamp: series.points[0].interval.endTime.seconds,
-                        };
-                    });
+                            return {
+                                value,
+                                timestamp: point.interval.endTime.seconds,
+                            };
+                        })
+                    );
 
+                    points.sort((a, b) => a.timestamp - b.timestamp);
                     metrics[metricName] = points;
                 } else {
                     metrics[metricName] = null;
