@@ -16,7 +16,7 @@ export default function Sidebar() {
         <Flex
             position="sticky"
             left="0"
-            className="h-[95vh] mt-[2.5vh] shadow-lg"
+            className="h-[100vh] mt-[2.5vh] shadow-lg"
             borderRadius="15px"
             minW="75px"
             maxW="75px"
