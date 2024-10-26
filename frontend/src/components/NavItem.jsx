@@ -41,6 +41,9 @@ export default function NavItem({ icon, title, description, active, navSize, to 
               background: "linear-gradient(to bottom, #a65ffc, #679cf6)",
               color: "white",
             }}
+            _focus={{
+              outline: "none",
+            }}
             w={navSize === "large" ? "100%" : "auto"}
             cursor="pointer"
             className="transition-colors duration-300"
@@ -72,6 +75,7 @@ export default function NavItem({ icon, title, description, active, navSize, to 
             ml={5}
             boxShadow="lg"
             className="bg-white"
+            _focusVisible={{ outline: "none" }}
           >
             <NavHoverBox title={title} icon={icon} description={description} />
           </PopoverContent>
