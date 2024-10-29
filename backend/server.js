@@ -2,8 +2,8 @@ import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
 import { connectDB } from "./db/db.js";
-import transactionRoutes from "./routes/transaction.route.js";
-import authRoutes from "./routes/auth.route.js";
+import transactionRoutes from "./routes/transaction.routes.js";
+import authRoutes from "./routes/auth.routes.js";
 import metricsRoutes from './routes/metrics.routes.js';
 
 dotenv.config();
