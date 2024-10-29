@@ -19,12 +19,13 @@ import GoogleButton from "./GoogleButton";
 import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
 import { useNavigate } from 'react-router-dom';
 import { signin } from '../../api/auth';
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const SignIn = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [showPassword, setShowPassword] = useState(false);
-    const [errorMessage, setErrorMessage] = useState(null);
     const navigate = useNavigate();
 
     const handleSignIn = async (event) => {
@@ -35,16 +36,16 @@ const SignIn = () => {
 
             if (result.success) {
                 sessionStorage.setItem('token', result.token);
+                toast.success('Successfully signed in!');
                 navigate('/metrics');
             } else {
-                setErrorMessage(result.message || 'Signin failed');
+                toast.error(result.message || 'Signin failed');
             }
         } catch (error) {
             console.error('Error signing in:', error);
-            setErrorMessage('An unexpected error occurred');
+            toast.error('An unexpected error occurred');
         }
     };
-
 
     const togglePasswordVisibility = () => {
         setShowPassword(!showPassword);

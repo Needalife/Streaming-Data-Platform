@@ -17,30 +17,32 @@ import GoogleButton from "./GoogleButton";
 import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
 import { useNavigate } from 'react-router-dom';
 import { signup } from "../../api/auth";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const SignUp = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
     const [showPassword, setShowPassword] = useState(false);
-    const [errorMessage, setErrorMessage] = useState(null);
     const navigate = useNavigate();
 
     const handleSignUp = async (event) => {
         event.preventDefault();
 
         if (password !== confirmPassword) {
-            alert("Passwords do not match!");
+            toast.error("Passwords do not match!");
             return;
         }
 
         const result = await signup(email, password);
 
         if (result.success) {
-            localStorage.setItem('token', result.token);
+            sessionStorage.setItem('token', result.token);
+            toast.success("Successfully signed up!");
             navigate('/signin');
         } else {
-            setErrorMessage(result.message || 'Signup failed');
+            toast.error(result.message || 'Signup failed');
         }
     };
 

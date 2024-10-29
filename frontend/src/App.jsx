@@ -8,6 +8,7 @@ import HomePage from './pages/HomePage';
 import MetricsPage from './pages/MetricsPage';
 import SignIn from './components/settings/SignIn';
 import SignUp from './components/settings/SignUp';
+import { ToastContainer } from "react-toastify";
 
 function App() {
     return (
@@ -15,6 +16,14 @@ function App() {
             <Box className="h-screen overflow-hidden">
                 <Router>
                     <Flex className="h-full">
+                        <ToastContainer
+                            position="bottom-right"
+                            style={{
+                                width: '400px',
+                                paddingBottom: '50px',
+                            }}
+                            autoClose={2000}
+                        />
                         <Sidebar />
                         <Box className="flex-1 bg-gray-50">
                             <Routes>
