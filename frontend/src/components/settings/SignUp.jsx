@@ -12,13 +12,12 @@ import {
     IconButton,
     InputGroup,
     InputRightElement,
+    useToast,
 } from "@chakra-ui/react";
 import GoogleButton from "./GoogleButton";
 import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
 import { useNavigate } from 'react-router-dom';
 import { signup } from "../../api/auth";
-import { toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 
 const SignUp = () => {
     const [email, setEmail] = useState("");
@@ -26,25 +25,56 @@ const SignUp = () => {
     const [confirmPassword, setConfirmPassword] = useState("");
     const [showPassword, setShowPassword] = useState(false);
     const navigate = useNavigate();
+    const toast = useToast();
 
     const handleSignUp = async (event) => {
         event.preventDefault();
 
         if (password !== confirmPassword) {
-            toast.error("Passwords do not match!");
+            toast({
+                title: "Error",
+                description: "Passwords do not match!",
+                status: "error",
+                duration: 3000,
+                isClosable: true,
+            });
             return;
         }
 
-        const result = await signup(email, password);
+        try {
+            const result = await signup(email, password);
 
-        if (result.success) {
-            sessionStorage.setItem('token', result.token);
-            toast.success("Successfully signed up!");
-            navigate('/');
-        } else {
-            toast.error(result.message || 'Signup failed');
+            if (result.success) {
+                sessionStorage.setItem('token', result.token);
+                toast({
+                    title: "Success",
+                    description: "Successfully signed up!",
+                    status: "success",
+                    duration: 3000,
+                    isClosable: true,
+                });
+                navigate('/signin');
+            } else {
+                toast({
+                    title: "Error",
+                    description: result.message || 'Signup failed',
+                    status: "error",
+                    duration: 3000,
+                    isClosable: true,
+                });
+            }
+        } catch (error) {
+            console.error("Error during signup:", error);
+            toast({
+                title: "Error",
+                description: "An unexpected error occurred during signup.",
+                status: "error",
+                duration: 3000,
+                isClosable: true,
+            });
         }
     };
+
 
     const togglePasswordVisibility = () => {
         setShowPassword(!showPassword);

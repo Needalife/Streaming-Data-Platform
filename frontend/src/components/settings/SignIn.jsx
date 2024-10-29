@@ -14,19 +14,19 @@ import {
     IconButton,
     InputGroup,
     InputRightElement,
+    useToast,
 } from "@chakra-ui/react";
 import GoogleButton from "./GoogleButton";
 import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
 import { useNavigate } from 'react-router-dom';
 import { signin } from '../../api/auth';
-import { toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 
 const SignIn = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [showPassword, setShowPassword] = useState(false);
     const navigate = useNavigate();
+    const toast = useToast();
 
     const handleSignIn = async (event) => {
         event.preventDefault();
@@ -36,16 +36,35 @@ const SignIn = () => {
 
             if (result.success) {
                 sessionStorage.setItem('token', result.token);
-                toast.success('Successfully signed in!');
+                toast({
+                    title: "Success",
+                    description: "Successfully signed in!",
+                    status: "success",
+                    duration: 3000,
+                    isClosable: true,
+                });
                 navigate('/metrics');
             } else {
-                toast.error(result.message || 'Signin failed');
+                toast({
+                    title: "Error",
+                    description: result.message || 'Signin failed',
+                    status: "error",
+                    duration: 3000,
+                    isClosable: true,
+                });
             }
         } catch (error) {
             console.error('Error signing in:', error);
-            toast.error('An unexpected error occurred');
+            toast({
+                title: "Error",
+                description: "An unexpected error occurred during signin.",
+                status: "error",
+                duration: 3000,
+                isClosable: true,
+            });
         }
     };
+
 
     const togglePasswordVisibility = () => {
         setShowPassword(!showPassword);

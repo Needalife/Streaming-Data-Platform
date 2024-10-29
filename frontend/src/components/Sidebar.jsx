@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
 import {
     Flex,
     Divider,
     Avatar,
+    useToast,
 } from '@chakra-ui/react';
 import { Link, useNavigate } from 'react-router-dom';
 import { VscGraph } from 'react-icons/vsc';
@@ -10,17 +10,22 @@ import { RiMenuSearchLine, RiLogoutBoxLine } from 'react-icons/ri';
 import { BsBoundingBox } from 'react-icons/bs';
 import { FiSettings } from 'react-icons/fi';
 import NavItem from './NavItem';
-import { toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 
 export default function Sidebar() {
     const isLoggedIn = sessionStorage.getItem("token") !== null;
     const navigate = useNavigate();
+    const toast = useToast();
 
     const handleLogout = () => {
         if (window.confirm("Are you sure you want to log out?")) {
             sessionStorage.removeItem('token');
-            toast.success('Successfully logged out!');
+            toast({
+                title: "Success",
+                description: "Successfully logged out!",
+                status: "success",
+                duration: 3000,
+                isClosable: true,
+            });
             navigate('/');
         }
     };
