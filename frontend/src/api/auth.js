@@ -9,10 +9,24 @@ export const signup = async (email, password) => {
             email,
             password,
         });
-        return response.data;
+
+        if (response.data.token) {
+            return {
+                success: true,
+                token: response.data.token,
+            };
+        } else {
+            return {
+                success: false,
+                message: response.data.message || "Signup failed",
+            };
+        }
     } catch (error) {
         console.error('Error signing up:', error);
-        return { success: false, message: error.response?.data?.message || error.message };
+        return {
+            success: false,
+            message: error.response?.data?.message || "An error occurred during signup.",
+        };
     }
 };
 

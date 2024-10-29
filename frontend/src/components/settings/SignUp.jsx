@@ -40,7 +40,7 @@ const SignUp = () => {
         if (result.success) {
             sessionStorage.setItem('token', result.token);
             toast.success("Successfully signed up!");
-            navigate('/signin');
+            navigate('/');
         } else {
             toast.error(result.message || 'Signup failed');
         }
