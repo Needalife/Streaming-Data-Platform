@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { getAllFunctionMetrics } from '../api/metrics';
+import { useNavigate } from 'react-router-dom';
 import FunctionButton from '../components/metrics/FunctionButton';
 import MetricGraph from '../components/metrics/MetricGraph';
 import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend } from 'chart.js';
@@ -12,11 +13,19 @@ ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, T
 const cloudFunctionNames = ['kafka-producer', 'kafka-consumer', 'mongo-kafka-delete', 'confluent-manager'];
 
 const CloudFunctionMetrics = () => {
+    const navigate = useNavigate();
     const [selectedFunction, setSelectedFunction] = useState(cloudFunctionNames[0]);
     const [metrics, setMetrics] = useState(null);
     const [error, setError] = useState(null);
 
     useEffect(() => {
+        // Check for token
+        const token = sessionStorage.getItem('token');
+        if (!token) {
+            navigate('/signin');
+            return;
+        }
+
         const fetchMetrics = async () => {
             try {
                 const data = await getAllFunctionMetrics([selectedFunction]);

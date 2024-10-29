@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
     Tabs, TabList, TabPanels, Tab, TabPanel,
     FormControl, FormLabel, Input, Select, Switch,
@@ -6,8 +6,19 @@ import {
     Text,
 } from '@chakra-ui/react';
 import { FiEdit2 } from 'react-icons/fi';
+import { useNavigate } from 'react-router-dom';
 
 export default function SettingsPage() {
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        // Check for token
+        const token = sessionStorage.getItem('token');
+        if (!token) {
+            navigate('/signin');
+        }
+    }, [navigate]);
+
     return (
         <Flex
             p={{ base: 4, md: 8 }}
