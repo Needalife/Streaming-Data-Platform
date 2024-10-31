@@ -132,7 +132,7 @@ export default function HomePage() {
             <CartesianGrid strokeDasharray="3 3" stroke="#e0e0e0" />
             <XAxis
               dataKey="timestamp"
-              tickFormatter={(tick) => format(new Date(tick), "hh:mm a")}
+              tickFormatter={(tick) => format(new Date(tick), "HH:mm")} // 24-hour format
               tick={{ fill: "#666" }}
               interval="preserveStartEnd"
               tickCount={6}
@@ -144,8 +144,8 @@ export default function HomePage() {
                 borderRadius: "8px",
                 padding: "5px",
               }}
-              labelFormatter={(label) =>
-                `Time: ${format(new Date(label), "hh:mm a")}`
+              labelFormatter={
+                (label) => `Time: ${format(new Date(label), "HH:mm")}` // 24-hour format
               }
             />
             <Legend wrapperStyle={{ paddingTop: "10px" }} />
@@ -198,7 +198,7 @@ export default function HomePage() {
               <CartesianGrid strokeDasharray="3 3" stroke="#e0e0e0" />
               <XAxis
                 dataKey="timestamp"
-                tickFormatter={(tick) => format(new Date(tick), "hh:mm a")}
+                tickFormatter={(tick) => format(new Date(tick), "HH:mm")}
                 tick={{ fill: "#666" }}
                 interval="preserveStartEnd"
                 tickCount={6}
@@ -211,7 +211,7 @@ export default function HomePage() {
                   padding: "5px",
                 }}
                 labelFormatter={(label) =>
-                  `Time: ${format(new Date(label), "hh:mm a")}`
+                  `Time: ${format(new Date(label), "HH:mm")}`
                 }
               />
               <Legend wrapperStyle={{ paddingTop: "10px" }} />
