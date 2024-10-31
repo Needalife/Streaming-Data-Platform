@@ -10,7 +10,7 @@ import {
     Portal,
 } from '@chakra-ui/react';
 import { Link } from 'react-router-dom';
-import NavHoverBox from '../components/NavHoverBox';
+import NavHoverBox from '../sidebar/NavHoverBox';
 
 export default function NavItem({ icon, title, description, active, navSize, to, onClick }) {
     const [isOpen, setIsOpen] = useState(false);

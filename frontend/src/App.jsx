@@ -1,7 +1,7 @@
 import React from 'react';
 import { ChakraProvider, Flex, Box } from '@chakra-ui/react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Sidebar from './components/Sidebar';
+import Sidebar from './components/sidebar/Sidebar';
 import SettingsPage from './pages/SettingsPage';
 import QueryBoard from './pages/QueryBoard';
 import HomePage from './pages/HomePage';
