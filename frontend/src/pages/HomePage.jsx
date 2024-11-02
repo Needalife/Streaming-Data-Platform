@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import {
-  LineChart,
-  Line,
+  AreaChart,
+  Area,
   XAxis,
   YAxis,
   CartesianGrid,
@@ -53,86 +53,161 @@ export default function HomePage() {
   };
 
   useEffect(() => {
-    const fetchRecentTransactions = async () => {
-      try {
-        const response = await axios.get(
-          "http://localhost:3000/api/transactions/recent"
-        );
+    const fakeData = [
+      {
+        timestamp: "2024-11-02T13:00:00Z",
+        total: 2,
+        success: 1,
+        ongoing: 1,
+        error: 0,
+      },
+      {
+        timestamp: "2024-11-02T13:10:00Z",
+        total: 3,
+        success: 2,
+        ongoing: 1,
+        error: 0,
+      },
+      {
+        timestamp: "2024-11-02T13:20:00Z",
+        total: 1,
+        success: 1,
+        ongoing: 0,
+        error: 0,
+      },
+      {
+        timestamp: "2024-11-02T13:30:00Z",
+        total: 4,
+        success: 3,
+        ongoing: 1,
+        error: 0,
+      },
+      {
+        timestamp: "2024-11-02T13:40:00Z",
+        total: 2,
+        success: 1,
+        ongoing: 0,
+        error: 1,
+      },
+      {
+        timestamp: "2024-11-02T13:50:00Z",
+        total: 3,
+        success: 2,
+        ongoing: 0,
+        error: 1,
+      },
+      {
+        timestamp: "2024-11-02T14:00:00Z",
+        total: 1,
+        success: 1,
+        ongoing: 0,
+        error: 0,
+      },
+      {
+        timestamp: "2024-11-02T14:10:00Z",
+        total: 2,
+        success: 1,
+        ongoing: 1,
+        error: 0,
+      },
+      {
+        timestamp: "2024-11-02T14:20:00Z",
+        total: 3,
+        success: 1,
+        ongoing: 2,
+        error: 0,
+      },
+      {
+        timestamp: "2024-11-02T14:30:00Z",
+        total: 2,
+        success: 2,
+        ongoing: 0,
+        error: 0,
+      },
+    ];
 
-        if (response.data.success) {
-          const aggregatedData = aggregateData(response.data.data);
-          setData(aggregatedData);
-        }
-      } catch (error) {
-        console.error("Error fetching recent transactions:", error);
-      }
-    };
-
-    fetchRecentTransactions();
-
-    const eventSource = new EventSource(
-      "http://localhost:3000/api/transactions/sse"
-    );
-
-    eventSource.onmessage = (event) => {
-      const newTransaction = JSON.parse(event.data);
-      newTransaction.timestamp = roundToMinute(newTransaction.timestamp);
-
-      setData((prevData) => {
-        const updatedData = [...prevData];
-        const existingEntry = updatedData.find(
-          (entry) => entry.timestamp === newTransaction.timestamp
-        );
-
-        if (existingEntry) {
-          existingEntry.total += 1;
-          existingEntry[newTransaction.status.toLowerCase()] += 1;
-        } else {
-          updatedData.push({
-            timestamp: newTransaction.timestamp,
-            total: 1,
-            success: newTransaction.status === "success" ? 1 : 0,
-            ongoing: newTransaction.status === "ongoing" ? 1 : 0,
-            error: newTransaction.status === "error" ? 1 : 0,
-          });
-        }
-
-        return filterData(updatedData, 2);
-      });
-    };
-
-    return () => {
-      eventSource.close();
-    };
+    setData(fakeData);
   }, []);
 
-  const LineChartComponent = ({ title, dataKey, color, hours }) => {
+  //     const fetchRecentTransactions = async () => {
+  //       try {
+  //         const response = await axios.get(
+  //           "http://localhost:3000/api/transactions/recent"
+  //         );
+
+  //         if (response.data.success) {
+  //           const aggregatedData = aggregateData(response.data.data);
+  //           setData(aggregatedData);
+  //         }
+  //       } catch (error) {
+  //         console.error("Error fetching recent transactions:", error);
+  //       }
+  //     };
+
+  //     fetchRecentTransactions();
+
+  //     const eventSource = new EventSource(
+  //       "http://localhost:3000/api/transactions/sse"
+  //     );
+
+  //     eventSource.onmessage = (event) => {
+  //       const newTransaction = JSON.parse(event.data);
+  //       newTransaction.timestamp = roundToMinute(newTransaction.timestamp);
+
+  //       setData((prevData) => {
+  //         const updatedData = [...prevData];
+  //         const existingEntry = updatedData.find(
+  //           (entry) => entry.timestamp === newTransaction.timestamp
+  //         );
+
+  //         if (existingEntry) {
+  //           existingEntry.total += 1;
+  //           existingEntry[newTransaction.status.toLowerCase()] += 1;
+  //         } else {
+  //           updatedData.push({
+  //             timestamp: newTransaction.timestamp,
+  //             total: 1,
+  //             success: newTransaction.status === "success" ? 1 : 0,
+  //             ongoing: newTransaction.status === "ongoing" ? 1 : 0,
+  //             error: newTransaction.status === "error" ? 1 : 0,
+  //           });
+  //         }
+
+  //         return filterData(updatedData, 2);
+  //       });
+  //     };
+
+  //     return () => {
+  //       eventSource.close();
+  //     };
+  //   }, []);
+
+  const AreaChartComponent = ({ title, dataKey, color, hours }) => {
     const filteredData = filterData(data, hours);
     return (
       <div className="p-4 bg-white shadow rounded-lg">
         <h3 className="text-lg font-bold mb-4">{title}</h3>
         <ResponsiveContainer width="100%" height={400}>
-          <LineChart
+          <AreaChart
             data={filteredData}
             margin={{ top: 20, right: 30, left: 0, bottom: 20 }}
           >
             <defs>
-              <linearGradient id="chartBackground" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#C4D8FB" stopOpacity={1} />
-                <stop offset="100%" stopColor="#ffffff" stopOpacity={1} />
+              <linearGradient
+                id={`${dataKey}Gradient`}
+                x1="0"
+                y1="0"
+                x2="0"
+                y2="1"
+              >
+                <stop offset="0%" stopColor={color} stopOpacity={0.6} />
+                <stop offset="100%" stopColor={color} stopOpacity={0} />
               </linearGradient>
             </defs>
-            <rect
-              x={60}
-              y={20}
-              width="calc(100% - 90px)"
-              height="calc(100% - 40px)"
-              fill="url(#chartBackground)"
-            />
             <CartesianGrid strokeDasharray="3 3" stroke="#e0e0e0" />
             <XAxis
               dataKey="timestamp"
-              tickFormatter={(tick) => format(new Date(tick), "HH:mm")} // 24-hour format
+              tickFormatter={(tick) => format(new Date(tick), "HH:mm")}
               tick={{ fill: "#666" }}
               interval="preserveStartEnd"
               tickCount={6}
@@ -144,20 +219,21 @@ export default function HomePage() {
                 borderRadius: "8px",
                 padding: "5px",
               }}
-              labelFormatter={
-                (label) => `Time: ${format(new Date(label), "HH:mm")}` // 24-hour format
+              labelFormatter={(label) =>
+                `Time: ${format(new Date(label), "HH:mm")}`
               }
             />
             <Legend wrapperStyle={{ paddingTop: "10px" }} />
-            <Line
-              type="monotoneX"
+            <Area
+              type="monotone"
               dataKey={dataKey}
               stroke={color}
+              fill={`url(#${dataKey}Gradient)`}
               strokeWidth={2}
               dot={false}
               activeDot={{ r: 5 }}
             />
-          </LineChart>
+          </AreaChart>
         </ResponsiveContainer>
       </div>
     );
@@ -170,31 +246,16 @@ export default function HomePage() {
         <div className="bg-white p-4 shadow rounded-lg">
           <h3 className="text-lg font-bold mb-4">Total Transactions</h3>
           <ResponsiveContainer width="100%" height={500}>
-            <LineChart
+            <AreaChart
               data={filterData(data, 2)}
               margin={{ top: 20, right: 30, left: 5, bottom: 20 }}
             >
               <defs>
-                <linearGradient
-                  id="totalChartBackground"
-                  x1="0"
-                  y1="0"
-                  x2="0"
-                  y2="1"
-                >
-                  <stop offset="0%" stopColor="#C08DFD" stopOpacity={1} />
-                  <stop offset="100%" stopColor="#ffffff" stopOpacity={1} />
+                <linearGradient id="totalGradient" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="#8884d8" stopOpacity={0.6} />
+                  <stop offset="100%" stopColor="#ffffff" stopOpacity={0} />
                 </linearGradient>
               </defs>
-
-              <rect
-                x={65}
-                y={20}
-                width="calc(100% - 95px)"
-                height="calc(100% - 40px)"
-                fill="url(#totalChartBackground)"
-              />
-
               <CartesianGrid strokeDasharray="3 3" stroke="#e0e0e0" />
               <XAxis
                 dataKey="timestamp"
@@ -215,34 +276,35 @@ export default function HomePage() {
                 }
               />
               <Legend wrapperStyle={{ paddingTop: "10px" }} />
-              <Line
-                type="monotoneX"
+              <Area
+                type="monotone"
                 dataKey="total"
                 stroke="#8884d8"
-                strokeWidth={2}
+                fill="url(#totalGradient)"
+                strokeWidth={3}
                 dot={false}
                 activeDot={{ r: 5 }}
                 name="Total Transactions"
               />
-            </LineChart>
+            </AreaChart>
           </ResponsiveContainer>
         </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <LineChartComponent
+        <AreaChartComponent
           title="Success Transactions"
           dataKey="success"
           color="#82ca9d"
           hours={1}
         />
-        <LineChartComponent
+        <AreaChartComponent
           title="Ongoing Transactions"
           dataKey="ongoing"
           color="#ffc658"
           hours={1}
         />
-        <LineChartComponent
+        <AreaChartComponent
           title="Error Transactions"
           dataKey="error"
           color="#ff4d4f"
