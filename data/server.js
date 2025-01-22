@@ -22,7 +22,7 @@ const producer = new TransactionProducer();
 transactionConsumer(producer);
 producer.startProducing();
 
-setInterval(manageLifecycle, 6000);
+setInterval(manageLifecycle, 2000);
 
 app.listen(PORT, () => {
   console.log(`Service running on http://localhost:${PORT}`);
