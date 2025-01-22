@@ -1,0 +1,23 @@
+# Ignore sensitive files
+.env
+
+# Ignore version control files and directories
+.git
+.gitignore
+
+# Ignore node_modules (if applicable)
+node_modules
+
+# Ignore Docker-related files you don't want in the image
+docker-compose.yml
+*.dockerfile
+
+# Ignore build and temporary files
+*.log
+*.pid
+*.sock
+*.tmp
+
+# Ignore OS-specific files
+.DS_Store
+Thumbs.db

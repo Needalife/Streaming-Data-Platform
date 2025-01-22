@@ -1,0 +1,20 @@
+services:
+  data-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: data-service
+    ports:
+      - "${PORT}:${PORT}"
+    environment:
+      MONGO_URI: ${MONGO_URI}
+      MAX_RECORDS: ${MAX_RECORDS}
+      DELETE_COUNT: ${DELETE_COUNT}
+    networks:
+      - microservices
+    volumes:
+      - .:/app
+
+networks:
+  microservices:
+    external: true
