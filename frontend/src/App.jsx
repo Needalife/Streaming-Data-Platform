@@ -8,6 +8,7 @@ import HomePage from './pages/HomePage';
 import MetricsPage from './pages/MetricsPage';
 import SignIn from './components/settings/SignIn';
 import SignUp from './components/settings/SignUp';
+import AppRouter from './router/AppRouter';
 
 function App() {
     return (
@@ -17,14 +18,16 @@ function App() {
                     <Flex className="h-full">
                         <Sidebar />
                         <Box className="flex-1 bg-gray-50">
-                            <Routes>
+                            {/* <Routes>
                                 <Route path="/" element={<HomePage />} />
                                 <Route path="/queryboard" element={<QueryBoard />} />
                                 <Route path="/metrics" element={<MetricsPage />} />
                                 <Route path="/settings" element={<SettingsPage />} />
                                 <Route path="/signin" element={<SignIn />} />
                                 <Route path="/signup" element={<SignUp />} />
-                            </Routes>
+                            </Routes> */}
+                            <AppRouter/>
+
                         </Box>
                     </Flex>
                 </Router>
