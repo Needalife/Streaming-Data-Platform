@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { getAllFunctionMetrics } from '../../api/metrics';
+import { getAllFunctionMetrics } from './api/metrics';
 import { useNavigate } from 'react-router-dom';
 import FunctionButton from '../../components/metrics/sub_components/FunctionButton';
 import MetricGraph from '../../components/metrics/sub_components/MetricGraph';

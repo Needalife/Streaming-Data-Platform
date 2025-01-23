@@ -2,7 +2,7 @@ import React from 'react';
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { FiDownload } from "react-icons/fi";
 import { formatTimestamp, formatStatus } from '../../../utils/helpers';
-import { deleteTransactionById, downloadTransactionById } from '../../../api/transaction';
+import { deleteTransactionById, downloadTransactionById } from '../api/transaction';
 
 const Table = ({ data, refreshData }) => {
     const handleDelete = async (item) => {

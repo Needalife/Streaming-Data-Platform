@@ -3,8 +3,8 @@ import Filters from '../queryboard/sub_components/Filters';
 import DataTable from '../queryboard/sub_components/DataTable';
 import SearchBar from '../queryboard/sub_components/SearchBar';
 
-import { getAllTransactions } from '../../api/transaction';
-import { getTransactionsByName } from '../../api/transaction';
+import { getAllTransactions } from './api/transaction';
+import { getTransactionsByName } from './api/transaction';
 
 const QueryBoard = () => {
     const [data, setData] = useState([]);

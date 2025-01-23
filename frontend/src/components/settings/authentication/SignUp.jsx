@@ -17,7 +17,7 @@ import {
 import GoogleButton from "./GoogleButton";
 import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
 import { useNavigate } from 'react-router-dom';
-import { signup } from "../../../api/auth";
+import { signup } from "./api/auth";
 
 const SignUp = () => {
     const [email, setEmail] = useState("");
