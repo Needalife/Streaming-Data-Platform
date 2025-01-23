@@ -33,3 +33,4 @@ stories/
 /frontend/.storybook
 
 /backend/config/service-account.json
+/test
