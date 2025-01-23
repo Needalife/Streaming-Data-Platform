@@ -19,7 +19,7 @@ import {
 import GoogleButton from "./GoogleButton";
 import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
 import { useNavigate } from 'react-router-dom';
-import { signin } from '../../api/auth';
+import { signin } from '../../../api/auth';
 
 const SignIn = () => {
     const [email, setEmail] = useState("");

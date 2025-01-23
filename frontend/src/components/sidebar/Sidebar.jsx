@@ -9,7 +9,7 @@ import { VscGraph } from 'react-icons/vsc';
 import { RiMenuSearchLine, RiLogoutBoxLine } from 'react-icons/ri';
 import { BsBoundingBox } from 'react-icons/bs';
 import { FiSettings } from 'react-icons/fi';
-import NavItem from './NavItem';
+import NavItem from './sub_components/NavItem';
 
 export default function Sidebar() {
     const isLoggedIn = sessionStorage.getItem("token") !== null;
