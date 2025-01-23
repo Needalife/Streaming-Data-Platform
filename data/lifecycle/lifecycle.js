@@ -1,31 +1,33 @@
-const Transaction = require("../models/transaction.model.js");
+const Transaction = require("../models/transaction.model");
+const connectDB = require("./db");
+
+connectDB();
 
 const MAX_RECORDS = process.env.MAX_RECORDS || 5000;
 const DELETE_COUNT = process.env.DELETE_COUNT || 100;
 
-async function manageLifecycle() {
+async function setupLifecycleStream() {
   try {
-    const recordCount = await Transaction.countDocuments();
+    const changeStream = Transaction.watch();
 
-    if (recordCount > MAX_RECORDS) {
-      const oldRecords = await Transaction.find()
-        .sort({ createdAt: 1 })
-        .limit(DELETE_COUNT);
+    changeStream.on("change", async (change) => {
+      console.log("Change detected:", change);
 
-      const idsToDelete = oldRecords.map((record) => record._id);
-      await Transaction.deleteMany({ _id: { $in: idsToDelete } });
+      const recordCount = await Transaction.countDocuments();
+      if (recordCount > MAX_RECORDS) {
+        const oldRecords = await Transaction.find()
+          .sort({ createdAt: 1 })
+          .limit(DELETE_COUNT);
 
-      console.log(
-        `Deleted ${DELETE_COUNT} old records to maintain lifecycle constraints.`
-      );
-    } else {
-      console.log("No lifecycle maintenance needed.");
-    }
+        const idsToDelete = oldRecords.map((record) => record._id);
+        await Transaction.deleteMany({ _id: { $in: idsToDelete } });
+
+        console.log(`Deleted ${DELETE_COUNT} old records.`);
+      }
+    });
   } catch (error) {
-    console.error("Error managing lifecycle:", error);
-
-    setTimeout(manageLifecycle, 3000);
+    console.error("Error in lifecycle stream:", error);
   }
 }
 
-module.exports = manageLifecycle;
+module.exports = setupLifecycleStream;

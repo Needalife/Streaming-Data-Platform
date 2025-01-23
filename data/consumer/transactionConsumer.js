@@ -1,4 +1,7 @@
-const Transaction = require("../models/transaction.model.js");
+const Transaction = require("../models/transaction.model");
+const connectDB = require("./db");
+
+connectDB();
 
 module.exports = (producer) => {
   producer.on("data", async (transactions) => {

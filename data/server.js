@@ -1,16 +1,13 @@
 const express = require("express");
 const dotenv = require("dotenv");
-const { connectDB } = require("./db/db");
-const manageLifecycle = require("./lifecycle/lifecycle");
 const TransactionProducer = require("./producer/transactionProducer");
 const transactionConsumer = require("./consumer/transactionConsumer");
+const setupLifecycleStream = require("./lifecycle/lifecycle");
 
 dotenv.config({ path: "./.env" });
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-
-connectDB();
 
 app.use(express.json());
 
@@ -22,7 +19,8 @@ const producer = new TransactionProducer();
 transactionConsumer(producer);
 producer.startProducing();
 
-setInterval(manageLifecycle, 2000);
+// Start the lifecycle management stream
+setupLifecycleStream();
 
 app.listen(PORT, () => {
   console.log(`Service running on http://localhost:${PORT}`);
