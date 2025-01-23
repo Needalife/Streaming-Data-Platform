@@ -23,8 +23,6 @@ dist-ssr
 *.sln
 *.sw?
 
-.env
-
 test.py
 client.properties
 backend/bcryptTest.js
