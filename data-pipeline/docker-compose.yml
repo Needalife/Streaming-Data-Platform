@@ -1,11 +1,33 @@
 services:
-  data-service:
+  producer:
     build:
-      context: .
+      context: ./producer
       dockerfile: Dockerfile
-    container_name: data-service
-    ports:
-      - "${PORT}:${PORT}"
+    container_name: producer-service
+    environment:
+      MONGO_URI: ${MONGO_URI}
+    networks:
+      - microservices
+    volumes:
+      - ./producer:/app
+
+  consumer:
+    build:
+      context: ./consumer
+      dockerfile: Dockerfile
+    container_name: consumer-service
+    environment:
+      MONGO_URI: ${MONGO_URI}
+    networks:
+      - microservices
+    volumes:
+      - ./consumer:/app
+
+  lifecycle:
+    build:
+      context: ./lifecycle
+      dockerfile: Dockerfile
+    container_name: lifecycle-service
     environment:
       MONGO_URI: ${MONGO_URI}
       MAX_RECORDS: ${MAX_RECORDS}
@@ -13,7 +35,19 @@ services:
     networks:
       - microservices
     volumes:
-      - .:/app
+      - ./lifecycle:/app
+
+  server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: server-service
+    environment:
+      MONGO_URI: ${MONGO_URI}
+    networks:
+      - microservices
+    volumes:
+      - ./server:/app
 
 networks:
   microservices:

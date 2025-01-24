@@ -2,7 +2,7 @@
 FROM node:18-alpine
 
 # Set working directory
-WORKDIR /Data-Engineering/data-pipeline
+WORKDIR /Data-Engineering/data-pipeline/producer
 
 # Copy package.json and package-lock.json
 COPY package.json ./
@@ -14,7 +14,7 @@ RUN npm install
 COPY . .
 
 # Expose the application port
-EXPOSE 3000
+EXPOSE 3001
 
 # Command to run the application
 CMD ["npm", "start"]

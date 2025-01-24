@@ -1,4 +1,5 @@
-const Transaction = require("../models/transaction.model");
+const Transaction = require("./models/transaction.model");
+const TransactionProducer = require("./producer/transactionProducer");
 const connectDB = require("./db");
 
 connectDB();
@@ -22,3 +23,6 @@ module.exports = (producer) => {
     }
   });
 };
+
+const producer = new TransactionProducer();
+transactionConsumer(producer);

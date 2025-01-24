@@ -74,4 +74,5 @@ class TransactionProducer extends EventEmitter {
   }
 }
 
-module.exports = TransactionProducer;
+const producer = new TransactionProducer();
+producer.startProducing();

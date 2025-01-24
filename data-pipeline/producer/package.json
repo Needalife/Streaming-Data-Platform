@@ -2,9 +2,9 @@
   "name": "data-pipeline",
   "version": "1.0.0",
   "description": "Service for producing, consuming, and managing transaction data",
-  "main": "server.js",
+  "main": "transactionProducer.js",
   "scripts": {
-    "start": "node server.js",
+    "start": "node transactionProducer.js",
     "test": "echo 'No test specified' && exit 0"
   },
   "dependencies": {

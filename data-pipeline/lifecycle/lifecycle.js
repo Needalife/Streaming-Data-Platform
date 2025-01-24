@@ -1,4 +1,4 @@
-const Transaction = require("../models/transaction.model");
+const Transaction = require("./models/transaction.model");
 const connectDB = require("./db");
 
 connectDB();
@@ -30,4 +30,4 @@ async function setupLifecycleStream() {
   }
 }
 
-module.exports = setupLifecycleStream;
+setupLifecycleStream();
