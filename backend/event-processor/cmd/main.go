@@ -13,12 +13,10 @@ func main() {
 		fmt.Println("No .env file found")
 	}
 	
-
 	uri := os.Getenv("MONGO_URI")
 	if uri == "" {
 		fmt.Println("MONGO_URI not found")
 	}
-	fmt.Println(uri)
 
 	client := config.ConnectMongo(uri)
 	defer func() {
