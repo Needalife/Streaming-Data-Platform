@@ -1,0 +1,11 @@
+services:
+  event-processor:
+    build:
+      context: ./event-processor
+      dockerfile: dockerfile
+    container_name: event-processor
+    restart: on-failure
+    env_file:
+      - path: ./event-processor/.env
+        required: true
+    
