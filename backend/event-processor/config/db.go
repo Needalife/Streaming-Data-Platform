@@ -5,8 +5,8 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"go.mongodb.org/mongo-driver/bson"
-	"log"
 	"time"
+	"fmt"
 )
 
 func ConnectMongo(uri string) *mongo.Client {
@@ -18,7 +18,7 @@ func ConnectMongo(uri string) *mongo.Client {
 		panic(err)
 	}
 
-	log.Println("✅ Connected to MongoDB!")
+	fmt.Println("Connected to MongoDB!")
 	return client
 }
 
@@ -31,19 +31,19 @@ func WatchChanges(collection *mongo.Collection) {
 	}
 	defer stream.Close(ctx)
 
-	log.Println("🔁 Watching for changes...")
+	fmt.Println("Watching for changes...")
 	for stream.Next(ctx) {
 		var event bson.M
 
 		if err := stream.Decode(&event); err != nil {
-			log.Printf("Fail to decode event %v", err)
+			fmt.Printf("Fail to decode event %v", err)
 			continue
 		}
 
-		log.Printf("Change detected: %v", event)
+		fmt.Printf("Change detected: %v \n", event)
 	}
 
 	if err := stream.Err(); err != nil {
-		log.Fatalf("Stream error: %v", err)
+		panic(err)
 	}
 }

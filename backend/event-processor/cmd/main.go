@@ -4,26 +4,28 @@ import (
 	"context"
 	"event-processor/config"
 	"github.com/joho/godotenv"
-	"log"
+	"fmt"
 	"os"
 )
 
 func main() {
 	if err := godotenv.Load(); err != nil {
-		log.Println("No .env file found")
+		fmt.Println("No .env file found")
 	}
+	
 
 	uri := os.Getenv("MONGO_URI")
 	if uri == "" {
-		log.Fatal("MONGO_URI not found")
+		fmt.Println("MONGO_URI not found")
 	}
+	fmt.Println(uri)
 
 	client := config.ConnectMongo(uri)
 	defer func() {
 		if err := client.Disconnect(context.TODO()); err != nil {
-			log.Fatal("Error disconnecting MongoDB:", err)
+			fmt.Println("Error disconnecting MongoDB:", err)
 		}
-		log.Println("✅ Disconnected from MongoDB!")
+		fmt.Println("Disconnected from MongoDB!")
 	}()
 
 	database := client.Database("test")
