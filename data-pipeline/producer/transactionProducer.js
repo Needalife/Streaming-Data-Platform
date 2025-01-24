@@ -1,6 +1,6 @@
 const faker = require("faker");
 const EventEmitter = require("events");
-const { Kafka } = require("kafkajs");
+const { Kafka, Partitioners } = require("kafkajs");
 
 class TransactionProducer extends EventEmitter {
   constructor() {
@@ -12,7 +12,11 @@ class TransactionProducer extends EventEmitter {
       clientId: "transaction-producer",
       brokers: [process.env.KAFKA_BROKER || "kafka:9092"],
     });
-    this.producer = this.kafka.producer();
+
+    // Use LegacyPartitioner to silence the warning
+    this.producer = this.kafka.producer({
+      createPartitioner: Partitioners.LegacyPartitioner,
+    });
   }
 
   async connect() {
@@ -20,7 +24,8 @@ class TransactionProducer extends EventEmitter {
       await this.producer.connect();
       console.log("Kafka producer connected.");
     } catch (error) {
-      console.error("Error connecting Kafka producer:", error);
+      console.error("Error connecting Kafka producer:", error.message);
+      process.exit(1); // Exit the process if the connection fails
     }
   }
 
@@ -88,7 +93,7 @@ class TransactionProducer extends EventEmitter {
         });
         console.log(`${transactionCount} transactions produced.`);
       } catch (error) {
-        console.error("Error producing transactions:", error);
+        console.error("Error producing transactions:", error.message);
       }
 
       setTimeout(produce, interval);

@@ -8,7 +8,7 @@ services:
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_TICK_TIME: 2000
     networks:
-      - microservices
+      - data-pipeline
     volumes:
       - zookeeper-data:/var/lib/zookeeper
 
@@ -29,7 +29,7 @@ services:
     depends_on:
       - zookeeper
     networks:
-      - microservices
+      - data-pipeline
     volumes:
       - kafka-data:/var/lib/kafka
 
@@ -40,7 +40,7 @@ services:
     ports:
       - "9000:9000"
     networks:
-      - microservices
+      - data-pipeline
     environment:
       ZK_HOSTS: "zookeeper:2181"
       APPLICATION_SECRET: "random-secret"
@@ -51,41 +51,38 @@ services:
       - zookeeper
 
   producer:
-    build:
-      context: ./
+    build: ./producer
     container_name: producer-service
     environment:
       MONGO_URI: ${MONGO_URI}
     networks:
-      - microservices
+      - data-pipeline
     volumes:
       - ./producer:/app
     depends_on:
       - kafka
 
   consumer:
-    build:
-      context: ./
+    build: ./consumer
     container_name: consumer-service
     environment:
       MONGO_URI: ${MONGO_URI}
     networks:
-      - microservices
+      - data-pipeline
     volumes:
       - ./consumer:/app
     depends_on:
       - kafka
 
   lifecycle:
-    build:
-      context: ./
+    build: ./lifecycle
     container_name: lifecycle-service
     environment:
       MONGO_URI: ${MONGO_URI}
       MAX_RECORDS: ${MAX_RECORDS}
       DELETE_COUNT: ${DELETE_COUNT}
     networks:
-      - microservices
+      - data-pipeline
     volumes:
       - ./lifecycle:/app
     depends_on:
@@ -98,12 +95,12 @@ services:
   #   environment:
   #     MONGO_URI: ${MONGO_URI}
   #   networks:
-  #     - microservices
+  #     - data-pipeline
   #   volumes:
   #     - ./server:/app
 
 networks:
-  microservices:
+  data-pipeline:
     external: true
 
 volumes:

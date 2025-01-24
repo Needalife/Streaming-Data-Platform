@@ -6,7 +6,6 @@ WORKDIR /Data-Engineering/data-pipeline/consumer
 
 # Copy package.json and package-lock.json
 COPY package*.json ./
-COPY ../producer/transactionProducer.js ../producer/transactionProducer.js
 
 # Install dependencies
 RUN npm install
