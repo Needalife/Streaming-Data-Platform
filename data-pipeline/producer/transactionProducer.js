@@ -1,10 +1,23 @@
 const faker = require("faker");
 const EventEmitter = require("events");
+const { Kafka } = require("kafkajs");
 
 class TransactionProducer extends EventEmitter {
   constructor() {
     super();
     this.isProducing = false;
+
+    // Kafka setup
+    this.kafka = new Kafka({
+      clientId: "transaction-producer",
+      brokers: ["localhost:9092"],
+    });
+    this.producer = this.kafka.producer();
+  }
+
+  async connect() {
+    await this.producer.connect();
+    console.log("Kafka producer connected.");
   }
 
   generateTransaction() {
@@ -61,6 +74,14 @@ class TransactionProducer extends EventEmitter {
       );
 
       this.emit("data", transactions);
+
+      await this.producer.send({
+        topic: "transactions",
+        messages: transactions.map((transaction) => ({
+          value: JSON.stringify(transaction),
+        })),
+      });
+
       console.log(`${transactionCount} transactions produced.`);
 
       setTimeout(produce, interval);

@@ -1,5 +1,5 @@
 # Use Node.js LTS version
-FROM node:18-alpine
+FROM node:lts
 
 # Set working directory
 WORKDIR /Data-Engineering/data-pipeline/lifecycle

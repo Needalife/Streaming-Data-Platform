@@ -1,8 +1,57 @@
 services:
+  zookeeper:
+    image: confluentinc/cp-zookeeper:latest
+    container_name: zookeeper
+    ports:
+      - "2181:2181"
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    networks:
+      - microservices
+    volumes:
+      - zookeeper-data:/var/lib/zookeeper
+
+  kafka:
+    image: confluentinc/cp-kafka:latest
+    container_name: kafka
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: "zookeeper:2181"
+      KAFKA_LISTENERS: "PLAINTEXT://0.0.0.0:9092"
+      KAFKA_ADVERTISED_LISTENERS: "${KAFKA_ADVERTISED_LISTENERS}"
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_MESSAGE_MAX_BYTES: 104857600
+      KAFKA_FETCH_MAX_BYTES: 104857600
+    depends_on:
+      - zookeeper
+    networks:
+      - microservices
+    volumes:
+      - kafka-data:/var/lib/kafka
+
+  kafka_manager:
+    image: hlebalbau/kafka-manager:stable
+    container_name: kafka-manager
+    restart: always
+    ports:
+      - "9000:9000"
+    networks:
+      - microservices
+    environment:
+      ZK_HOSTS: "zookeeper:2181"
+      APPLICATION_SECRET: "random-secret"
+      KAFKA_MANAGER_AUTH_ENABLED: "true"
+      KAFKA_MANAGER_USERNAME: admin
+      KAFKA_MANAGER_PASSWORD: bigbang
+    depends_on:
+      - zookeeper
+
   producer:
     build:
-      context: ./producer
-      dockerfile: Dockerfile
+      context: ./
     container_name: producer-service
     environment:
       MONGO_URI: ${MONGO_URI}
@@ -13,8 +62,7 @@ services:
 
   consumer:
     build:
-      context: ./consumer
-      dockerfile: Dockerfile
+      context: ./
     container_name: consumer-service
     environment:
       MONGO_URI: ${MONGO_URI}
@@ -25,8 +73,7 @@ services:
 
   lifecycle:
     build:
-      context: ./lifecycle
-      dockerfile: Dockerfile
+      context: ./
     container_name: lifecycle-service
     environment:
       MONGO_URI: ${MONGO_URI}
@@ -36,19 +83,22 @@ services:
       - microservices
     volumes:
       - ./lifecycle:/app
-
-  server:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    container_name: server-service
-    environment:
-      MONGO_URI: ${MONGO_URI}
-    networks:
-      - microservices
-    volumes:
-      - ./server:/app
+  # server:
+  #   build:
+  #     context: ./data-pipeline
+  #     dockerfile: Dockerfile
+  #   container_name: server-service
+  #   environment:
+  #     MONGO_URI: ${MONGO_URI}
+  #   networks:
+  #     - microservices
+  #   volumes:
+  #     - ./server:/app
 
 networks:
   microservices:
     external: true
+
+volumes:
+  zookeeper-data:
+  kafka-data:

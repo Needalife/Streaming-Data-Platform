@@ -1,11 +1,11 @@
 # Use Node.js LTS version
-FROM node:18-alpine
+FROM node:lts
 
 # Set working directory
 WORKDIR /Data-Engineering/data-pipeline/producer
 
 # Copy package.json and package-lock.json
-COPY package.json ./
+COPY package*.json ./
 
 # Install dependencies
 RUN npm install

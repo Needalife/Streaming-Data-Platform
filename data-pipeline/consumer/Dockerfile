@@ -1,11 +1,12 @@
 # Use Node.js LTS version
-FROM node:18-alpine
+FROM node:lts
 
 # Set working directory
 WORKDIR /Data-Engineering/data-pipeline/consumer
 
 # Copy package.json and package-lock.json
-COPY package.json ./
+COPY package*.json ./
+COPY ../producer/transactionProducer.js ../producer/transactionProducer.js
 
 # Install dependencies
 RUN npm install

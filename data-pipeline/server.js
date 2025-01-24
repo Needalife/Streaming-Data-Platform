@@ -8,10 +8,6 @@ const PORT = process.env.SERVER_PORT || 3000;
 
 app.use(express.json());
 
-app.get("/health", (req, res) => {
-  res.status(200).json({ status: "OK", message: "Service is healthy" });
-});
-
 app.listen(PORT, () => {
-  console.log(`Service running on http://localhost:${PORT}`);
+    console.log(`Service running on http://localhost:${PORT}`);
 });
