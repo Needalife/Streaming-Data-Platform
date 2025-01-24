@@ -1,9 +1,7 @@
 const Transaction = require("./models/transaction.model");
-const TransactionProducer = require("../producer/transactionProducer");
 const connectDB = require("./db");
 const { Kafka } = require("kafkajs");
-
-connectDB();
+const EventEmitter = require("events");
 
 class TransactionConsumer extends EventEmitter {
   constructor() {
@@ -11,48 +9,51 @@ class TransactionConsumer extends EventEmitter {
 
     this.kafka = new Kafka({
       clientId: "transaction-consumer",
-      brokers: ["localhost:9092"],
+      brokers: [process.env.KAFKA_BROKER || "kafka:9092"],
     });
     this.consumer = this.kafka.consumer({ groupId: "transaction-group" });
   }
 
   async connect() {
-    await this.consumer.connect();
-    console.log("Kafka consumer connected.");
-    await this.consumer.subscribe({ topic: "transactions", fromBeginning: true });
+    try {
+      await connectDB();
+      console.log("MongoDB connected.");
+
+      await this.consumer.connect();
+      console.log("Kafka consumer connected.");
+      await this.consumer.subscribe({
+        topic: "transactions",
+        fromBeginning: true,
+      });
+    } catch (error) {
+      console.error("Error connecting consumer:", error);
+    }
   }
 
   async startConsuming() {
-    await this.consumer.run({
-      eachMessage: async ({ topic, partition, message }) => {
-        const transactions = JSON.parse(message.value.toString());
+    try {
+      await this.consumer.run({
+        eachMessage: async ({ topic, partition, message }) => {
+          const transaction = JSON.parse(message.value.toString());
 
-        this.emit("data", transactions);
+          this.emit("data", transaction);
 
-        try {
-          await Transaction.insertMany(transactions);
-          console.log(`${transactions.length} transactions saved to the database.`);
-        } catch (error) {
-          console.error("Error saving transactions:", error);
-
-          setTimeout(async () => {
-            try {
-              await Transaction.insertMany(transactions);
-              console.log(`${transactions.length} transactions retried and saved.`);
-            } catch (retryError) {
-              console.error("Retry failed:", retryError);
-            }
-          }, 3000);
-        }
-      },
-    });
+          try {
+            await Transaction.create(transaction);
+            console.log(`Transaction saved: ${JSON.stringify(transaction)}`);
+          } catch (error) {
+            console.error("Error saving transaction:", error);
+          }
+        },
+      });
+    } catch (error) {
+      console.error("Error during consumption:", error);
+    }
   }
 }
 
-module.exports = TransactionConsumer;
-
-// Example usage
-const consumer = new TransactionConsumer();
-consumer.connect()
-  .then(() => consumer.startConsuming())
-  .catch((error) => console.error("Error in consumer:", error));
+(async () => {
+  const consumer = new TransactionConsumer();
+  await consumer.connect();
+  await consumer.startConsuming();
+})();

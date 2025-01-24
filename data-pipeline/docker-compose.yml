@@ -23,6 +23,7 @@ services:
       KAFKA_LISTENERS: "PLAINTEXT://0.0.0.0:9092"
       KAFKA_ADVERTISED_LISTENERS: "${KAFKA_ADVERTISED_LISTENERS}"
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_CREATE_TOPICS: "transactions:1:1"
       KAFKA_MESSAGE_MAX_BYTES: 104857600
       KAFKA_FETCH_MAX_BYTES: 104857600
     depends_on:
@@ -59,6 +60,8 @@ services:
       - microservices
     volumes:
       - ./producer:/app
+    depends_on:
+      - kafka
 
   consumer:
     build:
@@ -70,6 +73,8 @@ services:
       - microservices
     volumes:
       - ./consumer:/app
+    depends_on:
+      - kafka
 
   lifecycle:
     build:
@@ -83,6 +88,8 @@ services:
       - microservices
     volumes:
       - ./lifecycle:/app
+    depends_on:
+      - kafka
   # server:
   #   build:
   #     context: ./data-pipeline

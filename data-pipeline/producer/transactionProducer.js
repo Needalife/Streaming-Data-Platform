@@ -10,14 +10,18 @@ class TransactionProducer extends EventEmitter {
     // Kafka setup
     this.kafka = new Kafka({
       clientId: "transaction-producer",
-      brokers: ["localhost:9092"],
+      brokers: [process.env.KAFKA_BROKER || "kafka:9092"],
     });
     this.producer = this.kafka.producer();
   }
 
   async connect() {
-    await this.producer.connect();
-    console.log("Kafka producer connected.");
+    try {
+      await this.producer.connect();
+      console.log("Kafka producer connected.");
+    } catch (error) {
+      console.error("Error connecting Kafka producer:", error);
+    }
   }
 
   generateTransaction() {
@@ -34,16 +38,16 @@ class TransactionProducer extends EventEmitter {
       case "USD":
       case "EUR":
       case "GBP":
-        amount = parseFloat(faker.finance.amount(10, 5000, 2)); // 10 to 5000 for these currencies
+        amount = parseFloat(faker.finance.amount(10, 5000, 2));
         break;
       case "VND":
-        amount = parseFloat(faker.finance.amount(200000, 30000000, 0)); // 200,000 to 30,000,000 for VND
+        amount = parseFloat(faker.finance.amount(200000, 30000000, 0));
         break;
       case "JPY":
-        amount = parseFloat(faker.finance.amount(1000, 1000000, 0)); // 1,000 to 1,000,000 for JPY
+        amount = parseFloat(faker.finance.amount(1000, 1000000, 0));
         break;
       default:
-        amount = parseFloat(faker.finance.amount(10, 1000, 2)); // Fallback
+        amount = parseFloat(faker.finance.amount(10, 1000, 2));
     }
 
     return {
@@ -75,14 +79,17 @@ class TransactionProducer extends EventEmitter {
 
       this.emit("data", transactions);
 
-      await this.producer.send({
-        topic: "transactions",
-        messages: transactions.map((transaction) => ({
-          value: JSON.stringify(transaction),
-        })),
-      });
-
-      console.log(`${transactionCount} transactions produced.`);
+      try {
+        await this.producer.send({
+          topic: "transactions",
+          messages: transactions.map((transaction) => ({
+            value: JSON.stringify(transaction),
+          })),
+        });
+        console.log(`${transactionCount} transactions produced.`);
+      } catch (error) {
+        console.error("Error producing transactions:", error);
+      }
 
       setTimeout(produce, interval);
     };
@@ -95,5 +102,8 @@ class TransactionProducer extends EventEmitter {
   }
 }
 
-const producer = new TransactionProducer();
-producer.startProducing();
+(async () => {
+  const producer = new TransactionProducer();
+  await producer.connect();
+  producer.startProducing();
+})();
