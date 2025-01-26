@@ -2,11 +2,12 @@ package main
 
 import (
 	"context"
-	"event-processor/config"
-	"event-processor/events"
-	"github.com/joho/godotenv"
+	"event-processor/db"
+	"event-processor/kafka"
 	"fmt"
 	"os"
+
+	"github.com/joho/godotenv"
 )
 
 func main() {
@@ -19,7 +20,7 @@ func main() {
 		fmt.Println("MONGO_URI not found")
 	}
 
-	client := config.ConnectMongo(uri)
+	client := db.ConnectMongo(uri)
 	defer func() {
 		if err := client.Disconnect(context.TODO()); err != nil {
 			fmt.Println("Error disconnecting MongoDB:", err)
@@ -37,7 +38,7 @@ func main() {
 	}
 	
 	kafkaBrokers := []string{fmt.Sprintf("%s:%s", kafka_host, kafka_port)}
-	producer := config.ConnectKafka(kafkaBrokers)
+	producer := kafka.ConnectKafka(kafkaBrokers)
 	if producer == nil {
 		fmt.Printf("Fail to init kafka producer \n")
 		return
@@ -45,8 +46,8 @@ func main() {
 	defer producer.Close()
 
 	onChange := func(change string) {
-		events.SendMessage(producer, "mongo-changes", change)
+		kafka.SendMessage(producer, "mongo-changes", change)
 	}
 
-	config.WatchChanges(collecion, onChange)
+	db.WatchChanges(collecion, onChange)
 }
