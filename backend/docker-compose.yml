@@ -33,6 +33,8 @@ services:
       dockerfile: Dockerfile
     container_name: event-processor
     restart: on-failure
+    depends_on:
+      - kafka
     env_file:
       - path: ./event-processor/.env
         required: true
