@@ -101,7 +101,7 @@ services:
 
 networks:
   data-pipeline:
-    external: true
+    external: false
 
 volumes:
   zookeeper-data:
