@@ -28,8 +28,8 @@ func main() {
 		fmt.Println("Disconnected from MongoDB!")
 	}()
 
-	database := client.Database("test")
-	collecion := database.Collection("test")
+	database := client.Database("consumer_data")
+	collecion := database.Collection("transactions")
 	
 	kafka_host := os.Getenv("KAFKA_HOST")
 	kafka_port := os.Getenv("KAFKA_PORT")
