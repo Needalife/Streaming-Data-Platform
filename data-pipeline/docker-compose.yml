@@ -98,6 +98,7 @@ services:
 networks:
   data-pipeline:
     external: false
+    driver: bridge
 
 volumes:
   zookeeper-data:
