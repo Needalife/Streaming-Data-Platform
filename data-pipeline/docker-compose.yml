@@ -1,0 +1,108 @@
+services:
+  zookeeper:
+    image: confluentinc/cp-zookeeper:latest
+    container_name: zookeeper
+    ports:
+      - "2181:2181"
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    networks:
+      - data-pipeline
+    volumes:
+      - zookeeper-data:/var/lib/zookeeper
+
+  kafka:
+    image: confluentinc/cp-kafka:latest
+    container_name: kafka
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: "zookeeper:2181"
+      KAFKA_LISTENERS: "PLAINTEXT://0.0.0.0:9092"
+      KAFKA_ADVERTISED_LISTENERS: "${KAFKA_ADVERTISED_LISTENERS}"
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_CREATE_TOPICS: "transactions:1:1"
+      KAFKA_MESSAGE_MAX_BYTES: 104857600
+      KAFKA_FETCH_MAX_BYTES: 104857600
+    depends_on:
+      - zookeeper
+    networks:
+      - data-pipeline
+    volumes:
+      - kafka-data:/var/lib/kafka
+
+  kafka_manager:
+    image: hlebalbau/kafka-manager:stable
+    container_name: kafka-manager
+    restart: always
+    ports:
+      - "9000:9000"
+    networks:
+      - data-pipeline
+    environment:
+      ZK_HOSTS: "zookeeper:2181"
+      APPLICATION_SECRET: "random-secret"
+      KAFKA_MANAGER_AUTH_ENABLED: "true"
+      KAFKA_MANAGER_USERNAME: admin
+      KAFKA_MANAGER_PASSWORD: bigbang
+    depends_on:
+      - zookeeper
+
+  producer:
+    build: ./producer
+    container_name: producer-service
+    environment:
+      MONGO_URI: ${MONGO_URI}
+    networks:
+      - data-pipeline
+    volumes:
+      - ./producer:/app
+    depends_on:
+      - kafka
+
+  consumer:
+    build: ./consumer
+    container_name: consumer-service
+    environment:
+      MONGO_URI: ${MONGO_URI}
+    networks:
+      - data-pipeline
+    volumes:
+      - ./consumer:/app
+    depends_on:
+      - kafka
+
+  lifecycle:
+    build: ./lifecycle
+    container_name: lifecycle-service
+    environment:
+      MONGO_URI: ${MONGO_URI}
+      MAX_RECORDS: ${MAX_RECORDS}
+      DELETE_COUNT: ${DELETE_COUNT}
+    networks:
+      - data-pipeline
+    volumes:
+      - ./lifecycle:/app
+    depends_on:
+      - kafka
+  # server:
+  #   build:
+  #     context: ./data-pipeline
+  #     dockerfile: Dockerfile
+  #   container_name: server-service
+  #   environment:
+  #     MONGO_URI: ${MONGO_URI}
+  #   networks:
+  #     - data-pipeline
+  #   volumes:
+  #     - ./server:/app
+
+networks:
+  data-pipeline:
+    external: true
+
+volumes:
+  zookeeper-data:
+  kafka-data:

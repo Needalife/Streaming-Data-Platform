@@ -1,0 +1,17 @@
+{
+  "name": "data-pipeline",
+  "version": "1.0.0",
+  "description": "Service for producing, consuming, and managing transaction data",
+  "main": "transactionProducer.js",
+  "scripts": {
+    "start": "node transactionProducer.js",
+    "test": "echo 'No test specified' && exit 0"
+  },
+  "dependencies": {
+    "dotenv": "^16.0.0",
+    "express": "^4.18.0",
+    "faker": "^5.5.3",
+    "mongoose": "^6.5.0",
+    "kafkajs": "^2.2.4"
+  }
+}
