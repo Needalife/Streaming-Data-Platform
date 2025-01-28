@@ -2,6 +2,7 @@ const Transaction = require("./models/transaction.model");
 const connectDB = require("./db");
 const { Kafka } = require("kafkajs");
 const EventEmitter = require("events");
+const express = require("express");
 
 class TransactionConsumer extends EventEmitter {
   constructor() {
@@ -95,25 +96,23 @@ class TransactionConsumer extends EventEmitter {
 }
 
 (async () => {
+  const app = express();
   const consumer = new TransactionConsumer();
 
-  process.on("SIGINT", async () => {
-    console.log("Graceful shutdown...");
-    await consumer.disconnect();
-    process.exit(0);
+  // Health check endpoint
+  app.get("/health", (req, res) => {
+    const health = {
+      kafkaConnected: !!consumer.consumer.isConnected(),
+      isConsuming: consumer.isConsuming,
+    };
+    res.status(200).json(health);
   });
 
-  process.on("SIGTERM", async () => {
-    console.log("Graceful shutdown...");
-    await consumer.disconnect();
-    process.exit(0);
-  });
+  await consumer.connect();
+  consumer.startConsuming();
 
-  try {
-    await consumer.connect();
-    await consumer.startConsuming();
-  } catch (error) {
-    console.error("Error in consumer lifecycle:", error.message);
-    process.exit(1);
-  }
+  const PORT = process.env.CONSUMER_PORT || 3002;
+  app.listen(PORT, () => {
+    console.log(`Consumer service running on port ${PORT}`);
+  });
 })();

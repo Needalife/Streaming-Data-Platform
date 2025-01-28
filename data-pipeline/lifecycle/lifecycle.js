@@ -1,38 +1,66 @@
+const express = require("express");
 const Transaction = require("./models/transaction.model");
 const connectDB = require("./db");
 
-async function setupLifecycleStream() {
-  try {
-    await connectDB();
-    console.log("MongoDB connected.");
+class LifecycleService {
+  constructor() {
+    this.mongoConnected = false;
+    this.isMonitoring = false;
+  }
 
-    const changeStream = Transaction.watch();
+  async setupLifecycleStream() {
+    try {
+      await connectDB();
+      this.mongoConnected = true;
+      console.log("MongoDB connected.");
 
-    changeStream.on("change", async (change) => {
-      console.log("Change detected:", change);
+      const changeStream = Transaction.watch();
+      this.isMonitoring = true;
 
-      const recordCount = await Transaction.countDocuments();
-      if (recordCount > process.env.MAX_RECORDS) {
-        const oldRecords = await Transaction.find()
-          .sort({ createdAt: 1 })
-          .limit(parseInt(process.env.DELETE_COUNT, 10));
+      changeStream.on("change", async (change) => {
+        console.log("Change detected:", change);
 
-        const idsToDelete = oldRecords.map((record) => record._id);
-        await Transaction.deleteMany({ _id: { $in: idsToDelete } });
+        const recordCount = await Transaction.countDocuments();
+        if (recordCount > process.env.MAX_RECORDS) {
+          const oldRecords = await Transaction.find()
+            .sort({ createdAt: 1 })
+            .limit(parseInt(process.env.DELETE_COUNT, 10));
 
-        console.log(`Deleted ${idsToDelete.length} old records.`);
-      } else {
-        console.log("No deletion needed.");
-      }
-    });
+          const idsToDelete = oldRecords.map((record) => record._id);
+          await Transaction.deleteMany({ _id: { $in: idsToDelete } });
 
-    console.log("Lifecycle stream setup complete.");
-  } catch (error) {
-    console.error("Error in lifecycle stream:", error);
+          console.log(`Deleted ${idsToDelete.length} old records.`);
+        } else {
+          console.log("No deletion needed.");
+        }
+      });
+
+      console.log("Lifecycle stream setup complete.");
+    } catch (error) {
+      this.mongoConnected = false;
+      this.isMonitoring = false;
+      console.error("Error in lifecycle stream:", error);
+    }
   }
 }
 
 (async () => {
-  console.log("Starting lifecycle service...");
-  await setupLifecycleStream();
+  const app = express();
+  const lifecycle = new LifecycleService();
+
+  // Health check endpoint
+  app.get("/health", (req, res) => {
+    const health = {
+      mongoConnected: lifecycle.mongoConnected,
+      isMonitoring: lifecycle.isMonitoring,
+    };
+    res.status(200).json(health);
+  });
+
+  await lifecycle.setupLifecycleStream();
+
+  const PORT = process.env.LIFECYCLE_PORT || 3003;
+  app.listen(PORT, () => {
+    console.log(`Lifecycle service running on port ${PORT}`);
+  });
 })();

@@ -1,6 +1,7 @@
 const faker = require("faker");
 const EventEmitter = require("events");
 const { Kafka, Partitioners } = require("kafkajs");
+const express = require("express");
 
 class TransactionProducer extends EventEmitter {
   constructor() {
@@ -108,7 +109,23 @@ class TransactionProducer extends EventEmitter {
 }
 
 (async () => {
+  const app = express();
   const producer = new TransactionProducer();
+
+  // Health check endpoint
+  app.get("/health", (req, res) => {
+    const health = {
+      kafkaConnected: producer.producer.isConnected(),
+      isProducing: producer.isProducing,
+    };
+    res.status(200).json(health);
+  });
+
   await producer.connect();
   producer.startProducing();
+
+  const PORT = process.env.PRODUCER_PORT || 3001;
+  app.listen(PORT, () => {
+    console.log(`Producer service running on port ${PORT}`);
+  });
 })();
