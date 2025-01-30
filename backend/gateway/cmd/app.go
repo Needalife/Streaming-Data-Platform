@@ -11,7 +11,7 @@ import (
 )
 
 type application struct {
-	config config.Config
+	config config.AppConfig
 }
 
 func (app *application) mount() http.Handler {

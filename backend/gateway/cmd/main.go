@@ -6,7 +6,7 @@ import (
 )
 
 func main() {
-	cfg := config.LoadConfig()
+	cfg := config.LoadAppConfig()
 
 	app := &application{
 		config: cfg,
