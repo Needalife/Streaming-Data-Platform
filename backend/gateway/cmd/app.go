@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"gateway/internal/config"
+	"gateway/internal/handlers"
 	"net/http"
 	"time"
 
@@ -24,6 +25,7 @@ func (app *application) mount() http.Handler {
 
 	r.Route("/gateway", func(r chi.Router) {
 		r.Get("/health", app.healthCheckHandler)
+		r.HandleFunc("/static/user", handlers.ForwardHTTPRequest)
 	})
 
 	return r
