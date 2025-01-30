@@ -37,6 +37,19 @@ services:
         required: true
     networks:
       - backend
+  gateway:
+    build:
+      context: ./gateway
+      dockerfile: Dockerfile
+    container_name: gateway
+    restart: on-failure
+    env_file:
+      - path: ./gateway/.env
+        required: true
+    ports:
+      - "5000:5000"
+    networks:
+      - backend
 
 networks:
   backend:
