@@ -40,7 +40,7 @@ services:
   gateway:
     build:
       context: ./gateway
-      dockerfile: Dockerfile
+      dockerfile: deploy/Dockerfile
     container_name: gateway
     restart: on-failure
     env_file:
