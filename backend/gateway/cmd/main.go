@@ -9,7 +9,7 @@ func main() {
 	cfg := config.LoadAppConfig()
 
 	app := &application{
-		config: cfg,
+		appConfig: cfg,
 	}
 
 	mux := app.mount()

@@ -11,7 +11,7 @@ import (
 )
 
 type application struct {
-	config config.AppConfig
+	appConfig config.AppConfig
 }
 
 func (app *application) mount() http.Handler {
@@ -31,14 +31,14 @@ func (app *application) mount() http.Handler {
 
 func (app *application) run(mux http.Handler) error {
 	srv := &http.Server{
-		Addr:         app.config.Port,
+		Addr:         app.appConfig.Port,
 		Handler:      mux,
 		WriteTimeout: time.Second * 30,
 		ReadTimeout:  time.Second * 10,
 		IdleTimeout:  time.Minute,
 	}
 
-	fmt.Printf("Server has started at port%s \n", app.config.Port)
+	fmt.Printf("Server has started at port%s \n", app.appConfig.Port)
 
 	return srv.ListenAndServe()
 }
