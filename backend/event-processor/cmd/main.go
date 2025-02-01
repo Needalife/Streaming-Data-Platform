@@ -46,7 +46,6 @@ func main() {
 	defer producer.Close()
 
 	onChange := func(change string) {
-		// kafka.SendMessage(producer, "mongo-changes", change)
 		kafka.SendMessage(producer, "data-lake", change)
 	}
 

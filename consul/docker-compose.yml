@@ -1,9 +1,1 @@
-services:
-  consul:
-    image: consul:1.15.4
-    container_name: consul
-    ports:
-      - "8500:8500"
-      - "8600:8600/udp"
-    environment:
-      CONSUL_BIND_INTERFACE: eth0
+

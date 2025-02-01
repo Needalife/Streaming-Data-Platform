@@ -34,3 +34,5 @@ stories/
 
 /backend/config/service-account.json
 /test
+
+bin
