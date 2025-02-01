@@ -14,7 +14,7 @@ func main() {
 	if err := godotenv.Load(); err != nil {
 		fmt.Println("No .env file found")
 	}
-	
+
 	uri := os.Getenv("MONGO_URI")
 	if uri == "" {
 		fmt.Println("MONGO_URI not found")
@@ -30,13 +30,13 @@ func main() {
 
 	database := client.Database("consumer_data")
 	collecion := database.Collection("transactions")
-	
+
 	kafka_host := os.Getenv("KAFKA_HOST")
 	kafka_port := os.Getenv("KAFKA_PORT")
 	if kafka_host == "" || kafka_port == "" {
 		fmt.Println("Kafka env not found")
 	}
-	
+
 	kafkaBrokers := []string{fmt.Sprintf("%s:%s", kafka_host, kafka_port)}
 	producer := kafka.ConnectKafka(kafkaBrokers)
 	if producer == nil {
@@ -46,7 +46,8 @@ func main() {
 	defer producer.Close()
 
 	onChange := func(change string) {
-		kafka.SendMessage(producer, "mongo-changes", change)
+		// kafka.SendMessage(producer, "mongo-changes", change)
+		kafka.SendMessage(producer, "data-lake", change)
 	}
 
 	db.WatchChanges(collecion, onChange)
