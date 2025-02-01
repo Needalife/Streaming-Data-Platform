@@ -1,0 +1,57 @@
+services:
+  zookeeper:
+    image: confluentinc/cp-zookeeper:latest
+    container_name: zookeeper-backend
+    restart: on-failure
+    environment:
+      ZOOKEEPER_CLIENT_PORT: ${ZOOKEEPER_PORT}
+      ZOOKEEPER_TICK_TIME: ${ZOOKEEPER_TICK_TIME}
+    networks:
+      - backend
+  kafka:
+    image: confluentinc/cp-kafka:latest
+    container_name: kafka-backend
+    restart: on-failure
+    depends_on:
+      - zookeeper
+    volumes:
+      - ./kafka/server.properties:/etc/kafka/server.properties
+    environment:
+      KAFKA_BROKER_ID: ${KAFKA_BROKER_ID}
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:${ZOOKEEPER_PORT}
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:${KAFKA_PORT}
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://${KAFKA_ADVERTISED_HOSTNAME}:${KAFKA_PORT}
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    networks:
+      - backend
+  event-processor:
+    build:
+      context: ./event-processor
+      dockerfile: Dockerfile
+    container_name: event-processor
+    restart: on-failure
+    depends_on:
+      - kafka
+    env_file:
+      - path: ./event-processor/.env
+        required: true
+    networks:
+      - backend
+  gateway:
+    build:
+      context: ./gateway
+      dockerfile: deploy/Dockerfile
+    container_name: gateway
+    restart: on-failure
+    env_file:
+      - path: ./gateway/.env
+        required: true
+    ports:
+      - "5000:5000"
+    networks:
+      - backend
+
+networks:
+  backend:
+    external: false
+    driver: bridge
