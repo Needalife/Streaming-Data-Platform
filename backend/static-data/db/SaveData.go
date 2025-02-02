@@ -10,7 +10,7 @@ import (
 
 var client *mongo.Client
 
-func SaveData(database string, collection string, data interface{}) {
+func SaveData(client *mongo.Client, database, collection string, data interface{}) {
 	if client == nil {
 		log.Println("MongoDB client is not initialized")
 		return
@@ -19,7 +19,7 @@ func SaveData(database string, collection string, data interface{}) {
 	coll := client.Database(database).Collection(collection)
 	_, err := coll.InsertOne(context.Background(), data)
 	if err != nil {
-		log.Printf("Failed to insert data: %v\n", err)
+		log.Printf("Failed to insert data: %v", err)
 	} else {
 		fmt.Printf("Data saved to collection '%s': %v\n", collection, data)
 	}

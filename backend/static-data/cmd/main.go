@@ -1,13 +1,11 @@
 package main
 
 import (
-	"context"
 	"fmt"
+	"github.com/joho/godotenv"
 	"os"
 	"static-data/db"
 	"static-data/kafka"
-
-	"github.com/joho/godotenv"
 )
 
 func main() {
@@ -15,25 +13,13 @@ func main() {
 		fmt.Println("No .env file found")
 	}
 
-	uri := os.Getenv("MONGO_URI")
-	if uri == "" {
-		fmt.Println("MONGO_URI not found")
-	}
+	mongoURI := os.Getenv("MONGO_URI")
+	kafkaBroker := os.Getenv("KAFKA_BROKER")
+	topic := os.Getenv("KAFKA_TOPIC")
+	groupID := os.Getenv("KAFKA_GROUP_ID")
 
-	client := db.ConnectMongo(uri)
-	defer func() {
-		if err := client.Disconnect(context.TODO()); err != nil {
-			fmt.Println("Error disconnecting MongoDB:", err)
-		}
-		fmt.Println("Disconnected from MongoDB!")
-	}()
+	client := db.ConnectMongo(mongoURI) // Establish MongoDB connection
+	defer client.Disconnect(nil)        // Graceful disconnection
 
-	kafkaHost := os.Getenv("KAFKA_HOST")
-	kafkaPort := os.Getenv("KAFKA_PORT")
-	if kafkaHost == "" || kafkaPort == "" {
-		fmt.Println("Kafka environment variables not found")
-	}
-
-	kafkaBrokers := []string{fmt.Sprintf("%s:%s", kafkaHost, kafkaPort)}
-	kafka.StartConsumer(kafkaBrokers, "data-lake")
+	kafka.StartConsumer(kafkaBroker, topic, groupID, client)
 }

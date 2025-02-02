@@ -50,6 +50,19 @@ services:
       - "5000:5000"
     networks:
       - backend
+  static-data:
+    build:
+      context: ./static-data
+      dockerfile: Dockerfile
+    container_name: static-data
+    restart: on-failure
+    depends_on:
+      - kafka
+    env_file:
+      - path: ./static-data/.env
+        required: true
+    networks:
+      - backend
 
 networks:
   backend:

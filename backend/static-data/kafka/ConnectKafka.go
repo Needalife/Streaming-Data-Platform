@@ -2,32 +2,17 @@ package kafka
 
 import (
 	"fmt"
-	"time"
-
 	"github.com/IBM/sarama"
 )
 
-func ConnectKafka(brokers []string) sarama.SyncProducer {
+func ConnectKafka(broker string) sarama.ConsumerGroup {
 	config := sarama.NewConfig()
-	config.Producer.RequiredAcks = sarama.WaitForAll
-	config.Producer.Retry.Max = 5
-	config.Producer.Return.Successes = true
+	config.Version = sarama.V2_1_0_0
+	config.Consumer.Group.Rebalance.Strategy = sarama.BalanceStrategyRange
 
-	var producer sarama.SyncProducer
-	var err error
-	const retries = 10
-
-	for i := 0; i < retries; i ++ {
-		producer, err = sarama.NewSyncProducer(brokers, config)
-		if err == nil {
-			fmt.Println("Kafka producer connected!")
-			return producer
-		}
-
-		fmt.Printf("Fail to connect Kafka producer: %v. Retrying in 5 secs.. \n", err)
-		time.Sleep(5 * time.Second)
+	consumerGroup, err := sarama.NewConsumerGroup([]string{broker}, "static-data-group", config)
+	if err != nil {
+		panic(fmt.Sprintf("Error creating consumer group: %v", err))
 	}
-	
-	fmt.Printf("Fail to connect to Kafka after %d retries, error: %v", retries, err)
-	return nil
+	return consumerGroup
 }

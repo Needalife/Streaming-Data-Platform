@@ -10,8 +10,8 @@ RUN go mod tidy
 COPY . .
 
 # Build the Go application
-RUN go build -o event-processor ./cmd
+RUN go build -o static-data ./cmd
 
 # Command to run the application
-CMD ["./event-processor"]
+CMD ["./static-data"]
 
