@@ -8,8 +8,6 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-var client *mongo.Client
-
 func SaveData(client *mongo.Client, database, collection string, data interface{}) {
 	if client == nil {
 		log.Println("MongoDB client is not initialized")
