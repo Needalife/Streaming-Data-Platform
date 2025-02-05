@@ -24,12 +24,23 @@ func (c Consumer) Cleanup(_ sarama.ConsumerGroupSession) error { return nil }
 
 func (c Consumer) ConsumeClaim(session sarama.ConsumerGroupSession, claim sarama.ConsumerGroupClaim) error {
 	for message := range claim.Messages() {
-		var data map[string]interface{}
-		if err := json.Unmarshal(message.Value, &data); err == nil {
-			collection := "collection_" + time.Now().Format("2006-01-02")
-			db.SaveData(c.MongoClient, "static_data", collection, data)
-			session.MarkMessage(message, "")
+		var event map[string]interface{}
+		if err := json.Unmarshal(message.Value, &event); err != nil {
+			log.Printf("Error decoding message: %v", err)
+			continue
 		}
+
+		if fullDoc, exists := event["fullDocument"].(map[string]interface{}); exists {
+			delete(fullDoc, "__v")
+
+			collection := "collection_" + time.Now().Format("2006-01-02")
+			db.SaveData(c.MongoClient, "static_data", collection, fullDoc)
+			fmt.Printf("Saved document (without __v): %v\n", fullDoc)
+		} else {
+			log.Println("No fullDocument found in the message.")
+		}
+
+		session.MarkMessage(message, "")
 	}
 	return nil
 }
