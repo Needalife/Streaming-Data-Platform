@@ -65,7 +65,17 @@ services:
       - backend
     ports:
       - "8080:8080"
-
+  static-data-lifecycle:
+    build:
+      context: ./static-data-lifecycle
+      dockerfile: Dockerfile
+    container_name: static-data-lifecycle
+    restart: on-failure
+    env_file:
+      - path: ./static-data-lifecycle/.env
+        required: true
+    networks:
+      - backend
 networks:
   backend:
     external: false
