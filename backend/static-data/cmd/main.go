@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"net/http"
@@ -9,6 +10,7 @@ import (
 	"static-data/db"
 	"static-data/kafka"
 
+	"github.com/gorilla/mux"
 	"github.com/joho/godotenv"
 )
 
@@ -24,19 +26,29 @@ func main() {
 
 	// Connect to MongoDB
 	client := db.ConnectMongo(mongoURI)
-	defer client.Disconnect(nil)
+	defer func() {
+		if err := client.Disconnect(context.Background()); err != nil {
+			log.Printf("Error disconnecting Mongo client: %v", err)
+		}
+	}()
 
-	// Start Kafka Consumer (Runs concurrently)
+	// Start Kafka Consumer (runs concurrently)
 	go kafka.StartConsumer(kafkaBroker, topic, groupID, client)
 
-	// HTTP Server
-	http.HandleFunc("GET /transactions", api.GetTransactions(client))
-	http.HandleFunc("GET /transactions/{id}", api.GetTransactionByID(client))
-	http.HandleFunc("GET /transactions/filters", api.GetFilterOptions(client))
-	http.HandleFunc("POST /transactions/search", api.SearchTransactions(client))
-	http.HandleFunc("GET /transactions/dates", api.GetAvailableDates(client))
+	// Setup router using Gorilla Mux
+	router := mux.NewRouter()
 
-	// Start HTTP Server
+	// Static routes
+	router.HandleFunc("/transactions/filters", api.GetFilterOptions(client)).Methods("GET")
+	router.HandleFunc("/transactions/search", api.SearchTransactions(client)).Methods("POST")
+	router.HandleFunc("/transactions/dates", api.GetAvailableDates(client)).Methods("GET")
+
+	// Dynamic route with constraint
+	router.HandleFunc("/transactions/{id:[0-9a-fA-F]{24}}", api.GetTransactionByID(client)).Methods("GET")
+
+	// Other route
+	router.HandleFunc("/transactions", api.GetTransactions(client)).Methods("GET")
+
 	fmt.Println("Server running on port 8080")
-	log.Fatal(http.ListenAndServe(":8080", nil))
+	log.Fatal(http.ListenAndServe(":8080", router))
 }

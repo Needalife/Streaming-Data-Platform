@@ -20,6 +20,7 @@ require (
 	github.com/gobwas/glob v0.2.3 // indirect
 	github.com/gohugoio/hugo v0.134.3 // indirect
 	github.com/golang/snappy v0.0.4 // indirect
+	github.com/gorilla/mux v1.8.1
 	github.com/hashicorp/errwrap v1.0.0 // indirect
 	github.com/hashicorp/go-multierror v1.1.1 // indirect
 	github.com/hashicorp/go-uuid v1.0.3 // indirect
