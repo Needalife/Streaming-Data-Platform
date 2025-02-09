@@ -64,7 +64,7 @@ services:
     networks:
       - backend
     ports:
-      - "8080:8080"
+      - "${STATIC_EXTERNAL_PORT}:${STATIC_INTERNAL_PORT}"
   static-data-lifecycle:
     build:
       context: ./static-data-lifecycle
