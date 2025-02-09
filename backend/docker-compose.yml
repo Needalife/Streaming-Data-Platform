@@ -47,7 +47,7 @@ services:
       - path: ./gateway/.env
         required: true
     ports:
-      - "5000:5000"
+      - "${GATEWAY_EXTERNAL_PORT}:${GATEWAY_INTERNAL_PORT}"
     networks:
       - backend
   static-data:
