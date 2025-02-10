@@ -8,10 +8,10 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
-	"time"
+
+	"live-data/ws" // Import WebSocket handler
 
 	"github.com/IBM/sarama"
-	"live-data/ws" // Import WebSocket package
 )
 
 type Consumer struct{}
@@ -27,7 +27,7 @@ func (c Consumer) ConsumeClaim(session sarama.ConsumerGroupSession, claim sarama
 			continue
 		}
 
-		// Broadcast the live data update to WebSocket clients
+		// Broadcast live data to WebSocket clients
 		ws.BroadcastMessage(event)
 
 		session.MarkMessage(message, "")

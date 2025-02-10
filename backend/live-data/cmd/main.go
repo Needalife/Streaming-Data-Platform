@@ -9,7 +9,7 @@ import (
 
 func main() {
 	// Start Kafka consumer (listening to "data-lake" topic)
-	go kafka.StartConsumer("localhost:9092", "data-lake", "live-data-consumer")
+	go kafka.StartConsumer("kafka:9092", "data-lake", "live-data-consumer")
 
 	// Start WebSocket server
 	http.HandleFunc("/ws", ws.HandleConnections)
