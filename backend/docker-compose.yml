@@ -8,6 +8,7 @@ services:
       ZOOKEEPER_TICK_TIME: ${ZOOKEEPER_TICK_TIME}
     networks:
       - backend
+
   kafka:
     image: confluentinc/cp-kafka:latest
     container_name: kafka-backend
@@ -24,6 +25,7 @@ services:
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
     networks:
       - backend
+
   event-processor:
     build:
       context: ./event-processor
@@ -37,6 +39,7 @@ services:
         required: true
     networks:
       - backend
+
   gateway:
     build:
       context: ./gateway
@@ -50,6 +53,7 @@ services:
       - "${GATEWAY_EXTERNAL_PORT}:${GATEWAY_INTERNAL_PORT}"
     networks:
       - backend
+
   static-data:
     build:
       context: ./static-data
@@ -65,6 +69,7 @@ services:
       - backend
     ports:
       - "${STATIC_EXTERNAL_PORT}:${STATIC_INTERNAL_PORT}"
+
   static-data-lifecycle:
     build:
       context: ./static-data-lifecycle
@@ -76,6 +81,23 @@ services:
         required: true
     networks:
       - backend
+
+  live-data:
+    build:
+      context: ./live-data
+      dockerfile: Dockerfile
+    container_name: live-data
+    restart: on-failure
+    depends_on:
+      - kafka
+    environment:
+      KAFKA_BROKER: "kafka:9092"
+      KAFKA_TOPIC: "data-lake"
+    networks:
+      - backend
+    ports:
+      - "8080:8080"  # Expose WebSocket server for frontend connections
+
 networks:
   backend:
     external: false
