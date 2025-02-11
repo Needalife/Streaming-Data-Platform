@@ -38,7 +38,7 @@ func main() {
 	// Setup router using Gorilla Mux
 	router := mux.NewRouter()
 
-	// Static routes
+	// Static routes (order matters: static routes first)
 	router.HandleFunc("/transactions/filters", api.GetFilterOptions(client)).Methods("GET")
 	router.HandleFunc("/transactions/search", api.SearchTransactions(client)).Methods("POST")
 	router.HandleFunc("/transactions/dates", api.GetAvailableDates(client)).Methods("GET")
@@ -46,7 +46,7 @@ func main() {
 	// Dynamic route with constraint
 	router.HandleFunc("/transactions/{id:[0-9a-fA-F]{24}}", api.GetTransactionByID(client)).Methods("GET")
 
-	// Other route
+	// Other route (for transactions list)
 	router.HandleFunc("/transactions", api.GetTransactions(client)).Methods("GET")
 
 	fmt.Println("Server running on port 8080")

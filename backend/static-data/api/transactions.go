@@ -9,12 +9,11 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-// Returns transactions with optional filters.
+// Returns transactions with optional filters and pagination.
 func GetTransactions(client *mongo.Client) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		// Ensure we return JSON
+		// Ensure we return JSON.
 		w.Header().Set("Content-Type", "application/json")
-
 		transactions, err := db.FetchTransactions(client, r)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -24,18 +23,20 @@ func GetTransactions(client *mongo.Client) http.HandlerFunc {
 	}
 }
 
-// Returns a single transaction.
+// Returns a single transaction; accepts an optional "date" query parameter.
 func GetTransactionByID(client *mongo.Client) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
-
 		vars := mux.Vars(r)
 		id, ok := vars["id"]
 		if !ok || id == "" {
 			http.Error(w, "ID parameter is missing", http.StatusBadRequest)
 			return
 		}
-		transaction, err := db.FetchTransactionByID(client, id)
+
+		// Read optional "date" query parameter.
+		dateParam := r.URL.Query().Get("date")
+		transaction, err := db.FetchTransactionByID(client, id, dateParam)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusNotFound)
 			return
@@ -53,11 +54,10 @@ func GetFilterOptions(client *mongo.Client) http.HandlerFunc {
 	}
 }
 
-// Returns transactions matching the keyword.
+// Returns transactions matching the keyword across all collections.
 func SearchTransactions(client *mongo.Client) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
-
 		var body map[string]string
 		if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
 			http.Error(w, "Invalid request body", http.StatusBadRequest)
@@ -68,7 +68,6 @@ func SearchTransactions(client *mongo.Client) http.HandlerFunc {
 			http.Error(w, "Keyword is required", http.StatusBadRequest)
 			return
 		}
-
 		results, err := db.SearchTransactions(client, keyword)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
