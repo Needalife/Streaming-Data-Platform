@@ -8,8 +8,9 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
+	"time"
 
-	"live-data/ws" // Import WebSocket handler
+	"live-data/ws"
 
 	"github.com/IBM/sarama"
 )
@@ -20,6 +21,8 @@ func (c Consumer) Setup(_ sarama.ConsumerGroupSession) error   { return nil }
 func (c Consumer) Cleanup(_ sarama.ConsumerGroupSession) error { return nil }
 
 func (c Consumer) ConsumeClaim(session sarama.ConsumerGroupSession, claim sarama.ConsumerGroupClaim) error {
+	fmt.Println("Subscribed to topic:", claim.Topic())
+
 	for message := range claim.Messages() {
 		var event map[string]interface{}
 		if err := json.Unmarshal(message.Value, &event); err != nil {
@@ -27,8 +30,8 @@ func (c Consumer) ConsumeClaim(session sarama.ConsumerGroupSession, claim sarama
 			continue
 		}
 
-		// Broadcast live data to WebSocket clients
-		ws.BroadcastMessage(event)
+		fmt.Printf("Received message from Kafka (Partition %d, Offset %d): %v\n", message.Partition, message.Offset, event)
+		ws.BroadcastMessage(event) // Send message to WebSocket
 
 		session.MarkMessage(message, "")
 	}
@@ -38,7 +41,11 @@ func (c Consumer) ConsumeClaim(session sarama.ConsumerGroupSession, claim sarama
 func StartConsumer(broker, topic, groupID string) {
 	config := sarama.NewConfig()
 	config.Consumer.Group.Rebalance.Strategy = sarama.BalanceStrategyRoundRobin
-	config.Consumer.Offsets.Initial = sarama.OffsetNewest
+	config.Consumer.Offsets.Initial = -2
+	config.Consumer.Return.Errors = true
+	config.Consumer.Fetch.Min = 1
+	config.Consumer.Fetch.Default = 1048576 // Increase fetch size for faster processing
+	config.ChannelBufferSize = 1024         // Increase consumer throughput
 
 	consumerGroup, err := sarama.NewConsumerGroup([]string{broker}, groupID, config)
 	if err != nil {
@@ -57,10 +64,13 @@ func StartConsumer(broker, topic, groupID string) {
 		cancel()
 	}()
 
+	fmt.Println("Kafka Consumer started - Listening for live transactions...")
+
 	for {
 		err := consumerGroup.Consume(ctx, []string{topic}, Consumer{})
 		if err != nil {
-			log.Fatalf("Error consuming: %v", err)
+			fmt.Println("Error consuming from Kafka. Retrying in 3 seconds:", err)
+			time.Sleep(3 * time.Second)
 		}
 
 		if ctx.Err() != nil {
