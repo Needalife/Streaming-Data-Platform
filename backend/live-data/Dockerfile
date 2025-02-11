@@ -14,7 +14,7 @@ RUN go mod tidy
 RUN go build -o live-data cmd/main.go
 
 # Expose WebSocket port
-EXPOSE 8081
+EXPOSE 8091
 
 # Run the service
 CMD ["/app/live-data"]
