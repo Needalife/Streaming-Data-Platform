@@ -14,6 +14,6 @@ func main() {
 	// Start WebSocket server
 	http.HandleFunc("/ws", ws.HandleConnections)
 
-	fmt.Println("Live Data WebSocket server started on :8080")
-	http.ListenAndServe(":8080", nil)
+	fmt.Println("Live Data WebSocket server started on :8090")
+	http.ListenAndServe(":8090", nil)
 }
