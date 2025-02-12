@@ -27,6 +27,8 @@ func (app *application) mount() http.Handler {
 		r.Get("/health", app.healthCheckHandler)
 		r.HandleFunc("/static/transactions", handlers.ForwardHTTPRequest)
 		r.HandleFunc("/static/transactions/filters", handlers.ForwardHTTPRequest)
+		r.HandleFunc("/static/transactions/dates", handlers.ForwardHTTPRequest)
+		
 	})
 
 	return r
