@@ -26,6 +26,7 @@ func (app *application) mount() http.Handler {
 	r.Route("/gateway", func(r chi.Router) {
 		r.Get("/health", app.healthCheckHandler)
 		r.HandleFunc("/static/transactions", handlers.ForwardHTTPRequest)
+		r.HandleFunc("/static/transactions/filters", handlers.ForwardHTTPRequest)
 	})
 
 	return r
