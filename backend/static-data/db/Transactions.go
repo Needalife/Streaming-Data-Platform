@@ -14,8 +14,10 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-// Fetches transactions with optional filters and pagination
-// from the collection corresponding to the given date (or today's date if not provided).
+// FetchTransactions fetches transactions with optional filters and pagination.
+// It supports filtering by status and by a price range (minAmount and maxAmount).
+// When the query parameter "all" is set to "true", it aggregates transactions
+// from all collections; otherwise, it uses a single collection based on the "date" parameter.
 func FetchTransactions(client *mongo.Client, r *http.Request) ([]bson.M, error) {
 	ctx := r.Context()
 	dbName := "static_data"
@@ -35,8 +37,30 @@ func FetchTransactions(client *mongo.Client, r *http.Request) ([]bson.M, error) 
 
 	// Build a filter from query parameters.
 	filter := bson.M{}
+
+	// Filter by status.
 	if status := r.URL.Query().Get("status"); status != "" {
 		filter["status"] = status
+	}
+
+	// Filter by price range (amount).
+	minAmountStr := r.URL.Query().Get("minAmount")
+	maxAmountStr := r.URL.Query().Get("maxAmount")
+	if minAmountStr != "" || maxAmountStr != "" {
+		amountFilter := bson.M{}
+		if minAmountStr != "" {
+			if minVal, err := strconv.ParseFloat(minAmountStr, 64); err == nil {
+				amountFilter["$gte"] = minVal
+			}
+		}
+		if maxAmountStr != "" {
+			if maxVal, err := strconv.ParseFloat(maxAmountStr, 64); err == nil {
+				amountFilter["$lte"] = maxVal
+			}
+		}
+		if len(amountFilter) > 0 {
+			filter["amount"] = amountFilter
+		}
 	}
 
 	// Check if we should query across all collections.
@@ -149,11 +173,6 @@ func FetchTransactionByID(client *mongo.Client, id string, dateParam string) (bs
 	}
 
 	return nil, fmt.Errorf("transaction with ID %s not found", id)
-}
-
-// Returns a static list of filter options.
-func GetFilterOptions(client *mongo.Client) []string {
-	return []string{"pending", "completed", "failed"}
 }
 
 // Creates a text index on the "name", "email", "status", and "type" fields.

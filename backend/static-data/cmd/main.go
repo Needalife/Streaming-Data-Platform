@@ -39,7 +39,6 @@ func main() {
 	router := mux.NewRouter()
 
 	// Static routes (order matters: static routes first)
-	router.HandleFunc("/transactions/filters", api.GetFilterOptions(client)).Methods("GET")
 	router.HandleFunc("/transactions/search", api.SearchTransactions(client)).Methods("POST")
 	router.HandleFunc("/transactions/dates", api.GetAvailableDates(client)).Methods("GET")
 
