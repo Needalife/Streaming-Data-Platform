@@ -52,7 +52,7 @@ func ManageData(client *mongo.Client) {
 	log.Printf("Total Documents: %d", totalDocs)
 
 	// Determine if there is an excess over the 20,000 limit.
-	excess := totalDocs - 20000
+	excess := totalDocs - 50000
 	if excess > 0 {
 		log.Printf("Excess documents: %d", excess)
 		removeExcessDocuments(ctx, database, collections, collectionCounts, excess)
