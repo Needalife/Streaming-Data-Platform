@@ -24,8 +24,17 @@ func (app *application) mount() http.Handler {
 	r.Use(middleware.Recoverer)
 
 	r.Route("/gateway", func(r chi.Router) {
+		//health check
 		r.Get("/health", app.healthCheckHandler)
-		r.HandleFunc("/static/user", handlers.ForwardHTTPRequest)
+
+		//rest endpoints
+		r.HandleFunc("/static/transactions", handlers.ForwardHTTPRequest)
+		r.HandleFunc("/static/transactions/filters", handlers.ForwardHTTPRequest)
+		r.HandleFunc("/static/transactions/dates", handlers.ForwardHTTPRequest)
+		r.HandleFunc("/static/transactions/{id}", handlers.ForwardHTTPRequest)
+		
+		//ws endpoint
+		
 	})
 
 	return r
