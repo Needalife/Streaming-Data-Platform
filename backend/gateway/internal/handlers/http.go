@@ -8,7 +8,7 @@ import (
 	"strings"
 )
 
-const StaticServiceURL = "http://localhost:4000/v1" // Replace with your static-data service URL
+const StaticServiceURL = "http://static-data:8080/" 
 
 func ForwardHTTPRequest(w http.ResponseWriter, r *http.Request) {
 	// Strip "/gateway/static" from the path
@@ -43,4 +43,4 @@ func ForwardHTTPRequest(w http.ResponseWriter, r *http.Request) {
 
 	w.WriteHeader(resp.StatusCode)
 	io.Copy(w, resp.Body)
-}
+} 

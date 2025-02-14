@@ -8,6 +8,7 @@ services:
       ZOOKEEPER_TICK_TIME: ${ZOOKEEPER_TICK_TIME}
     networks:
       - backend
+
   kafka:
     image: confluentinc/cp-kafka:latest
     container_name: kafka-backend
@@ -22,8 +23,15 @@ services:
       KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:${KAFKA_PORT}
       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://${KAFKA_ADVERTISED_HOSTNAME}:${KAFKA_PORT}
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    healthcheck:
+      test: ["CMD", "kafka-topics", "--bootstrap-server", "localhost:9092", "--list"]
+      interval: 10s
+      retries: 5
+      start_period: 30s
+      timeout: 5s
     networks:
       - backend
+
   event-processor:
     build:
       context: ./event-processor
@@ -50,6 +58,64 @@ services:
       - "5000:5000"
     networks:
       - backend
+
+  gateway:
+    build:
+      context: ./gateway
+      dockerfile: deploy/Dockerfile
+    container_name: gateway
+    restart: on-failure
+    env_file:
+      - path: ./gateway/.env
+        required: true
+    ports:
+      - "${GATEWAY_EXTERNAL_PORT}:${GATEWAY_INTERNAL_PORT}"
+    networks:
+      - backend
+
+  static-data:
+    build:
+      context: ./static-data
+      dockerfile: Dockerfile
+    container_name: static-data
+    restart: on-failure
+    depends_on:
+      - kafka
+    env_file:
+      - path: ./static-data/.env
+        required: true
+    networks:
+      - backend
+    ports:
+      - "${STATIC_EXTERNAL_PORT}:${STATIC_INTERNAL_PORT}"
+
+  static-data-lifecycle:
+    build:
+      context: ./static-data-lifecycle
+      dockerfile: Dockerfile
+    container_name: static-data-lifecycle
+    restart: on-failure
+    env_file:
+      - path: ./static-data-lifecycle/.env
+        required: true
+    networks:
+      - backend
+
+  live-data:
+    build:
+      context: ./live-data
+      dockerfile: Dockerfile
+    container_name: live-data
+    restart: on-failure
+    depends_on:
+      kafka:
+        condition: service_healthy 
+    env_file:
+      - ./live-data/.env
+    networks:
+      - backend
+    ports:
+      - "${LIVE_EXTERNAL_PORT}:${LIVE_INTERNAL_PORT}"
 
 networks:
   backend:

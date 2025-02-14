@@ -1,0 +1,7 @@
+bin
+.vscode
+.git
+.vscode
+.log
+bin/
+.air.toml

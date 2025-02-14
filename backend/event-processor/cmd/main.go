@@ -2,8 +2,8 @@ package main
 
 import (
 	"context"
-	"event-processor/db"
-	"event-processor/kafka"
+	"event-processor/internal/db"
+	"event-processor/internal/kafka"
 	"fmt"
 	"os"
 
