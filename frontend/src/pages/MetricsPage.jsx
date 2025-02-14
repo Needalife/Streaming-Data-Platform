@@ -1,9 +1,9 @@
 import React from 'react';
-import CloudFunctionMetrics from '../components/metrics/MetricsDashboard';
+import Metrics from '../components/metrics/Metrics';
 const MetricsPage = () => {
   return (
     <div>
-      <CloudFunctionMetrics />
+      <Metrics />
     </div>
   );
 };

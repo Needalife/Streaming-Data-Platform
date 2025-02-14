@@ -1,3 +1,4 @@
+// auth/SignIn.jsx
 import { useState } from "react";
 import {
     Box,
@@ -16,10 +17,11 @@ import {
     InputRightElement,
     useToast,
 } from "@chakra-ui/react";
-import GoogleButton from "./GoogleButton";
+import GoogleButton from "./sub_components/GoogleButton";
 import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
 import { useNavigate } from 'react-router-dom';
-import { signin } from './api/auth';
+import { useAuth } from "./hooks/useAuth";
+import { setToken } from "./utils/authUtils";
 
 const SignIn = () => {
     const [email, setEmail] = useState("");
@@ -27,44 +29,32 @@ const SignIn = () => {
     const [showPassword, setShowPassword] = useState(false);
     const navigate = useNavigate();
     const toast = useToast();
+    const { signInUser, loading } = useAuth();
 
     const handleSignIn = async (event) => {
         event.preventDefault();
+        const result = await signInUser(email, password);
 
-        try {
-            const result = await signin(email, password);
-
-            if (result.success) {
-                sessionStorage.setItem('token', result.token);
-                toast({
-                    title: "Success",
-                    description: "Successfully signed in!",
-                    status: "success",
-                    duration: 3000,
-                    isClosable: true,
-                });
-                navigate('/metrics');
-            } else {
-                toast({
-                    title: "Error",
-                    description: result.message || 'Signin failed',
-                    status: "error",
-                    duration: 3000,
-                    isClosable: true,
-                });
-            }
-        } catch (error) {
-            console.error('Error signing in:', error);
+        if (result.success) {
+            setToken(result.token);
+            toast({
+                title: "Success",
+                description: "Successfully signed in!",
+                status: "success",
+                duration: 3000,
+                isClosable: true,
+            });
+            navigate('/metrics');
+        } else {
             toast({
                 title: "Error",
-                description: "An unexpected error occurred during signin.",
+                description: result.message || 'Signin failed',
                 status: "error",
                 duration: 3000,
                 isClosable: true,
             });
         }
     };
-
 
     const togglePasswordVisibility = () => {
         setShowPassword(!showPassword);
@@ -147,6 +137,7 @@ const SignIn = () => {
                                 _hover={{ bg: "#305ACF" }}
                                 size="lg"
                                 width="full"
+                                isLoading={loading}
                             >
                                 Sign In
                             </Button>

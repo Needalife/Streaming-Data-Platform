@@ -1,3 +1,4 @@
+// auth/SignUp.jsx
 import { useState } from "react";
 import {
     Box,
@@ -14,10 +15,11 @@ import {
     InputRightElement,
     useToast,
 } from "@chakra-ui/react";
-import GoogleButton from "./GoogleButton";
+import GoogleButton from "./sub_components/GoogleButton";
 import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
 import { useNavigate } from 'react-router-dom';
-import { signup } from "./api/auth";
+import { useAuth } from "./hooks/useAuth";
+import { setToken } from "./utils/authUtils";
 
 const SignUp = () => {
     const [email, setEmail] = useState("");
@@ -26,6 +28,7 @@ const SignUp = () => {
     const [showPassword, setShowPassword] = useState(false);
     const navigate = useNavigate();
     const toast = useToast();
+    const { signUpUser, loading } = useAuth();
 
     const handleSignUp = async (event) => {
         event.preventDefault();
@@ -41,40 +44,28 @@ const SignUp = () => {
             return;
         }
 
-        try {
-            const result = await signup(email, password);
+        const result = await signUpUser(email, password);
 
-            if (result.success) {
-                sessionStorage.setItem('token', result.token);
-                toast({
-                    title: "Success",
-                    description: "Successfully signed up!",
-                    status: "success",
-                    duration: 3000,
-                    isClosable: true,
-                });
-                navigate('/signin');
-            } else {
-                toast({
-                    title: "Error",
-                    description: result.message || 'Signup failed',
-                    status: "error",
-                    duration: 3000,
-                    isClosable: true,
-                });
-            }
-        } catch (error) {
-            console.error("Error during signup:", error);
+        if (result.success) {
+            setToken(result.token);
+            toast({
+                title: "Success",
+                description: "Successfully signed up!",
+                status: "success",
+                duration: 3000,
+                isClosable: true,
+            });
+            navigate('/signin');
+        } else {
             toast({
                 title: "Error",
-                description: "An unexpected error occurred during signup.",
+                description: result.message || 'Signup failed',
                 status: "error",
                 duration: 3000,
                 isClosable: true,
             });
         }
     };
-
 
     const togglePasswordVisibility = () => {
         setShowPassword(!showPassword);
@@ -139,7 +130,8 @@ const SignUp = () => {
                                 value={confirmPassword}
                                 onChange={(e) => setConfirmPassword(e.target.value)}
                                 placeholder="Enter your password again"
-                                required />
+                                required
+                            />
                             <InputRightElement>
                                 <IconButton
                                     icon={showPassword ? <ViewOffIcon /> : <ViewIcon />}
@@ -152,7 +144,7 @@ const SignUp = () => {
 
                     <Divider my={6} />
 
-                    <Button type="submit" bg="#4072EE" color="white" _hover={{ bg: "#305ACF" }} size="lg" width="full">
+                    <Button type="submit" bg="#4072EE" color="white" _hover={{ bg: "#305ACF" }} size="lg" width="full" isLoading={loading}>
                         Sign Up
                     </Button>
                 </Stack>
