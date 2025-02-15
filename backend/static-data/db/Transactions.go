@@ -7,11 +7,9 @@ import (
 	"net/http"
 	"sort"
 	"strconv"
-	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 // FetchTransactions fetches transactions with optional filters and pagination.
@@ -63,75 +61,50 @@ func FetchTransactions(client *mongo.Client, r *http.Request) ([]bson.M, error) 
 		}
 	}
 
-	// Check if we should query across all collections.
-	getAll := r.URL.Query().Get("all") == "true"
-	if getAll {
-		// List all collections that match the expected pattern.
-		collections, err := dbInstance.ListCollectionNames(ctx, bson.M{
-			"name": bson.M{"$regex": "^collection_"},
-		})
+	// Always aggregate across all collections that match the pattern.
+	collections, err := dbInstance.ListCollectionNames(ctx, bson.M{
+		"name": bson.M{"$regex": "^collection_"},
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	var aggregatedResults []bson.M
+	for _, collName := range collections {
+		coll := dbInstance.Collection(collName)
+		cursor, err := coll.Find(ctx, filter)
 		if err != nil {
-			return nil, err
+			log.Printf("Error querying collection %s: %v", collName, err)
+			continue
 		}
-
-		var aggregatedResults []bson.M
-		for _, collName := range collections {
-			coll := dbInstance.Collection(collName)
-			cursor, err := coll.Find(ctx, filter)
-			if err != nil {
-				log.Printf("Error querying collection %s: %v", collName, err)
-				continue
-			}
-
-			var results []bson.M
-			if err := cursor.All(ctx, &results); err != nil {
-				cursor.Close(ctx)
-				log.Printf("Error reading results from collection %s: %v", collName, err)
-				continue
-			}
-			cursor.Close(ctx)
-			aggregatedResults = append(aggregatedResults, results...)
-		}
-
-		// Sort the aggregated results by createdAt.
-		sort.Slice(aggregatedResults, func(i, j int) bool {
-			ci, _ := aggregatedResults[i]["createdAt"].(string)
-			cj, _ := aggregatedResults[j]["createdAt"].(string)
-			return ci < cj
-		})
-
-		// Apply pagination manually.
-		total := len(aggregatedResults)
-		if skip >= total {
-			return []bson.M{}, nil
-		}
-		end := skip + limit
-		if end > total {
-			end = total
-		}
-		return aggregatedResults[skip:end], nil
-
-	} else {
-		// Use a specific collection based on the "date" parameter (or default to today).
-		dateParam := r.URL.Query().Get("date")
-		if dateParam == "" {
-			dateParam = time.Now().Format("2006-01-02")
-		}
-		collectionName := "collection_" + dateParam
-		coll := dbInstance.Collection(collectionName)
-		findOptions := options.Find().SetLimit(int64(limit)).SetSkip(int64(skip))
-		cursor, err := coll.Find(ctx, filter, findOptions)
-		if err != nil {
-			return nil, err
-		}
-		defer cursor.Close(ctx)
 
 		var results []bson.M
 		if err := cursor.All(ctx, &results); err != nil {
-			return nil, err
+			cursor.Close(ctx)
+			log.Printf("Error reading results from collection %s: %v", collName, err)
+			continue
 		}
-		return results, nil
+		cursor.Close(ctx)
+		aggregatedResults = append(aggregatedResults, results...)
 	}
+
+	// Sort the aggregated results by createdAt descending (newest first).
+	sort.Slice(aggregatedResults, func(i, j int) bool {
+		ci, _ := aggregatedResults[i]["createdAt"].(string)
+		cj, _ := aggregatedResults[j]["createdAt"].(string)
+		return ci > cj
+	})
+
+	// Apply pagination manually.
+	total := len(aggregatedResults)
+	if skip >= total {
+		return []bson.M{}, nil
+	}
+	end := skip + limit
+	if end > total {
+		end = total
+	}
+	return aggregatedResults[skip:end], nil
 }
 
 // Retrieves a specific transaction by its ID.
