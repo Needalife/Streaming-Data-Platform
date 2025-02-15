@@ -45,25 +45,11 @@ func GetTransactionByID(client *mongo.Client) http.HandlerFunc {
 	}
 }
 
-// Returns available filter options.
-func GetFilterOptions(client *mongo.Client) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Content-Type", "application/json")
-		filters := db.GetFilterOptions(client)
-		json.NewEncoder(w).Encode(filters)
-	}
-}
-
 // Returns transactions matching the keyword across all collections.
 func SearchTransactions(client *mongo.Client) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
-		var body map[string]string
-		if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
-			http.Error(w, "Invalid request body", http.StatusBadRequest)
-			return
-		}
-		keyword := body["keyword"]
+		keyword := r.URL.Query().Get("keyword")
 		if keyword == "" {
 			http.Error(w, "Keyword is required", http.StatusBadRequest)
 			return

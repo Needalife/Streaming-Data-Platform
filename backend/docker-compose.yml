@@ -45,7 +45,7 @@ services:
         required: true
     networks:
       - backend
-
+      
   gateway:
     build:
       context: ./gateway
