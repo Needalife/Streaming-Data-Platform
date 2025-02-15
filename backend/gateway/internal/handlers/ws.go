@@ -11,7 +11,7 @@ var upgrader = websocket.Upgrader{
 	CheckOrigin: func(r *http.Request) bool { return true },
 }
 
-const liveDataWebSocketURL = "ws://livedata:8090/ws"
+const liveDataWebSocketURL = "ws://live-data:8090/ws"
 
 func ForwardWSConnection(w http.ResponseWriter, r *http.Request) {
 	clientConn, err := upgrader.Upgrade(w, r, nil)
@@ -32,7 +32,45 @@ func ForwardWSConnection(w http.ResponseWriter, r *http.Request) {
 
 	errChan := make(chan error)
 
+	go func() {
+		for {
+			messageType, msg, err := clientConn.ReadMessage()
+			if err != nil {
+				fmt.Println("Error reading from client:", err)
+				errChan <- err
+				return
+			}
 
+			fmt.Printf("Received from client: %s\n", msg)
 
-	
+			err = liveDataConn.WriteMessage(messageType, msg)
+			if err != nil {
+				fmt.Println("Error forwarding to Live Data:", err)
+				errChan <- err
+				return
+			}
+		}
+	}()
+
+	go func() {
+		for {
+			messageType, msg, err := liveDataConn.ReadMessage()
+			if err != nil {
+				fmt.Println("Error reading from Live Data:", err)
+				errChan <- err
+				return
+			}
+
+			fmt.Printf("Received from live-data: %s\n", msg)
+
+			err = clientConn.WriteMessage(messageType, msg)
+			if err != nil {
+				fmt.Println("Error sending to client:", err)
+				errChan <- err
+				return
+			}
+		}
+	}()
+
+	<-errChan
 }
