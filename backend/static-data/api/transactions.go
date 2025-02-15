@@ -49,12 +49,7 @@ func GetTransactionByID(client *mongo.Client) http.HandlerFunc {
 func SearchTransactions(client *mongo.Client) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
-		var body map[string]string
-		if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
-			http.Error(w, "Invalid request body", http.StatusBadRequest)
-			return
-		}
-		keyword := body["keyword"]
+		keyword := r.URL.Query().Get("keyword")
 		if keyword == "" {
 			http.Error(w, "Keyword is required", http.StatusBadRequest)
 			return
