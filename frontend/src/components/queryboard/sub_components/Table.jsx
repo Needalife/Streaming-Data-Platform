@@ -3,15 +3,12 @@ import { RiDeleteBin6Line } from 'react-icons/ri';
 import { FiDownload } from 'react-icons/fi';
 import { formatTimestamp, formatStatus } from '../../../utils/helpers';
 
-// Since deleteTransactionById and downloadTransactionById are not available,
-// we replace their usage with placeholder alerts.
 const Table = ({ data, refreshData }) => {
   const handleDelete = (item) => {
     const confirmDelete = window.confirm(
       `Are you sure you want to delete transaction: ${item.name}?`
     );
     if (confirmDelete) {
-      // Placeholder: call your deletion API here if available.
       alert('Delete functionality is not implemented.');
       // Optionally, refresh data after deletion:
       // refreshData();
@@ -19,7 +16,6 @@ const Table = ({ data, refreshData }) => {
   };
 
   const handleDownload = (item) => {
-    // Placeholder: call your download API here if available.
     alert('Download functionality is not implemented.');
   };
 
@@ -40,14 +36,14 @@ const Table = ({ data, refreshData }) => {
             <tr key={index} className="border-t">
               <td className="py-4 px-4 border-b text-center w-1/5">{item.name}</td>
               <td className="py-4 px-4 border-b text-center w-1/5">
-                {formatTimestamp(item.timestamp)}
+                {formatTimestamp(item.createdAt)}
               </td>
               <td className="py-4 px-4 border-b text-center w-1/5">
                 <span
                   className={`inline-block px-3 py-1 rounded-full font-bold ${
                     item.status === 'success'
                       ? 'bg-green-200 text-green-700'
-                      : item.status === 'error'
+                      : item.status === 'failed'
                       ? 'bg-red-200 text-red-700'
                       : 'bg-yellow-200 text-yellow-700'
                   }`}
