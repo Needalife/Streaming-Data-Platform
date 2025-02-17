@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"static-data/db"
+	"time"
 
 	"github.com/gorilla/mux"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -12,8 +13,17 @@ import (
 // Returns transactions with optional filters and pagination.
 func GetTransactions(client *mongo.Client) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		// Ensure we return JSON.
+		// Set response type.
 		w.Header().Set("Content-Type", "application/json")
+
+		// Determine snapshotTime.
+		snapshotTime := r.URL.Query().Get("snapshotTime")
+		if snapshotTime == "" {
+			snapshotTime = time.Now().Format("2006-01-02T15:04:05Z07:00")
+		}
+		// Include the snapshot in the response header.
+		w.Header().Set("Snapshot-Time", snapshotTime)
+
 		transactions, err := db.FetchTransactions(client, r)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)

@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"sort"
 	"strconv"
+	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -60,6 +61,16 @@ func FetchTransactions(client *mongo.Client, r *http.Request) ([]bson.M, error) 
 			filter["amount"] = amountFilter
 		}
 	}
+
+	// Implement snapshot filtering.
+	// If the client did not provide a snapshotTime, use the current time.
+	// Use a format that matches your createdAt field (e.g., ISO8601).
+	snapshotTime := r.URL.Query().Get("snapshotTime")
+	if snapshotTime == "" {
+		snapshotTime = time.Now().Format("2006-01-02T15:04:05Z07:00")
+	}
+	// Only include transactions created at or before the snapshot.
+	filter["createdAt"] = bson.M{"$lte": snapshotTime}
 
 	// Always aggregate across all collections that match the pattern.
 	collections, err := dbInstance.ListCollectionNames(ctx, bson.M{
