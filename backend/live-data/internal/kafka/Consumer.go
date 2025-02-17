@@ -10,7 +10,7 @@ import (
 	"syscall"
 	"time"
 
-	"live-data/ws"
+	"live-data/internal/ws"
 
 	"github.com/IBM/sarama"
 )

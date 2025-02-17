@@ -2,8 +2,8 @@ package main
 
 import (
 	"fmt"
-	"live-data/kafka"
-	"live-data/ws"
+	"live-data/internal/kafka"
+	"live-data/internal/ws"
 	"net/http"
 )
 
