@@ -1,61 +1,69 @@
-// QueryBoard.js
-import React, { useEffect, useState } from 'react';
+// QueryBoard.jsx
+import React, { useState, useEffect } from 'react';
 import Filters from '../queryboard/sub_components/Filters';
 import DataTable from '../queryboard/sub_components/DataTable';
 import SearchBar from '../queryboard/sub_components/SearchBar';
 import { getTransactions } from './api/transaction';
 
 const QueryBoard = () => {
-  // State for paginated data and next-page flag
+  // State declarations for data, filters, pagination, etc.
   const [data, setData] = useState([]);
-  const [hasNextPage, setHasNextPage] = useState(false);
-
-  // Loading & error states
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Filter/search states
+  // Filter states
   const [selectedDate, setSelectedDate] = useState(null);
-  const [selectedStatuses, setSelectedStatuses] = useState(['All']);
+  const [selectedStatuses, setSelectedStatuses] = useState(['All']); // <-- Make sure this is declared!
   const [selectedType, setSelectedType] = useState('All');
   const [searchTerm, setSearchTerm] = useState('');
 
-  // Pagination state
+  // Pagination state (using "limit+1" strategy for backend pagination)
   const [currentPage, setCurrentPage] = useState(1);
-  const rowsPerPage = 10; // desired items per page
+  const rowsPerPage = 10;
+  const [hasNextPage, setHasNextPage] = useState(false);
 
-  // Build filter parameters for the backend query.
+  // Build filter parameters to send to the backend.
   const buildFilterParams = () => {
     const params = {};
+
+    // Search filter
     if (searchTerm.trim() !== '') {
       params.name = searchTerm.trim();
       params.all = false;
     } else {
       params.all = false;
     }
+
+    // Status filter: if not "All", join the statuses (e.g., "pending", "completed", etc.)
     if (!selectedStatuses.includes('All') && selectedStatuses.length > 0) {
       params.status = selectedStatuses.join(',');
     }
+
+    // Date filter: convert the selected date to YYYY-MM-DD format
     if (selectedDate) {
       const year = selectedDate.getFullYear();
       const month = String(selectedDate.getMonth() + 1).padStart(2, '0');
       const day = String(selectedDate.getDate()).padStart(2, '0');
       params.date = `${year}-${month}-${day}`;
     }
+
+    // Type filter: only send if not "All"
     if (selectedType !== 'All') {
       params.type = selectedType;
     }
+
     return params;
   };
 
   const fetchData = async () => {
     setLoading(true);
     setError(null);
-    // Request one extra record to check for a next page
+    // Calculate offset based on current page
     const skip = (currentPage - 1) * rowsPerPage;
     const filterParams = buildFilterParams();
-    const response = await getTransactions({ ...filterParams, limit: rowsPerPage + 1, skip });
 
+    // Request one extra record to check if there is a next page.
+    const response = await getTransactions({ ...filterParams, limit: rowsPerPage + 1, skip });
     if (response) {
       let fetchedData;
       if (Array.isArray(response)) {
@@ -67,11 +75,9 @@ const QueryBoard = () => {
         setLoading(false);
         return;
       }
-
-      // If we have more items than our page size, there is a next page.
+      // If we fetched more records than rowsPerPage, we have a next page.
       if (fetchedData.length > rowsPerPage) {
         setHasNextPage(true);
-        // Remove the extra item
         fetchedData = fetchedData.slice(0, rowsPerPage);
       } else {
         setHasNextPage(false);
@@ -83,12 +89,11 @@ const QueryBoard = () => {
     setLoading(false);
   };
 
-  // Re-fetch data when currentPage or any filter/search parameter changes.
   useEffect(() => {
     fetchData();
   }, [currentPage, selectedDate, selectedStatuses, selectedType, searchTerm]);
 
-  // Handlers that update filters/search and reset to page 1
+  // Handlers to update filters/search and reset the page to 1 when changed.
   const handleSearch = (term) => {
     setSearchTerm(term);
     setCurrentPage(1);
@@ -109,16 +114,13 @@ const QueryBoard = () => {
     setCurrentPage(1);
   };
 
-  const handlePageChange = (newPage) => {
-    setCurrentPage(newPage);
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
   };
 
   if (loading) {
     return (
-      <div style={{
-        display: 'flex', justifyContent: 'center', alignItems: 'center',
-        height: '100vh', textAlign: 'center'
-      }}>
+      <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', textAlign: 'center'}}>
         <p>Loading query...</p>
       </div>
     );
