@@ -7,6 +7,7 @@ import (
 	"log"
 	"os"
 	"os/signal"
+	"sync"
 	"syscall"
 	"time"
 
@@ -17,11 +18,19 @@ import (
 
 type Consumer struct{}
 
+var (
+	mutex         = sync.Mutex{}
+	transactionBuffer []map[string]interface{}
+)
+
 func (c Consumer) Setup(_ sarama.ConsumerGroupSession) error   { return nil }
 func (c Consumer) Cleanup(_ sarama.ConsumerGroupSession) error { return nil }
 
 func (c Consumer) ConsumeClaim(session sarama.ConsumerGroupSession, claim sarama.ConsumerGroupClaim) error {
 	fmt.Println("Subscribed to topic:", claim.Topic())
+
+	// Start periodic aggregation in a separate Goroutine
+	go startAggregation()
 
 	for message := range claim.Messages() {
 		var event map[string]interface{}
@@ -30,11 +39,16 @@ func (c Consumer) ConsumeClaim(session sarama.ConsumerGroupSession, claim sarama
 			continue
 		}
 
-		fmt.Printf("Received message from Kafka (Partition %d, Offset %d): %v\n", message.Partition, message.Offset, event)
-		ws.BroadcastMessage(event) // Send message to WebSocket
+		// Add transaction to buffer
+		mutex.Lock()
+		transactionBuffer = append(transactionBuffer, event)
+		mutex.Unlock()
+
+		ws.BroadcastRawMessage(event)
 
 		session.MarkMessage(message, "")
 	}
+
 	return nil
 }
 
@@ -77,4 +91,65 @@ func StartConsumer(broker, topic, groupID string) {
 			return
 		}
 	}
+}
+
+// Periodically aggregates and broadcasts messages
+func startAggregation() {
+	ticker := time.NewTicker(5 * time.Second)
+	defer ticker.Stop()
+
+	for range ticker.C {
+		mutex.Lock()
+		if len(transactionBuffer) == 0 {
+			mutex.Unlock()
+			continue
+		}
+
+		// Copy buffer and clear original
+		aggregatedData := aggregateTransactions(transactionBuffer)
+		transactionBuffer = nil
+		mutex.Unlock()
+
+		// **Broadcast aggregated structured data**
+		ws.BroadcastStructuredData(aggregatedData)
+	}
+}
+
+// Aggregate transactions into structured format
+func aggregateTransactions(transactions []map[string]interface{}) map[string]interface{} {
+    summary := map[string]int{
+        "totalTransactions":     0,
+        "successTransactions":   0,
+        "failedTransactions":    0,
+        "ongoingTransactions":   0,
+    }
+
+    for _, txn := range transactions {
+        summary["totalTransactions"]++
+
+        fullDoc, exists := txn["fullDocument"].(map[string]interface{})
+        if !exists {
+            continue
+        }
+
+        status, ok := fullDoc["status"].(string)
+        if !ok {
+            continue
+        }
+
+        switch status {
+        case "completed":
+            summary["successTransactions"]++
+        case "failed":
+            summary["failedTransactions"]++
+        case "pending":
+            summary["ongoingTransactions"]++
+        }
+    }
+
+    summary["timestamp"] = int(time.Now().Unix())
+
+    return map[string]interface{}{
+        "summary": summary,
+    }
 }
