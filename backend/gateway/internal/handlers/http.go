@@ -8,11 +8,11 @@ import (
 	"strings"
 )
 
-const StaticServiceURL = "http://static-data:8080/" 
+const StaticServiceURL = "http://static-data:8080/"
 
 func ForwardHTTPRequest(w http.ResponseWriter, r *http.Request) {
-	// Strip "/gateway/static" from the path
-	backendPath := strings.TrimPrefix(r.URL.Path, "/gateway/static")
+	// Strip "/gateway/v1/static" from the path
+	backendPath := strings.TrimPrefix(r.URL.Path, "/gateway/v1/static")
 	if backendPath == r.URL.Path {
 		http.Error(w, "Invalid path", http.StatusBadRequest)
 		return
@@ -23,7 +23,7 @@ func ForwardHTTPRequest(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Failed to parse URL", http.StatusInternalServerError)
 		return
 	}
-	targetURL.RawQuery = r.URL.RawQuery 
+	targetURL.RawQuery = r.URL.RawQuery
 
 	fmt.Printf("Forwarding request to: %s\n", targetURL.String())
 
@@ -32,7 +32,7 @@ func ForwardHTTPRequest(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Failed to create request", http.StatusInternalServerError)
 		return
 	}
-	req.Header = r.Header 
+	req.Header = r.Header
 
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
@@ -43,4 +43,4 @@ func ForwardHTTPRequest(w http.ResponseWriter, r *http.Request) {
 
 	w.WriteHeader(resp.StatusCode)
 	io.Copy(w, resp.Body)
-} 
+}
