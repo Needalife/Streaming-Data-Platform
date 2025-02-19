@@ -1,16 +1,17 @@
+// StatusFilter.jsx
 import React from 'react';
 
-const StatusFilter = ({ onStatusChange }) => {
+const StatusFilter = ({ onStatusChange, selectedStatus }) => {
   const handleChange = (e) => {
-    // Send the selected value in an array.
-    const selectedValue = e.target.value;
-    onStatusChange([selectedValue]);
+    // Wrap the selected value in an array for consistency.
+    onStatusChange([e.target.value]);
   };
 
   return (
     <div>
       <label className="block mb-2 font-semibold">Filter by Status</label>
       <select
+        value={selectedStatus}
         onChange={handleChange}
         className="w-full border border-gray-300 rounded p-2"
       >

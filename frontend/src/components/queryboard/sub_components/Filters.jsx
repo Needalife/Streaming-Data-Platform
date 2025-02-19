@@ -1,27 +1,30 @@
+// Filters.jsx
 import React from 'react';
 import DateFilter from './DateFilter';
 import StatusFilter from './StatusFilter';
-import TypeFilter from './TypeFilter';
 
-const Filters = ({ onDateChange, onStatusChange, onTypeChange }) => {
-  return (
-    <div className="bg-white shadow-md rounded-lg p-6 flex space-x-6">
-      {/* Date Filter */}
-      <div className="flex-1">
-        <DateFilter onDateChange={onDateChange} />
-      </div>
+const Filters = ({ 
+    onDateChange, 
+    onStatusChange, 
+    onTypeChange, 
+    selectedDate, 
+    selectedStatuses, 
+    selectedType 
+}) => {
+    return (
+        <div className="bg-white shadow-md rounded-lg p-6 flex space-x-6">
+            {/* Date Filter */}
+            <div className="flex-1">
+                <DateFilter onDateChange={onDateChange} selectedDate={selectedDate} />
+            </div>
 
-      {/* Status Filter */}
-      <div className="flex-1">
-        <StatusFilter onStatusChange={onStatusChange} />
-      </div>
-
-      {/* Type Filter */}
-      <div className="flex-1">
-        <TypeFilter onTypeChange={onTypeChange} />
-      </div>
-    </div>
-  );
+            {/* Status Filter */}
+            <div className="flex-1">
+                {/* For the select, we display the first value in the array */}
+                <StatusFilter onStatusChange={onStatusChange} selectedStatus={selectedStatuses[0]} />
+            </div>
+        </div>
+    );
 };
 
 export default Filters;
