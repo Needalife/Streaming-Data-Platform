@@ -1,7 +1,7 @@
 // DataTable.js
 import React from 'react';
-import Table from '../Table';
-import Pagination from '../Pagination';
+import Table from './Table';
+import Pagination from './Pagination';
 
 const DataTable = ({ data = [], currentPage, hasNextPage, onPageChange }) => {
   return (
