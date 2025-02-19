@@ -9,8 +9,8 @@ import (
 )
 
 func ForwardHTTPRequest(w http.ResponseWriter, r *http.Request) {
-	// Strip "/gateway/static" from the path
-	backendPath := strings.TrimPrefix(r.URL.Path, "/gateway/static")
+	// Strip "/gateway/v1/static" from the path
+	backendPath := strings.TrimPrefix(r.URL.Path, "/gateway/v1/static")
 	if backendPath == r.URL.Path {
 		http.Error(w, "Invalid path", http.StatusBadRequest)
 		return
