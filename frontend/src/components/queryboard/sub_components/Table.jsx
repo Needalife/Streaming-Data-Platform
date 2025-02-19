@@ -1,7 +1,7 @@
 import React from 'react';
 import { formatTimestamp, formatStatus } from '../../../utils/helpers';
 
-const Table = ({ data, refreshData }) => {
+const Table = ({ data }) => {
   return (
     <div className="max-h-96 overflow-y-auto">
       <table className="min-w-full bg-white border border-gray-200 table-fixed">
@@ -24,7 +24,7 @@ const Table = ({ data, refreshData }) => {
               <td className="py-4 px-4 border-b text-center w-1/5">
                 <span
                   className={`inline-block px-3 py-1 rounded-full font-bold ${
-                    item.status === 'success'
+                    item.status === 'completed'
                       ? 'bg-green-200 text-green-700'
                       : item.status === 'failed'
                       ? 'bg-red-200 text-red-700'

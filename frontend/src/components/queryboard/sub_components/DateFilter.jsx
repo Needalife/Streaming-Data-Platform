@@ -31,7 +31,6 @@ const DateFilter = ({ onDateChange, selectedDate }) => {
         <option value="All">All</option>
         {availableDates.map((dateStr) => (
           <option key={dateStr} value={dateStr}>
-            {/* Display a friendlier date (e.g., remove "collection_") */}
             {dateStr.replace("collection_", "")}
           </option>
         ))}

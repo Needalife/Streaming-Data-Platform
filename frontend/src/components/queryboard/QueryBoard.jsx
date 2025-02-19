@@ -1,9 +1,8 @@
-// QueryBoard.jsx
 import React, { useState, useEffect } from 'react';
 import Filters from '../queryboard/sub_components/Filters';
 import DataTable from '../queryboard/sub_components/DataTable';
 import SearchBar from '../queryboard/sub_components/SearchBar';
-import { getTransactions } from './api/transaction';
+import { getTransactions, getTransactionById } from './api/transaction';
 
 const QueryBoard = () => {
   // Data & loading states
@@ -14,7 +13,6 @@ const QueryBoard = () => {
   // Filter states
   const [selectedDate, setSelectedDate] = useState("All");
   const [selectedStatuses, setSelectedStatuses] = useState(['All']);
-  const [searchTerm, setSearchTerm] = useState('');
   const [minAmount, setMinAmount] = useState('');
   const [maxAmount, setMaxAmount] = useState('');
 
@@ -26,12 +24,7 @@ const QueryBoard = () => {
   // Build filter parameters for the backend query
   const buildFilterParams = () => {
     const params = {};
-    if (searchTerm.trim() !== '') {
-      params.name = searchTerm.trim();
-      params.all = false;
-    } else {
-      params.all = false;
-    }
+    params.all = false;
     if (!selectedStatuses.includes('All') && selectedStatuses.length > 0) {
       params.status = selectedStatuses.join(',');
     }
@@ -126,12 +119,31 @@ const QueryBoard = () => {
 
   useEffect(() => {
     fetchData();
-  }, [currentPage, selectedDate, selectedStatuses, searchTerm, minAmount, maxAmount]);
+  }, [currentPage, selectedDate, selectedStatuses, minAmount, maxAmount]);
 
-  // Handlers for filter changes (reset currentPage to 1 when filters change)
-  const handleSearch = term => {
-    setSearchTerm(term);
-    setCurrentPage(1);
+  // Search by transaction id.
+  const handleSearch = async (term) => {
+    if (term.trim() === '') {
+      // If empty, re-run fetchData with current filters.
+      fetchData();
+      return;
+    }
+    setLoading(true);
+    setError(null);
+    try {
+      const result = await getTransactionById(term.trim());
+      if (result) {
+        setData([result]);
+        setError(null);
+      } else {
+        setData([]);
+        setError("Transaction not found");
+      }
+    } catch (err) {
+      setError("Error fetching transaction by id");
+      setData([]);
+    }
+    setLoading(false);
   };
 
   const handleDateChange = dateStr => {
@@ -145,7 +157,6 @@ const QueryBoard = () => {
   };
 
   const handleAmountChange = ({ min, max }) => {
-    console.log("QueryBoard: Received amount filter:", min, max);
     setMinAmount(min);
     setMaxAmount(max);
     setCurrentPage(1);
@@ -157,7 +168,7 @@ const QueryBoard = () => {
 
   if (loading) {
     return (
-      <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', textAlign: 'center'}}>
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', textAlign: 'center' }}>
         <p>Loading query...</p>
       </div>
     );
@@ -169,7 +180,7 @@ const QueryBoard = () => {
     <div className="bg-gray-100">
       <div className="flex justify-between items-center">
         <h1 className="text-3xl p-8">Queryboard</h1>
-        <SearchBar placeholder="Search by name" onSearch={handleSearch} />
+        <SearchBar placeholder="Search by ID" onSearch={handleSearch} />
       </div>
       <div className="p-6 rounded-lg shadow-md">
         <Filters
