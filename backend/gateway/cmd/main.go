@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"gateway/internal/config"
+	"gateway/internal/deps"
 	"log"
 
 	myredis "gateway/redis"
@@ -13,10 +14,15 @@ func main() {
 	redisClient := myredis.NewRedisClient()
 	fmt.Println("Redis client is ready:", redisClient)
 
+	depsStruct := &deps.Deps{
+		RedisClient: redisClient,
+	}
+
 	cfg := config.LoadAppConfig()
 
 	app := &application{
 		appConfig: cfg,
+		deps:      depsStruct,
 	}
 
 	mux := app.mount()
