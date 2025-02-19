@@ -15,6 +15,8 @@ const QueryBoard = () => {
   const [selectedDate, setSelectedDate] = useState("All");
   const [selectedStatuses, setSelectedStatuses] = useState(['All']);
   const [searchTerm, setSearchTerm] = useState('');
+  const [minAmount, setMinAmount] = useState('');
+  const [maxAmount, setMaxAmount] = useState('');
 
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
@@ -32,6 +34,12 @@ const QueryBoard = () => {
     }
     if (!selectedStatuses.includes('All') && selectedStatuses.length > 0) {
       params.status = selectedStatuses.join(',');
+    }
+    if (minAmount !== '') {
+      params.minAmount = Number(minAmount);
+    }
+    if (maxAmount !== '') {
+      params.maxAmount = Number(maxAmount);
     }
     return params;
   };
@@ -84,17 +92,23 @@ const QueryBoard = () => {
         
         // Format the selected date for comparison by removing "collection_" prefix.
         const formattedSelectedDate = selectedDate.replace("collection_", "").trim();
-        console.log("Selected Date (formatted):", formattedSelectedDate);
         
         // Filter transactions by comparing the date extracted from createdAt.
-        const filteredData = allData.filter(item => {
+        let filteredData = allData.filter(item => {
           if (!item.createdAt) return false;
           // Extract the date portion from createdAt (YYYY-MM-DD)
           const itemDate = new Date(item.createdAt).toISOString().substring(0, 10);
-          console.log("Comparing createdAt date:", itemDate, "with", formattedSelectedDate);
           return itemDate === formattedSelectedDate;
         });
-        console.log("Total transactions after filtering:", filteredData.length);
+
+        // Filter by amount
+        if (minAmount !== '') {
+          filteredData = filteredData.filter(item => item.amount >= Number(minAmount));
+        }
+        if (maxAmount !== '') {
+          filteredData = filteredData.filter(item => item.amount <= Number(maxAmount));
+        }
+        console.log("Transactions after amount filtering:", filteredData.length);
 
         // Apply client-side pagination.
         const total = filteredData.length;
@@ -112,7 +126,7 @@ const QueryBoard = () => {
 
   useEffect(() => {
     fetchData();
-  }, [currentPage, selectedDate, selectedStatuses, searchTerm]);
+  }, [currentPage, selectedDate, selectedStatuses, searchTerm, minAmount, maxAmount]);
 
   // Handlers for filter changes (reset currentPage to 1 when filters change)
   const handleSearch = term => {
@@ -127,6 +141,13 @@ const QueryBoard = () => {
 
   const handleStatusChange = statuses => {
     setSelectedStatuses(statuses);
+    setCurrentPage(1);
+  };
+
+  const handleAmountChange = ({ min, max }) => {
+    console.log("QueryBoard: Received amount filter:", min, max);
+    setMinAmount(min);
+    setMaxAmount(max);
     setCurrentPage(1);
   };
 
@@ -154,8 +175,11 @@ const QueryBoard = () => {
         <Filters
           onDateChange={handleDateChange}
           onStatusChange={handleStatusChange}
+          onAmountChange={handleAmountChange}
           selectedDate={selectedDate}
           selectedStatuses={selectedStatuses}
+          selectedMinAmount={minAmount}
+          selectedMaxAmount={maxAmount}
         />
       </div>
       <div className="p-6 rounded-lg shadow-md">

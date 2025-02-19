@@ -8,7 +8,6 @@ const DateFilter = ({ onDateChange, selectedDate }) => {
     async function fetchDates() {
       try {
         const dates = await getAvailableDates();
-        // dates is an array like: ["collection_2025-02-19", "collection_2025-02-18"]
         setAvailableDates(dates);
       } catch (error) {
         console.error('Error fetching available dates:', error);
