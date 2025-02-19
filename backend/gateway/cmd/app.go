@@ -23,7 +23,7 @@ func (app *application) mount() http.Handler {
 	r.Use(middleware.Logger)
 	r.Use(middleware.Recoverer)
 
-	r.Route("/gateway", func(r chi.Router) {
+	r.Route("/gateway/v1", func(r chi.Router) {
 		r.Get("/health", app.healthCheckHandler)
 
 		//static-data api

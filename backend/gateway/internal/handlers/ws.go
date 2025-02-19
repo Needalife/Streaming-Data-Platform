@@ -10,9 +10,21 @@ var upgrader = websocket.Upgrader{
 	CheckOrigin: func(r *http.Request) bool { return true },
 }
 
-const liveDataWebSocketURL = "ws://live-data:8090/ws"
-
 func ForwardWSConnection(w http.ResponseWriter, r *http.Request) {
+	// Extract the type of WebSocket connection from query parameters
+	dataType := r.URL.Query().Get("type")
+	var liveDataWebSocketURL string
+
+	switch dataType {
+	case "raw":
+		liveDataWebSocketURL = "ws://live-data:8090/ws/raw"
+	case "structured":
+		liveDataWebSocketURL = "ws://live-data:8090/ws/structured"
+	default:
+		http.Error(w, "Invalid WebSocket type. Use ?type=raw or ?type=structured", http.StatusBadRequest)
+		return
+	}
+
 	// Upgrade HTTP to WebSocket for client
 	clientConn, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
@@ -25,13 +37,11 @@ func ForwardWSConnection(w http.ResponseWriter, r *http.Request) {
 	// Connect to Live Data WebSocket
 	liveDataConn, _, err := websocket.DefaultDialer.Dial(liveDataWebSocketURL, nil)
 	if err != nil {
-		fmt.Println("Error connecting to Live Data WebSocket:", err)
+		fmt.Println("Error connecting to live-data ws - ", err)
 		http.Error(w, "Failed to connect to Live Data WebSocket", http.StatusInternalServerError)
 		return
 	}
 	defer liveDataConn.Close()
-
-	fmt.Println("WebSocket connected: Listening to Live Data...")
 
 	errChan := make(chan error)
 
@@ -40,7 +50,6 @@ func ForwardWSConnection(w http.ResponseWriter, r *http.Request) {
 		for {
 			messageType, msg, err := clientConn.ReadMessage()
 			if err != nil {
-				// Handle normal WebSocket close
 				if websocket.IsCloseError(err, websocket.CloseNormalClosure, websocket.CloseGoingAway) {
 					fmt.Println("Client disconnected: Normal closure.")
 				} else {

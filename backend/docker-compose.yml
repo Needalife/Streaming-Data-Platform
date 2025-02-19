@@ -91,7 +91,7 @@ services:
   live-data:
     build:
       context: ./live-data
-      dockerfile: Dockerfile
+      dockerfile: deploy/Dockerfile
     container_name: live-data
     restart: on-failure
     depends_on:
