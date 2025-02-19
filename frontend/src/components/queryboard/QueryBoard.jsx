@@ -93,6 +93,8 @@ const QueryBoard = () => {
           const itemDate = new Date(item.createdAt).toISOString().substring(0, 10);
           return itemDate === formattedSelectedDate;
         });
+        console.log("Total transactions after filtering:", filteredData.length);
+
 
         // Filter by amount
         if (minAmount !== '') {
@@ -147,6 +149,7 @@ const QueryBoard = () => {
   };
 
   const handleDateChange = dateStr => {
+    console.log("New date selected:", dateStr);
     setSelectedDate(dateStr);
     setCurrentPage(1);
   };

@@ -1,4 +1,3 @@
-// AmountFilter.jsx
 import React, { useState, useEffect } from 'react';
 
 const AmountFilter = ({ onAmountChange, selectedMinAmount, selectedMaxAmount }) => {
