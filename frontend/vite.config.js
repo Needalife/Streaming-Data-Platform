@@ -7,7 +7,8 @@ export default defineConfig({
   server: {
     proxy: {
       '/gateway': {
-        target: 'http://host.docker.internal:8001',
+        target: 'http://localhost:8001',
+        // target: 'http://host.docker.internal:8001',
         changeOrigin: true,
       },
     },
