@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_BASE_URL = '/gateway/static/transactions';
+const API_BASE_URL = '/gateway/v1/static/transactions';
 
 export const getTransactions = async ({ all = true, status, minAmount, maxAmount, limit = 10, skip = 0 }) => {
     try {
