@@ -6,7 +6,7 @@ import (
 	"gateway/internal/deps"
 	"log"
 
-	myredis "gateway/redis"
+	myredis "gateway/internal/redis"
 )
 
 func main() {

@@ -3,42 +3,82 @@ package handlers
 import (
 	"fmt"
 	"io"
+	"log"
 	"net/http"
 	"net/url"
 	"strings"
+	"time"
+
+	"gateway/internal/deps"
+	myredis "gateway/internal/redis"
 )
 
-func ForwardHTTPRequest(w http.ResponseWriter, r *http.Request) {
-	// Strip "/gateway/v1/static" from the path
-	backendPath := strings.TrimPrefix(r.URL.Path, "/gateway/v1/static")
-	if backendPath == r.URL.Path {
-		http.Error(w, "Invalid path", http.StatusBadRequest)
-		return
+const StaticServiceURL = "http://static-data:8080/"
+
+func buildCacheKey(path, rawQuery string) string {
+	return fmt.Sprintf("gwcache:%s?%s", path, rawQuery)
+}
+
+func ForwardHTTPRequestWithCache(d *deps.Deps) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		// 1. Remove the prefix from the path.
+		backendPath := strings.TrimPrefix(r.URL.Path, "/gateway/v1/static")
+		if backendPath == r.URL.Path {
+			http.Error(w, "Invalid path", http.StatusBadRequest)
+			return
+		}
+
+		// 2. Build the target URL for the static-data service.
+		targetURL, err := url.Parse(StaticServiceURL + backendPath)
+		if err != nil {
+			http.Error(w, "Failed to parse URL", http.StatusInternalServerError)
+			return
+		}
+		targetURL.RawQuery = r.URL.RawQuery
+
+		// 3. Build a unique cache key.
+		cacheKey := buildCacheKey(backendPath, r.URL.RawQuery)
+
+		// 4. Check Redis for a cached response.
+		cached, err := myredis.GetCache(d.RedisClient, cacheKey)
+		if err == nil && cached != "" {
+			w.Header().Set("Content-Type", "application/json")
+			fmt.Fprint(w, cached)
+			log.Println("Cache hit:", cacheKey)
+			return
+		}
+		log.Println("Cache miss:", cacheKey)
+
+		// 5. Forward the request to the static-data service.
+		req, err := http.NewRequest(r.Method, targetURL.String(), r.Body)
+		if err != nil {
+			http.Error(w, "Failed to create request", http.StatusInternalServerError)
+			return
+		}
+		req.Header = r.Header.Clone()
+
+		resp, err := http.DefaultClient.Do(req)
+		if err != nil {
+			http.Error(w, "Failed to forward request", http.StatusInternalServerError)
+			return
+		}
+		defer resp.Body.Close()
+
+		// 6. Read the response body.
+		bodyBytes, err := io.ReadAll(resp.Body)
+		if err != nil {
+			http.Error(w, "Failed to read response", http.StatusBadGateway)
+			return
+		}
+
+		// 7. Write the response back to the client.
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(resp.StatusCode)
+		w.Write(bodyBytes)
+
+		// 8. Cache the response in Redis for 5 minutes.
+		if err := myredis.SetCache(d.RedisClient, cacheKey, bodyBytes, 5*time.Minute); err != nil {
+			log.Printf("Failed to set cache for key %s: %v", cacheKey, err)
+		}
 	}
-
-	targetURL, err := url.Parse(StaticServiceURL + backendPath)
-	if err != nil {
-		http.Error(w, "Failed to parse URL", http.StatusInternalServerError)
-		return
-	}
-	targetURL.RawQuery = r.URL.RawQuery
-
-	fmt.Printf("Forwarding request to: %s\n", targetURL.String())
-
-	req, err := http.NewRequest(r.Method, targetURL.String(), r.Body)
-	if err != nil {
-		http.Error(w, "Failed to create request", http.StatusInternalServerError)
-		return
-	}
-	req.Header = r.Header
-
-	resp, err := http.DefaultClient.Do(req)
-	if err != nil {
-		http.Error(w, "Failed to forward request", http.StatusInternalServerError)
-		return
-	}
-	defer resp.Body.Close()
-
-	w.WriteHeader(resp.StatusCode)
-	io.Copy(w, resp.Body)
 }

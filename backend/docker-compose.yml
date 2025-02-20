@@ -33,54 +33,45 @@ services:
       - backend
 
   redis-master:
-    image: redis:6.2
-    command: [ "redis-server", "--appendonly", "yes", "--requirepass", "someStrongPassword" ]
-    ports:
-      - "6379:6379"
+    image: redis:latest
+    command: [ "redis-server", "/usr/local/etc/redis/redis.conf" ]
+    restart: always
     volumes:
-      - redis-master-data:/data
+      - ./redis/config/redis-master.conf:/usr/local/etc/redis/redis.conf
+    ports:
+      - "${REDIS_MASTER_PORT}:${REDIS_MASTER_PORT}"
+    environment:
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
     networks:
       - backend
-    healthcheck:
-      test: [ "CMD", "redis-cli", "-a", "someStrongPassword", "ping" ]
-      interval: 5s
-      timeout: 5s
-      retries: 5
-      start_period: 30s
 
-  redis-slave-1:
-    image: redis:6.2
-    command: [ "redis-server", "--appendonly", "yes", "--slaveof", "redis-master", "6379", "--masterauth", "someStrongPassword" ]
+  redis-replica:
+    image: redis:latest
+    command: [ "redis-server", "/usr/local/etc/redis/redis.conf", "--replicaof", "redis-master", "${REDIS_MASTER_PORT}" ]
+    restart: always
+    volumes:
+      - ./redis/config/redis-replica.conf:/usr/local/etc/redis/redis.conf
+    ports:
+      - "${REDIS_REPLICA_PORT}:${REDIS_MASTER_PORT}"
+    environment:
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+    networks:
+      - backend
+
+  redis-sentinel:
+    image: redis:latest
+    command: [ "redis-sentinel", "/usr/local/etc/redis/redis.conf", "--sentinel" ]
+    volumes:
+      - ./redis/config/sentinel.conf:/usr/local/etc/redis/redis.conf
+    ports:
+      - "${REDIS_SENTINEL_PORT}:${REDIS_SENTINEL_PORT}"
     depends_on:
       - redis-master
-    ports:
-      - "6380:6379"
+      - redis-replica
+    environment:
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
     networks:
       - backend
-    healthcheck:
-      test: [ "CMD", "redis-cli", "-a", "someStrongPassword", "-h", "redis-master", "ping" ]
-      interval: 5s
-      timeout: 5s
-      retries: 5
-      start_period: 30s
-
-  redis-sentinel-1:
-    build:
-      context: ./gateway/redis
-      dockerfile: Dockerfile.sentinel
-    ports:
-      - "26379:26379"
-    depends_on:
-      - redis-master
-      - redis-slave-1
-    networks:
-      - backend
-    healthcheck:
-      test: [ "CMD", "redis-cli", "-p", "26379", "ping" ]
-      interval: 5s
-      timeout: 5s
-      retries: 5
-      start_period: 30s
 
   event-processor:
     build:
@@ -101,6 +92,8 @@ services:
       context: ./gateway
       dockerfile: deploy/Dockerfile
     container_name: gateway
+    depends_on:
+      - redis-sentinel
     restart: on-failure
     env_file:
       - path: ./gateway/.env
