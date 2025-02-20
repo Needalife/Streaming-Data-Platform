@@ -4,6 +4,7 @@ import TotalTransactionsChart from './sub_components/TotalTransactionChart';
 import SuccessTransactionsChart from './sub_components/SuccessTransactionChart';
 import PendingTransactionsChart from './sub_components/PendingTransactionChart';
 import FailedTransactionsChart from './sub_components/FailedTransactionChart';
+import GradientSummaryCard from './sub_components/GradientSummaryCard';
 
 const X_MINUTES = 5 * 60 * 1000;
 const ONE_MINUTE = 60 * 1000;
@@ -14,10 +15,11 @@ const Dashboard = () => {
   const [windowStart, setWindowStart] = useState(initialStart);
   const [windowEnd, setWindowEnd] = useState(initialStart + X_MINUTES);
   const [summaryData, setSummaryData] = useState([]);
+  const [cumulativeTotal, setCumulativeTotal] = useState(0);
 
   useWebSocket(
     (rawData) => {
-      // Optionally handle raw data here.
+      // Raw data here.
     },
     (structuredData) => {
       if (structuredData.summary) {
@@ -29,6 +31,9 @@ const Dashboard = () => {
           ongoingTransactions: structuredData.summary.ongoingTransactions,
           failedTransactions: structuredData.summary.failedTransactions,
         };
+
+        // Cumulative total
+        setCumulativeTotal(prev => prev + newSummary.totalTransactions);
 
         // Shift the window forward if the new data reaches/exceeds the current windowEnd.
         let updatedStart = windowStart;
@@ -54,13 +59,28 @@ const Dashboard = () => {
 
   // Domain for x-axis for all charts.
   const domain = [windowStart, windowEnd];
+  const currentDate = new Date().toLocaleDateString();
 
   return (
-    <div className="p-4 grid grid-cols-1 lg:grid-cols-2 gap-4">
-      <TotalTransactionsChart data={summaryData} domain={domain} />
-      <SuccessTransactionsChart data={summaryData} domain={domain} />
-      <PendingTransactionsChart data={summaryData} domain={domain} />
-      <FailedTransactionsChart data={summaryData} domain={domain} />
+    <div className="p-4">
+      {/* Top row: Total Transactions Chart and Gradient Summary Card side by side */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-4">
+        {/* Total Transactions Chart spans 2 columns */}
+        <div className="lg:col-span-2">
+          <TotalTransactionsChart data={summaryData} domain={domain} />
+        </div>
+        {/* Gradient Summary Card takes up 1 column and is smaller in width */}
+        <div>
+          <GradientSummaryCard totalTransactions={cumulativeTotal} date={currentDate} />
+        </div>
+      </div>
+      
+      {/* Second row: Three charts in a single row */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+        <SuccessTransactionsChart data={summaryData} domain={domain} />
+        <PendingTransactionsChart data={summaryData} domain={domain} />
+        <FailedTransactionsChart data={summaryData} domain={domain} />
+      </div>
     </div>
   );
 };
