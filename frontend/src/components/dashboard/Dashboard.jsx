@@ -5,6 +5,7 @@ import SuccessTransactionsChart from './sub_components/SuccessTransactionChart';
 import PendingTransactionsChart from './sub_components/PendingTransactionChart';
 import FailedTransactionsChart from './sub_components/FailedTransactionChart';
 import GradientSummaryCard from './sub_components/GradientSummaryCard';
+import { formatDate } from './utils/dateFormatter';
 
 const X_MINUTES = 5 * 60 * 1000;
 const ONE_MINUTE = 60 * 1000;
@@ -59,23 +60,23 @@ const Dashboard = () => {
 
   // Domain for x-axis for all charts.
   const domain = [windowStart, windowEnd];
-  const currentDate = new Date().toLocaleDateString();
+  const currentDate = formatDate(new Date());
 
   return (
     <div className="p-4">
-      {/* Top row: Total Transactions Chart and Gradient Summary Card side by side */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-4">
-        {/* Total Transactions Chart spans 2 columns */}
-        <div className="lg:col-span-2">
+      {/* Top row using flex */}
+      <div className="flex flex-col sm:flex-row items-start justify-between mb-4">
+        {/* Total Transactions Chart fills available space */}
+        <div className="flex-1 mr-4">
           <TotalTransactionsChart data={summaryData} domain={domain} />
         </div>
-        {/* Gradient Summary Card takes up 1 column and is smaller in width */}
-        <div>
+        {/* Summary Card container with max width */}
+        <div className="w-full sm:w-auto max-w-sm mt-4 sm:mt-0">
           <GradientSummaryCard totalTransactions={cumulativeTotal} date={currentDate} />
         </div>
       </div>
       
-      {/* Second row: Three charts in a single row */}
+      {/* Second row: Three charts in a grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         <SuccessTransactionsChart data={summaryData} domain={domain} />
         <PendingTransactionsChart data={summaryData} domain={domain} />
