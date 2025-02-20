@@ -64,6 +64,8 @@ const Dashboard = () => {
 
   return (
     <div className="p-4">
+      {/* Header */}
+      <h1 className="text-3xl font-bold mb-10">Dashboard</h1>
       {/* Top row using flex */}
       <div className="flex flex-col sm:flex-row items-start justify-between mb-4">
         {/* Total Transactions Chart fills available space */}
