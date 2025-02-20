@@ -8,7 +8,7 @@ import GradientSummaryCard from './sub_components/GradientSummaryCard';
 import { formatDate } from './utils/dateFormatter';
 
 const X_MINUTES = 5 * 60 * 1000;
-const ONE_MINUTE = 60 * 1000;
+const FIVE_SEC = 5 * 1000;
 
 const Dashboard = () => {
   // Initialize the x-axis window to be from "now" to "now + 10 minutes"
@@ -40,8 +40,8 @@ const Dashboard = () => {
         let updatedStart = windowStart;
         let updatedEnd = windowEnd;
         while (newSummary.timestamp >= updatedEnd) {
-          updatedStart += ONE_MINUTE;
-          updatedEnd += ONE_MINUTE;
+          updatedStart += FIVE_SEC;
+          updatedEnd += FIVE_SEC;
         }
         if (updatedEnd !== windowEnd) {
           setWindowStart(updatedStart);
