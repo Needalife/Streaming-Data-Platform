@@ -8,7 +8,7 @@ import GradientSummaryCard from './sub_components/GradientSummaryCard';
 import { formatDate } from './utils/dateFormatter';
 
 // Maximum window width: 5 minutes in milliseconds.
-const MAX_WINDOW = 1 * 60 * 1000; 
+const MAX_WINDOW = 5 * 60 * 1000; 
 
 const Dashboard = () => {
   // We'll store the timestamp of the first data point using a ref.
