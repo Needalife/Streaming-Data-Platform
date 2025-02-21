@@ -11,10 +11,10 @@ import { formatDate } from './utils/dateFormatter';
 const MAX_WINDOW = 5 * 60 * 1000; 
 
 const Dashboard = () => {
-  // We'll store the timestamp of the first data point using a ref.
+  // Timestamp of the first data point using a ref.
   const initialTimestampRef = useRef(null);
 
-  // For the x-axis window, we hold windowStart and windowEnd in state.
+  // For the x-axis window holds windowStart and windowEnd in state.
   const [windowStart, setWindowStart] = useState(Date.now());
   const [windowEnd, setWindowEnd] = useState(Date.now());
   const [summaryData, setSummaryData] = useState([]);
@@ -22,7 +22,7 @@ const Dashboard = () => {
 
   useWebSocket(
     (rawData) => {
-      // Optionally process raw data.
+      // No need for now
     },
     (structuredData) => {
       if (structuredData.summary) {
@@ -74,9 +74,7 @@ const Dashboard = () => {
 
   return (
     <div className="p-4">
-      {/* Header */}
       <h1 className="text-3xl font-bold mb-10">Dashboard</h1>
-      {/* Top row: Flex layout with Total Transactions Chart and Summary Card */}
       <div className="flex flex-col sm:flex-row items-start justify-between mb-4">
         <div className="flex-1 mr-4">
           <TotalTransactionsChart data={summaryData} domain={domain} />
