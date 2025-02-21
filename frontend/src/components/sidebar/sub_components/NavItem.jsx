@@ -29,8 +29,6 @@ export default function NavItem({ icon, title, description, active, navSize, to,
       flexDir="column"
       w="100%"
       alignItems={navSize === "small" ? "center" : "flex-start"}
-      onMouseEnter={openPopover}
-      onMouseLeave={closePopover}
       className="transition-all duration-300"
     >
       <Popover isOpen={isOpen} placement="right">
@@ -79,19 +77,6 @@ export default function NavItem({ icon, title, description, active, navSize, to,
             </Flex>
           </Box>
         </PopoverTrigger>
-        <Portal>
-          <PopoverContent
-            py={0}
-            border="none"
-            w={200}
-            h={200}
-            ml={5}
-            boxShadow="lg"
-            className="bg-white"
-            _focusVisible={{ outline: "none" }}
-          >
-          </PopoverContent>
-        </Portal>
       </Popover>
     </Flex>
   );
