@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"gateway/internal/config"
+	"gateway/internal/deps"
 	"gateway/internal/handlers"
 	"net/http"
 	"time"
@@ -13,6 +14,7 @@ import (
 
 type application struct {
 	appConfig config.AppConfig
+	deps      *deps.Deps
 }
 
 func (app *application) mount() http.Handler {
@@ -27,10 +29,10 @@ func (app *application) mount() http.Handler {
 		r.Get("/health", app.healthCheckHandler)
 
 		//static-data api
-		r.HandleFunc("/static/transactions", handlers.ForwardHTTPRequest)
-		r.HandleFunc("/static/transactions/filters", handlers.ForwardHTTPRequest)
-		r.HandleFunc("/static/transactions/dates", handlers.ForwardHTTPRequest)
-		r.HandleFunc("/static/transactions/{id}", handlers.ForwardHTTPRequest)
+		r.HandleFunc("/static/transactions", handlers.ForwardHTTPRequestWithCache(app.deps))
+		r.HandleFunc("/static/transactions/filters", handlers.ForwardHTTPRequestWithCache(app.deps))
+		r.HandleFunc("/static/transactions/dates", handlers.ForwardHTTPRequestWithCache(app.deps))
+		r.HandleFunc("/static/transactions/{id}", handlers.ForwardHTTPRequestWithCache(app.deps))
 
 		//live-data ws connection
 		r.HandleFunc("/live", handlers.ForwardWSConnection)

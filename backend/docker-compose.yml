@@ -24,11 +24,52 @@ services:
       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://${KAFKA_ADVERTISED_HOSTNAME}:${KAFKA_PORT}
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
     healthcheck:
-      test: ["CMD", "kafka-topics", "--bootstrap-server", "localhost:9092", "--list"]
+      test: [ "CMD", "kafka-topics", "--bootstrap-server", "localhost:9092", "--list" ]
       interval: 10s
       retries: 5
       start_period: 30s
       timeout: 5s
+    networks:
+      - backend
+
+  redis-master:
+    image: redis:latest
+    command: [ "redis-server", "/usr/local/etc/redis/redis.conf" ]
+    restart: always
+    volumes:
+      - ./redis/config/redis-master.conf:/usr/local/etc/redis/redis.conf
+    ports:
+      - "${REDIS_MASTER_PORT}:${REDIS_MASTER_PORT}"
+    environment:
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+    networks:
+      - backend
+
+  redis-replica:
+    image: redis:latest
+    command: [ "redis-server", "/usr/local/etc/redis/redis.conf", "--replicaof", "redis-master", "${REDIS_MASTER_PORT}" ]
+    restart: always
+    volumes:
+      - ./redis/config/redis-replica.conf:/usr/local/etc/redis/redis.conf
+    ports:
+      - "${REDIS_REPLICA_PORT}:${REDIS_MASTER_PORT}"
+    environment:
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+    networks:
+      - backend
+
+  redis-sentinel:
+    image: redis:latest
+    command: [ "redis-sentinel", "/usr/local/etc/redis/redis.conf", "--sentinel" ]
+    volumes:
+      - ./redis/config/sentinel.conf:/usr/local/etc/redis/redis.conf
+    ports:
+      - "${REDIS_SENTINEL_PORT}:${REDIS_SENTINEL_PORT}"
+    depends_on:
+      - redis-master
+      - redis-replica
+    environment:
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
     networks:
       - backend
 
@@ -45,12 +86,14 @@ services:
         required: true
     networks:
       - backend
-      
+
   gateway:
     build:
       context: ./gateway
       dockerfile: deploy/Dockerfile
     container_name: gateway
+    depends_on:
+      - redis-sentinel
     restart: on-failure
     env_file:
       - path: ./gateway/.env
@@ -96,13 +139,17 @@ services:
     restart: on-failure
     depends_on:
       kafka:
-        condition: service_healthy 
+        condition: service_healthy
     env_file:
       - ./live-data/.env
     networks:
       - backend
     ports:
       - "${LIVE_EXTERNAL_PORT}:${LIVE_INTERNAL_PORT}"
+
+volumes:
+  redis-master-data:
+
 
 networks:
   backend:

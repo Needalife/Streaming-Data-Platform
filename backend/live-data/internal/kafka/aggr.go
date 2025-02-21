@@ -34,8 +34,6 @@ func aggregateTransactions(transactions []map[string]interface{}) map[string]int
 	}
 
 	for _, txn := range transactions {
-		summary["totalTransactions"]++
-
 		fullDoc, exists := txn["fullDocument"].(map[string]interface{})
 		if !exists {
 			continue
@@ -56,6 +54,7 @@ func aggregateTransactions(transactions []map[string]interface{}) map[string]int
 		}
 	}
 
+	summary["totalTransactions"] = summary["successTransactions"] + summary["failedTransactions"] + summary["ongoingTransactions"]
 	summary["timestamp"] = int(time.Now().Unix())
 
 	return map[string]interface{}{
