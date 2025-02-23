@@ -6,7 +6,6 @@ import {
   YAxis,
   Tooltip,
   Legend,
-  CartesianGrid,
   ResponsiveContainer,
 } from 'recharts';
 
@@ -17,25 +16,24 @@ const TotalTransactionsChart = ({ data, domain }) => (
       <AreaChart data={data} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
         <defs>
           <linearGradient id="colorTotal" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="5%" stopColor="#8884d8" stopOpacity={0.8} />
-            <stop offset="95%" stopColor="#8884d8" stopOpacity={0} />
+            <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.8} />
+            <stop offset="95%" stopColor="#3b82f6" stopOpacity={0} />
           </linearGradient>
         </defs>
-        <CartesianGrid strokeDasharray="3 3" />
         <XAxis
           dataKey="timestamp"
           type="number"
           domain={domain}
           tickFormatter={(unixTime) => new Date(unixTime).toLocaleTimeString()}
         />
-        <YAxis />
+        <YAxis tick={false} tickLine={false} axisLine={{ strokeOpacity: 0 }} />
         <Tooltip labelFormatter={(value) => new Date(value).toLocaleTimeString()} />
         <Legend />
         <Area
           type="monotone"
           dataKey="totalTransactions"
-          name="Total Transactions"
-          stroke="#8884d8"
+          name="Total"
+          stroke="#3b82f6"
           fill="url(#colorTotal)"
           strokeWidth={3}
           dot={false}
