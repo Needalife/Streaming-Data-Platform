@@ -18,22 +18,22 @@ func HandleStructuredConnections(w http.ResponseWriter, r *http.Request) {
 func handleConnection(w http.ResponseWriter, r *http.Request, clients map[*websocket.Conn]bool) {
 	conn, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
-	    fmt.Println("WebSocket Upgrade Error:", err)
-	    return
-    }
+		fmt.Println("WebSocket Upgrade Error:", err)
+		return
+	}
 	defer conn.Close()
 
 	mutex.Lock()
-    clients[conn] = true
+	clients[conn] = true
 	mutex.Unlock()
 
 	for {
-	    _, _, err := conn.ReadMessage()
-	    if err != nil {
-	        mutex.Lock()
-	        delete(clients, conn)
-	        mutex.Unlock()
-	        break
-	    }
-    }
+		_, _, err := conn.ReadMessage()
+		if err != nil {
+			mutex.Lock()
+			delete(clients, conn)
+			mutex.Unlock()
+			break
+		}
+	}
 }
