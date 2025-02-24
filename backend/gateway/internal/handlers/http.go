@@ -21,7 +21,7 @@ func buildCacheKey(path, rawQuery string) string {
 
 func ForwardHTTPRequestWithCache(d *deps.Deps) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		// 1. Remove the prefix from the path.
+		// 1. Remove the "/gateway/v1/static" prefix.
 		backendPath := strings.TrimPrefix(r.URL.Path, "/gateway/v1/static")
 		if backendPath == r.URL.Path {
 			http.Error(w, "Invalid path", http.StatusBadRequest)
@@ -43,6 +43,13 @@ func ForwardHTTPRequestWithCache(d *deps.Deps) http.HandlerFunc {
 		cached, err := myredis.GetCache(d.RedisClient, cacheKey)
 		if err == nil && cached != "" {
 			w.Header().Set("Content-Type", "application/json")
+			// On a cache hit, set Snapshot-Time based on the request query or current time.
+			if r.URL.Query().Get("snapshotTime") == "" {
+				snapshotTime := time.Now().Format("2006-01-02T15:04:05Z07:00")
+				w.Header().Set("Snapshot-Time", snapshotTime)
+			} else {
+				w.Header().Set("Snapshot-Time", r.URL.Query().Get("snapshotTime"))
+			}
 			fmt.Fprint(w, cached)
 			log.Println("Cache hit:", cacheKey)
 			return
@@ -71,12 +78,24 @@ func ForwardHTTPRequestWithCache(d *deps.Deps) http.HandlerFunc {
 			return
 		}
 
-		// 7. Write the response back to the client.
+		// 7. Propagate the Snapshot-Time header from static-data if present,
+		// otherwise, compute it based on the query or current time.
+		snapshotHeader := resp.Header.Get("Snapshot-Time")
+		if snapshotHeader != "" {
+			w.Header().Set("Snapshot-Time", snapshotHeader)
+		} else if r.URL.Query().Get("snapshotTime") != "" {
+			w.Header().Set("Snapshot-Time", r.URL.Query().Get("snapshotTime"))
+		} else {
+			snapshotTime := time.Now().Format("2006-01-02T15:04:05Z07:00")
+			w.Header().Set("Snapshot-Time", snapshotTime)
+		}
+
+		// 8. Write the response headers and body back to the client.
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(resp.StatusCode)
 		w.Write(bodyBytes)
 
-		// 8. Cache the response in Redis for 5 minutes.
+		// 9. Cache the response in Redis for 5 minutes.
 		if err := myredis.SetCache(d.RedisClient, cacheKey, bodyBytes, 5*time.Minute); err != nil {
 			log.Printf("Failed to set cache for key %s: %v", cacheKey, err)
 		}

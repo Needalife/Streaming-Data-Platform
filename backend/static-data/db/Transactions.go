@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"sort"
 	"strconv"
+	"strings"
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
@@ -19,8 +20,7 @@ import (
 // from all collections; otherwise, it uses a single collection based on the "date" parameter.
 func FetchTransactions(client *mongo.Client, r *http.Request) ([]bson.M, error) {
 	ctx := r.Context()
-	dbName := "static_data"
-	dbInstance := client.Database(dbName)
+	dbInstance := client.Database("static_data")
 
 	// Parse pagination parameters.
 	limitStr := r.URL.Query().Get("limit")
@@ -34,88 +34,102 @@ func FetchTransactions(client *mongo.Client, r *http.Request) ([]bson.M, error) 
 		skip = 0
 	}
 
-	// Build a filter from query parameters.
+	// Build filter from query parameters.
 	filter := bson.M{}
-
-	// Filter by status.
 	if status := r.URL.Query().Get("status"); status != "" {
 		filter["status"] = status
 	}
-
-	// Filter by price range (amount).
-	minAmountStr := r.URL.Query().Get("minAmount")
-	maxAmountStr := r.URL.Query().Get("maxAmount")
-	if minAmountStr != "" || maxAmountStr != "" {
-		amountFilter := bson.M{}
-		if minAmountStr != "" {
-			if minVal, err := strconv.ParseFloat(minAmountStr, 64); err == nil {
-				amountFilter["$gte"] = minVal
-			}
+	if minAmountStr := r.URL.Query().Get("minAmount"); minAmountStr != "" {
+		if minVal, err := strconv.ParseFloat(minAmountStr, 64); err == nil {
+			filter["amount"] = bson.M{"$gte": minVal}
 		}
-		if maxAmountStr != "" {
-			if maxVal, err := strconv.ParseFloat(maxAmountStr, 64); err == nil {
-				amountFilter["$lte"] = maxVal
+	}
+	if maxAmountStr := r.URL.Query().Get("maxAmount"); maxAmountStr != "" {
+		if maxVal, err := strconv.ParseFloat(maxAmountStr, 64); err == nil {
+			if cur, ok := filter["amount"].(bson.M); ok {
+				cur["$lte"] = maxVal
+			} else {
+				filter["amount"] = bson.M{"$lte": maxVal}
 			}
-		}
-		if len(amountFilter) > 0 {
-			filter["amount"] = amountFilter
 		}
 	}
 
-	// Implement snapshot filtering.
-	// If the client did not provide a snapshotTime, use the current time.
-	// Use a format that matches your createdAt field (e.g., ISO8601).
 	snapshotTime := r.URL.Query().Get("snapshotTime")
 	if snapshotTime == "" {
 		snapshotTime = time.Now().Format("2006-01-02T15:04:05Z07:00")
 	}
-	// Only include transactions created at or before the snapshot.
 	filter["createdAt"] = bson.M{"$lte": snapshotTime}
 
-	// Always aggregate across all collections that match the pattern.
-	collections, err := dbInstance.ListCollectionNames(ctx, bson.M{
+	// List all collections that match your naming pattern.
+	allCollections, err := dbInstance.ListCollectionNames(ctx, bson.M{
 		"name": bson.M{"$regex": "^collection_"},
 	})
 	if err != nil {
 		return nil, err
 	}
 
-	var aggregatedResults []bson.M
-	for _, collName := range collections {
-		coll := dbInstance.Collection(collName)
-		cursor, err := coll.Find(ctx, filter)
+	// Filter collections based on snapshotTime.
+	var relevantCollections []string
+	snapshotDate, _ := time.Parse("2006-01-02T15:04:05Z07:00", snapshotTime)
+	for _, collName := range allCollections {
+		// Assume the date is at the end of the collection name like "collection_2025-02-24".
+		// Extract the date portion.
+		datePart := strings.TrimPrefix(collName, "collection_")
+		collDate, err := time.Parse("2006-01-02", datePart)
 		if err != nil {
-			log.Printf("Error querying collection %s: %v", collName, err)
+			log.Printf("Skipping collection %s due to date parse error: %v", collName, err)
 			continue
 		}
-
-		var results []bson.M
-		if err := cursor.All(ctx, &results); err != nil {
-			cursor.Close(ctx)
-			log.Printf("Error reading results from collection %s: %v", collName, err)
-			continue
+		// Only include collections with dates <= snapshotDate.
+		if !collDate.After(snapshotDate) {
+			relevantCollections = append(relevantCollections, collName)
 		}
-		cursor.Close(ctx)
-		aggregatedResults = append(aggregatedResults, results...)
+	}
+	if len(relevantCollections) == 0 {
+		return nil, fmt.Errorf("no collections found for snapshotTime %s", snapshotTime)
 	}
 
-	// Sort the aggregated results by createdAt descending (newest first).
-	sort.Slice(aggregatedResults, func(i, j int) bool {
-		ci, _ := aggregatedResults[i]["createdAt"].(string)
-		cj, _ := aggregatedResults[j]["createdAt"].(string)
-		return ci > cj
+	// Sort relevantCollections in descending order so the most recent is first.
+	// (You can adjust this if needed.)
+	sort.Slice(relevantCollections, func(i, j int) bool {
+		return relevantCollections[i] > relevantCollections[j]
 	})
 
-	// Apply pagination manually.
-	total := len(aggregatedResults)
-	if skip >= total {
-		return []bson.M{}, nil
+	// Build the aggregation pipeline.
+	// Use the first collection in the sorted list as the base.
+	pipeline := mongo.Pipeline{
+		{{Key: "$match", Value: filter}},
 	}
-	end := skip + limit
-	if end > total {
-		end = total
+	for i := 1; i < len(relevantCollections); i++ {
+		unionStage := bson.D{
+			{Key: "$unionWith", Value: bson.D{
+				{Key: "coll", Value: relevantCollections[i]},
+				{Key: "pipeline", Value: mongo.Pipeline{
+					{{Key: "$match", Value: filter}},
+				}},
+			}},
+		}
+		pipeline = append(pipeline, unionStage)
 	}
-	return aggregatedResults[skip:end], nil
+
+	pipeline = append(pipeline,
+		bson.D{{Key: "$sort", Value: bson.D{{Key: "createdAt", Value: -1}}}},
+		bson.D{{Key: "$skip", Value: skip}},
+		bson.D{{Key: "$limit", Value: limit}},
+	)
+
+	// Execute the aggregation on the first collection.
+	cursor, err := dbInstance.Collection(relevantCollections[0]).Aggregate(ctx, pipeline)
+	if err != nil {
+		return nil, err
+	}
+	defer cursor.Close(ctx)
+
+	var results []bson.M
+	if err := cursor.All(ctx, &results); err != nil {
+		return nil, err
+	}
+	return results, nil
 }
 
 // Retrieves a specific transaction by its ID.
@@ -159,7 +173,6 @@ func FetchTransactionByID(client *mongo.Client, id string, dateParam string) (bs
 	return nil, fmt.Errorf("transaction with ID %s not found", id)
 }
 
-// Creates a text index on the "name", "email", "status", and "type" fields.
 func EnsureTextIndex(client *mongo.Client, dbName, collectionName string) error {
 	coll := client.Database(dbName).Collection(collectionName)
 	indexModel := mongo.IndexModel{
@@ -168,6 +181,7 @@ func EnsureTextIndex(client *mongo.Client, dbName, collectionName string) error 
 			{Key: "email", Value: "text"},
 			{Key: "status", Value: "text"},
 			{Key: "type", Value: "text"},
+			{Key: "currency", Value: "text"},
 		},
 	}
 	_, err := coll.Indexes().CreateOne(context.Background(), indexModel)
