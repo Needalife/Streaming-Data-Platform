@@ -173,7 +173,6 @@ func FetchTransactionByID(client *mongo.Client, id string, dateParam string) (bs
 	return nil, fmt.Errorf("transaction with ID %s not found", id)
 }
 
-// Creates a text index on the "name", "email", "status", and "type" fields.
 func EnsureTextIndex(client *mongo.Client, dbName, collectionName string) error {
 	coll := client.Database(dbName).Collection(collectionName)
 	indexModel := mongo.IndexModel{
@@ -182,6 +181,7 @@ func EnsureTextIndex(client *mongo.Client, dbName, collectionName string) error 
 			{Key: "email", Value: "text"},
 			{Key: "status", Value: "text"},
 			{Key: "type", Value: "text"},
+			{Key: "currency", Value: "text"},
 		},
 	}
 	_, err := coll.Indexes().CreateOne(context.Background(), indexModel)
