@@ -10,7 +10,7 @@ const Filters = ({
   selectedMaxAmount
 }) => {
   return (
-    <div className="bg-white shadow-md rounded-lg p-6 flex flex-wrap gap-6">
+    <div className="h-[150px] bg-white shadow-md rounded-lg p-6 flex flex-wrap gap-6">
       {/* Status Filter */}
       <div className="flex-1 min-w-[200px]">
         <StatusFilter onStatusChange={onStatusChange} selectedStatus={selectedStatuses[0]} />

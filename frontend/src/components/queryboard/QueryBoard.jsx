@@ -17,8 +17,25 @@ const QueryBoard = () => {
 
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
-  const rowsPerPage = 13; //Change the rows per page
+  const [rowsPerPage, setRowsPerPage] = useState(13);
   const [hasNextPage, setHasNextPage] = useState(false);
+
+  // Dynamically calculate rows per page based on available window height
+  useEffect(() => {
+    const updateRowsPerPage = () => {
+      // Header/search/filters take up spaces.
+      const reservedSpace = 400;
+      const availableHeight = window.innerHeight - reservedSpace;
+      // Estimated height per row in pixels
+      const estimatedRowHeight = 70;
+      const calculatedRows = Math.floor(availableHeight / estimatedRowHeight);
+      setRowsPerPage(calculatedRows > 0 ? calculatedRows : 1);
+    };
+
+    updateRowsPerPage();
+    window.addEventListener('resize', updateRowsPerPage);
+    return () => window.removeEventListener('resize', updateRowsPerPage);
+  }, []);
 
   // Build filter parameters for the backend query
   const buildFilterParams = () => {
@@ -42,6 +59,7 @@ const QueryBoard = () => {
 
     const skip = (currentPage - 1) * rowsPerPage;
     const filterParams = buildFilterParams();
+    // Use dynamic rowsPerPage (plus one to check if there's a next page)
     const response = await getTransactions({ ...filterParams, limit: rowsPerPage + 1, skip });
     
     if (response) {
@@ -71,52 +89,50 @@ const QueryBoard = () => {
 
   useEffect(() => {
     fetchData();
-  }, [currentPage, selectedStatuses, minAmount, maxAmount]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentPage, selectedStatuses, minAmount, maxAmount, rowsPerPage]);
 
-const handleSearch = async (term) => {
-  if (term.trim() === '') {
-    // If empty, re-run fetchData with current filters.
-    fetchData();
-    return;
-  }
-  setLoading(true);
-  setError(null);
-  const trimmedTerm = term.trim();
-
-  // Check if the search term is a 24-character hexadecimal string (common for IDs)
-  if (/^[0-9a-fA-F]{24}$/.test(trimmedTerm)) {
-    try {
-      const result = await getTransactionById(trimmedTerm);
-      if (result) {
-        setData([result]);
-        setError(null);
-      } else {
-        setData([]);
-        setError("Transaction not found");
-      }
-    } catch (err) {
-      setError("Error fetching transaction by id");
-      setData([]);
+  const handleSearch = async (term) => {
+    if (term.trim() === '') {
+      // If empty, re-run fetchData with current filters.
+      fetchData();
+      return;
     }
-  } else {
-    // Otherwise, use keyword search
-    try {
-      const result = await searchTransactions(trimmedTerm);
-      if (result && result.length > 0) {
-        setData(result);
-        setError(null);
-      } else {
-        setData([]);
-        setError("No transactions found for the given keyword");
-      }
-    } catch (err) {
-      setError("Error searching transactions by keyword");
-      setData([]);
-    }
-  }
-  setLoading(false);
-};
+    setLoading(true);
+    setError(null);
+    const trimmedTerm = term.trim();
 
+    if (/^[0-9a-fA-F]{24}$/.test(trimmedTerm)) {
+      try {
+        const result = await getTransactionById(trimmedTerm);
+        if (result) {
+          setData([result]);
+          setError(null);
+        } else {
+          setData([]);
+          setError("Transaction not found");
+        }
+      } catch (err) {
+        setError("Error fetching transaction by id");
+        setData([]);
+      }
+    } else {
+      try {
+        const result = await searchTransactions(trimmedTerm);
+        if (result && result.length > 0) {
+          setData(result);
+          setError(null);
+        } else {
+          setData([]);
+          setError("No transactions found for the given keyword");
+        }
+      } catch (err) {
+        setError("Error searching transactions by keyword");
+        setData([]);
+      }
+    }
+    setLoading(false);
+  };
 
   const handleStatusChange = statuses => {
     setSelectedStatuses(statuses);
@@ -135,30 +151,25 @@ const handleSearch = async (term) => {
 
   return (
     <div className="h-screen overflow-y-scroll">
-      {/* Main Content */}
       <div className={`transition-all duration-300 ${loading ? 'blur-sm' : 'blur-0'}`}>
-        <div className="flex justify-between items-center">
+        <div className="h-[100px] flex justify-between items-center">
           <h1 className="text-3xl font-bold">Queryboard</h1>
           <SearchBar placeholder="Search by ID or keyword" onSearch={handleSearch} />
         </div>
-        <div>
-          <Filters
-            onStatusChange={handleStatusChange}
-            onAmountChange={handleAmountChange}
-            selectedStatuses={selectedStatuses}
-            selectedMinAmount={minAmount}
-            selectedMaxAmount={maxAmount}
-          />
-        </div>
+        <Filters
+          onStatusChange={handleStatusChange}
+          onAmountChange={handleAmountChange}
+          selectedStatuses={selectedStatuses}
+          selectedMinAmount={minAmount}
+          selectedMaxAmount={maxAmount}
+        />
 
-        {/* Error message in red text */}
         {error && (
           <p className="text-red-500 text-center my-4">
             {error}
           </p>
         )}
 
-        {/* Data table container */}
         <div className="p-6 rounded-lg shadow-md mt-6 bg-white">
           {data && data.length > 0 ? (
             <DataTable
@@ -168,7 +179,6 @@ const handleSearch = async (term) => {
               onPageChange={handlePageChange}
             />
           ) : (
-            // When there is no data, show an empty state.
             !loading && !error && (
               <div className="text-center p-4">
                 <p>No transactions found</p>
@@ -178,7 +188,6 @@ const handleSearch = async (term) => {
         </div>
       </div>
 
-      {/* Loading Overlay */}
       {loading && (
         <div className="absolute inset-0 flex items-center justify-center">
           <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-blue-500 border-solid"></div>

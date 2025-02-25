@@ -6,7 +6,7 @@ const Table = ({ data }) => {
     <div className="max-h overflow-y-auto">
       <table className="min-w-full bg-white">
         <thead>
-          <tr className="bg-gray-100">
+          <tr className="bg-gray-100 h-[60px]">
             <th className="py-2 px-4 text-center w-1/5">Name</th>
             <th className="py-2 px-4 text-center w-1/5">Time & Date</th>
             <th className="py-2 px-4 text-center w-1/5">Status</th>
