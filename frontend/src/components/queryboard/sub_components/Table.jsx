@@ -3,7 +3,7 @@ import { formatTimestamp, formatStatus } from '../../../utils/helpers';
 
 const Table = ({ data }) => {
   return (
-    <div className="max-h-96 overflow-y-auto">
+    <div className="max-h overflow-y-auto">
       <table className="min-w-full bg-white">
         <thead>
           <tr className="bg-gray-100">

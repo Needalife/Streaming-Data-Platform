@@ -43,6 +43,16 @@ export const getAvailableDates = async () => {
     }
 };
 
+export const searchTransactions = async (keyword) => {
+    try {
+        const response = await axios.get(`${API_BASE_URL}/search`, { params: { keyword } });
+        return response.data;
+    } catch (error) {
+        console.error(`Error searching transactions with keyword ${keyword}:`, error);
+        return null;
+    }
+};
+
 export const healthCheck = async () => {
     try {
         const response = await axios.get('http://localhost:8001/gateway/health');

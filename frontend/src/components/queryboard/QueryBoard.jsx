@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Filters from './sub_components/filters/Filters';
 import DataTable from './sub_components/DataTable';
 import SearchBar from '../queryboard/sub_components/SearchBar';
-import { getTransactions, getTransactionById } from './api/transaction';
+import { getTransactions, getTransactionById, searchTransactions } from './api/transaction';
 
 const QueryBoard = () => {
   // Data & loading states
@@ -17,7 +17,7 @@ const QueryBoard = () => {
 
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
-  const rowsPerPage = 10;
+  const rowsPerPage = 13; //Change the rows per page
   const [hasNextPage, setHasNextPage] = useState(false);
 
   // Build filter parameters for the backend query
@@ -73,17 +73,20 @@ const QueryBoard = () => {
     fetchData();
   }, [currentPage, selectedStatuses, minAmount, maxAmount]);
 
-  // Search by transaction id.
-  const handleSearch = async (term) => {
-    if (term.trim() === '') {
-      // If empty, re-run fetchData with current filters.
-      fetchData();
-      return;
-    }
-    setLoading(true);
-    setError(null);
+const handleSearch = async (term) => {
+  if (term.trim() === '') {
+    // If empty, re-run fetchData with current filters.
+    fetchData();
+    return;
+  }
+  setLoading(true);
+  setError(null);
+  const trimmedTerm = term.trim();
+
+  // Check if the search term is a 24-character hexadecimal string (common for IDs)
+  if (/^[0-9a-fA-F]{24}$/.test(trimmedTerm)) {
     try {
-      const result = await getTransactionById(term.trim());
+      const result = await getTransactionById(trimmedTerm);
       if (result) {
         setData([result]);
         setError(null);
@@ -95,8 +98,25 @@ const QueryBoard = () => {
       setError("Error fetching transaction by id");
       setData([]);
     }
-    setLoading(false);
-  };
+  } else {
+    // Otherwise, use keyword search
+    try {
+      const result = await searchTransactions(trimmedTerm);
+      if (result && result.length > 0) {
+        setData(result);
+        setError(null);
+      } else {
+        setData([]);
+        setError("No transactions found for the given keyword");
+      }
+    } catch (err) {
+      setError("Error searching transactions by keyword");
+      setData([]);
+    }
+  }
+  setLoading(false);
+};
+
 
   const handleStatusChange = statuses => {
     setSelectedStatuses(statuses);
@@ -114,12 +134,12 @@ const QueryBoard = () => {
   };
 
   return (
-    <div className="relative">
+    <div className="h-screen overflow-y-scroll">
       {/* Main Content */}
       <div className={`transition-all duration-300 ${loading ? 'blur-sm' : 'blur-0'}`}>
         <div className="flex justify-between items-center">
           <h1 className="text-3xl font-bold">Queryboard</h1>
-          <SearchBar placeholder="Search by ID" onSearch={handleSearch} />
+          <SearchBar placeholder="Search by ID or keyword" onSearch={handleSearch} />
         </div>
         <div>
           <Filters
