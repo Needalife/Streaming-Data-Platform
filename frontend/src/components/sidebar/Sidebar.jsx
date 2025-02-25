@@ -9,8 +9,6 @@ import {
   import { VscGraph } from 'react-icons/vsc';
   import { RiMenuSearchLine, RiLogoutBoxLine } from 'react-icons/ri';
   import { CgProfile } from "react-icons/cg";
-  import { BsBoundingBox } from 'react-icons/bs';
-  import { FiSettings } from 'react-icons/fi';
   import NavItem from './sub_components/NavItem';
   
   export default function Sidebar() {
@@ -55,9 +53,6 @@ import {
         flexDir="column"
         justifyContent="space-between"
       >
-        {/* <Flex p={paddingValue} flexDir="column" w="100%" alignItems="center">
-          <Avatar size="sm" src="avatar-1.jpg" mb={5} />
-        </Flex> */}
   
         <Flex flexDir="column" alignItems="center" justifyContent="center" flex="1">
           <NavItem 
@@ -90,29 +85,6 @@ import {
             active={location.pathname === '/about'}
             activeBg={activeBg}
           />
-          {/*
-            Uncomment these if needed:
-            <NavItem 
-              navSize={navSize} 
-              icon={BsBoundingBox} 
-              title="Metrics" 
-              description="View metrics" 
-              as={Link} 
-              to="/metrics"
-              active={location.pathname === '/metrics'}
-              activeBg={activeBg}
-            />
-            <NavItem 
-              navSize={navSize} 
-              icon={FiSettings} 
-              title="Settings" 
-              description="Change your settings" 
-              as={Link} 
-              to="/settings"
-              active={location.pathname === '/settings'}
-              activeBg={activeBg}
-            />
-          */}
           {isLoggedIn && (
             <NavItem
               navSize={navSize}

@@ -3,8 +3,6 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import HomePage from "../pages/HomePage";
 import QueryPage from "../pages/QueryPage";
 import AboutPage from "../pages/AboutPage";
-import MetricsPage from "../pages/MetricsPage";
-import SettingsPage from "../pages/SettingsPage";
 import SignIn from "../components/authentication/SignIn";
 import SignUp from "../components/authentication/SignUp";
 import { Loader } from 'rsuite';
@@ -19,28 +17,10 @@ const AppRouter = () => {
           <Route path="/queryboard" element={<QueryPage />} />
           <Route path="/about" element={<AboutPage />} />
 
-          {/* Protected routes
-          <Route
-            path="/metrics"
-            element={
-              // <RequireAuth>
-                <MetricsPage />
-              // </RequireAuth>
-            }
-          />
-          <Route
-            path="/settings"
-            element={
-              // <RequireAuth>
-                <SettingsPage />
-              // </RequireAuth>
-            }
-          /> */}
-
           {/* <Route path="/signup" element={<SignUp />} />
           <Route path="/signin" element={<SignIn />} /> */}
 
-          {/* Optional: Redirect unknown routes */}
+          {/* Redirect unknown routes */}
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </div>
