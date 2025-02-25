@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useWebSocket } from './hooks/useWebSocket';
 import TotalTransactionsChart from './sub_components/TotalTransactionChart';
 import SuccessTransactionsChart from './sub_components/SuccessTransactionChart';
@@ -7,18 +7,27 @@ import FailedTransactionsChart from './sub_components/FailedTransactionChart';
 import GradientSummaryCard from './sub_components/GradientSummaryCard';
 import { formatDate } from './utils/dateFormatter';
 
-// Maximum window width: 5 minutes in milliseconds.
-const MAX_WINDOW = 5 * 60 * 1000; 
+const MAX_WINDOW = 5 * 60 * 1000; // 5 minutes in milliseconds
+
+// Helper to calculate the available height for the second row of charts.
+const calculateChartsHeight = () => {
+  const reservedSpace = 650; // For header, TotalTransactionsChart, and GradientSummaryCard
+  const availableHeight = window.innerHeight - reservedSpace;
+  return availableHeight
+};
 
 const Dashboard = () => {
   // Timestamp of the first data point using a ref.
   const initialTimestampRef = useRef(null);
 
-  // For the x-axis window holds windowStart and windowEnd in state.
+  // State for the x-axis window boundaries.
   const [windowStart, setWindowStart] = useState(Date.now());
   const [windowEnd, setWindowEnd] = useState(Date.now());
   const [summaryData, setSummaryData] = useState([]);
   const [cumulativeTotal, setCumulativeTotal] = useState(0);
+
+  // Calculate and store the dynamic height for the second row (charts).
+  const [chartsHeight, setChartsHeight] = useState(() => calculateChartsHeight());
 
   useWebSocket(
     (rawData) => {
@@ -72,10 +81,19 @@ const Dashboard = () => {
   const domain = [windowStart, windowEnd];
   const currentDate = formatDate(new Date());
 
+  // Update chartsHeight on window resize.
+  useEffect(() => {
+    const updateChartsHeight = () => {
+      setChartsHeight(calculateChartsHeight());
+    };
+    window.addEventListener('resize', updateChartsHeight);
+    return () => window.removeEventListener('resize', updateChartsHeight);
+  }, []);
+
   return (
     <div className="p-4 h-screen overflow-y-scroll">
       <h1 className="text-3xl font-bold mb-10">Dashboard</h1>
-      <div className="flex flex-col sm:flex-row items-start justify-between mb-4">
+      <div className="flex flex-col sm:flex-row items-start justify-between mb-4 h-[450px]">
         <div className="flex-1 mr-4">
           <TotalTransactionsChart data={summaryData} domain={domain} />
         </div>
@@ -83,11 +101,11 @@ const Dashboard = () => {
           <GradientSummaryCard totalTransactions={cumulativeTotal} date={currentDate} />
         </div>
       </div>
-      {/* Second row: Three charts in a grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-        <SuccessTransactionsChart data={summaryData} domain={domain} />
-        <PendingTransactionsChart data={summaryData} domain={domain} />
-        <FailedTransactionsChart data={summaryData} domain={domain} />
+      {/* Second row: Three charts in a grid that fills the remaining screen height */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4" style={{ height: chartsHeight }}>
+        <SuccessTransactionsChart data={summaryData} domain={domain} chartHeight={chartsHeight} />
+        <PendingTransactionsChart data={summaryData} domain={domain} chartHeight={chartsHeight} />
+        <FailedTransactionsChart data={summaryData} domain={domain} chartHeight={chartsHeight} />
       </div>
     </div>
   );

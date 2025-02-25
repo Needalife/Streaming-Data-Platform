@@ -9,13 +9,13 @@ import {
   ResponsiveContainer,
 } from 'recharts';
 
-const SuccessTransactionsChart = ({ data, domain }) => {
+const SuccessTransactionsChart = ({ data, domain, chartHeight }) => {
   const ticks = domain[0] === domain[1] ? [domain[0]] : [domain[0], domain[1]];
   
   return (
     <div className="bg-white p-4 rounded-lg shadow-md">
       <h2 className="text-xl font-semibold mb-2">Completed Transactions</h2>
-      <ResponsiveContainer width="100%" height={384}>
+      <ResponsiveContainer width="100%" height={chartHeight}>
         <AreaChart data={data} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
           <defs>
             <linearGradient id="colorSuccess" x1="0" y1="0" x2="0" y2="1">
