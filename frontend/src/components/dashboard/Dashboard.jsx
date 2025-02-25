@@ -92,7 +92,7 @@ const Dashboard = () => {
 
   return (
     <div className="h-screen overflow-y-scroll">
-      <h1 className="text-3xl font-bold mt-8 mb-10">Dashboard</h1>
+      <h1 className="text-3xl font-bold mt-6 mb-6">Dashboard</h1>
       <div className="flex flex-col sm:flex-row items-start justify-between mb-4 h-[450px]">
         <div className="flex-1 mr-4">
           <TotalTransactionsChart data={summaryData} domain={domain} />
