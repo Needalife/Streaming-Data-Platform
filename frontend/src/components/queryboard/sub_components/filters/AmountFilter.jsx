@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import ReactSlider from 'react-slider';
+import { FiEdit } from 'react-icons/fi';
 import '../../../../App.css';
 
 const AmountFilter = ({
@@ -69,20 +70,26 @@ const AmountFilter = ({
         />
       </div>
       <div className="flex justify-between items-center">
-        <input
-          type="number"
-          value={rangeValues[0]}
-          onChange={handleMinInputChange}
-          onBlur={handleInputBlur}
-          className="w-1/2 rounded p-2 mr-2"
-        />
-        <input
-          type="number"
-          value={rangeValues[1]}
-          onChange={handleMaxInputChange}
-          onBlur={handleInputBlur}
-          className="w-1/2 rounded p-2 ml-2 text-right"
-        />
+        <div className="flex items-center w-1/2 mr-2">
+          <FiEdit className="mr-2 cursor-pointer" />
+          <input
+            type="number"
+            value={rangeValues[0]}
+            onChange={handleMinInputChange}
+            onBlur={handleInputBlur}
+            className="flex-grow rounded p-2"
+          />
+        </div>
+        <div className="flex items-center w-1/2 ml-2">
+          <input
+            type="number"
+            value={rangeValues[1]}
+            onChange={handleMaxInputChange}
+            onBlur={handleInputBlur}
+            className="flex-grow rounded p-2 text-right"
+          />
+          <FiEdit className="ml-2 cursor-pointer" />
+        </div>
       </div>
     </div>
   );
