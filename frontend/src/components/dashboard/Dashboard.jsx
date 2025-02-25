@@ -11,7 +11,7 @@ const MAX_WINDOW = 5 * 60 * 1000; // 5 minutes in milliseconds
 
 // Helper to calculate the available height for the second row of charts.
 const calculateChartsHeight = () => {
-  const reservedSpace = 650; // For header, TotalTransactionsChart, and GradientSummaryCard
+  const reservedSpace = 670; // For header, TotalTransactionsChart, and GradientSummaryCard
   const availableHeight = window.innerHeight - reservedSpace;
   return availableHeight
 };
@@ -91,8 +91,8 @@ const Dashboard = () => {
   }, []);
 
   return (
-    <div className="p-4 h-screen overflow-y-scroll">
-      <h1 className="text-3xl font-bold mb-10">Dashboard</h1>
+    <div className="h-screen overflow-y-scroll">
+      <h1 className="text-3xl font-bold mt-8 mb-10">Dashboard</h1>
       <div className="flex flex-col sm:flex-row items-start justify-between mb-4 h-[450px]">
         <div className="flex-1 mr-4">
           <TotalTransactionsChart data={summaryData} domain={domain} />
