@@ -22,6 +22,7 @@
         "cors": "^2.8.5",
         "framer-motion": "^11.11.9",
         "frontend": "file:",
+        "rc-slider": "^11.1.8",
         "react": "^18.3.1",
         "react-chartjs-2": "^5.2.0",
         "react-datepicker": "^7.5.0",

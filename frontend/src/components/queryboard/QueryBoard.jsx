@@ -112,41 +112,43 @@ const QueryBoard = () => {
     setCurrentPage(page);
   };
 
-  if (loading) {
-    return (
-      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', textAlign: 'center' }}>
-        <p>Loading query...</p>
-      </div>
-    );
-  }
-
   if (error) {
     return <div>Error: {error}</div>;
   }
 
   return (
-    <div className="">
-      <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold">Queryboard</h1>
-        <SearchBar placeholder="Search by ID" onSearch={handleSearch} />
+    <div className="relative">
+      {/* Main Content */}
+      <div className={`transition-all duration-300 ${loading ? 'blur-sm' : 'blur-0'}`}>
+        <div className="flex justify-between items-center">
+          <h1 className="text-3xl font-bold">Queryboard</h1>
+          <SearchBar placeholder="Search by ID" onSearch={handleSearch} />
+        </div>
+        <div className="">
+          <Filters
+            onStatusChange={handleStatusChange}
+            onAmountChange={handleAmountChange}
+            selectedStatuses={selectedStatuses}
+            selectedMinAmount={minAmount}
+            selectedMaxAmount={maxAmount}
+          />
+        </div>
+        <div className="p-6 rounded-lg shadow-md mt-6 bg-white">
+          <DataTable
+            data={data}
+            currentPage={currentPage}
+            hasNextPage={hasNextPage}
+            onPageChange={handlePageChange}
+          />
+        </div>
       </div>
-      <div className="">
-        <Filters
-          onStatusChange={handleStatusChange}
-          onAmountChange={handleAmountChange}
-          selectedStatuses={selectedStatuses}
-          selectedMinAmount={minAmount}
-          selectedMaxAmount={maxAmount}
-        />
-      </div>
-      <div className="p-6 rounded-lg shadow-md mt-6 bg-white">
-        <DataTable
-          data={data}
-          currentPage={currentPage}
-          hasNextPage={hasNextPage}
-          onPageChange={handlePageChange}
-        />
-      </div>
+
+      {/* Loading Overlay */}
+      {loading && (
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-blue-500 border-solid"></div>
+        </div>
+      )}
     </div>
   );
 };
