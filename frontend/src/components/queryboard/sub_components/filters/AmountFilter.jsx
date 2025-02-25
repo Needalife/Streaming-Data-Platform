@@ -9,30 +9,51 @@ const AmountFilter = ({
   minPossible = 0,
   maxPossible = 999999,
 }) => {
+  // Initialize state with numeric values.
   const [rangeValues, setRangeValues] = useState([
-    selectedMinAmount !== '' ? selectedMinAmount : minPossible,
-    selectedMaxAmount !== '' ? selectedMaxAmount : maxPossible,
+    selectedMinAmount !== '' ? Number(selectedMinAmount) : minPossible,
+    selectedMaxAmount !== '' ? Number(selectedMaxAmount) : maxPossible,
   ]);
 
+  // Update local state if parent values change.
   useEffect(() => {
     setRangeValues([
-      selectedMinAmount !== '' ? selectedMinAmount : minPossible,
-      selectedMaxAmount !== '' ? selectedMaxAmount : maxPossible,
+      selectedMinAmount !== '' ? Number(selectedMinAmount) : minPossible,
+      selectedMaxAmount !== '' ? Number(selectedMaxAmount) : maxPossible,
     ]);
   }, [selectedMinAmount, selectedMaxAmount, minPossible, maxPossible]);
 
-  const handleChange = (values) => {
+  // Called while dragging the slider.
+  const handleSliderChange = (values) => {
     setRangeValues(values);
   };
 
-  const handleAfterChange = (values) => {
+  // Called when slider dragging is complete.
+  const handleSliderAfterChange = (values) => {
     onAmountChange({ min: values[0], max: values[1] });
+  };
+
+  // Update state as the user types in the min value.
+  const handleMinInputChange = (e) => {
+    const value = Number(e.target.value);
+    setRangeValues(([prevMin, prevMax]) => [value, prevMax]);
+  };
+
+  // Update state as the user types in the max value.
+  const handleMaxInputChange = (e) => {
+    const value = Number(e.target.value);
+    setRangeValues(([prevMin, prevMax]) => [prevMin, value]);
+  };
+
+  // When an input loses focus, update the parent filter.
+  const handleInputBlur = () => {
+    onAmountChange({ min: rangeValues[0], max: rangeValues[1] });
   };
 
   return (
     <div>
-      <label className="block mb-6 font-semibold">Filter by Amount</label>
-      <div className="mb-2">
+      <label className="block mb-2 font-semibold">Filter by Amount</label>
+      <div className="mb-4">
         <ReactSlider
           className="horizontal-slider"
           thumbClassName="example-thumb"
@@ -40,16 +61,28 @@ const AmountFilter = ({
           min={minPossible}
           max={maxPossible}
           value={rangeValues}
-          onChange={handleChange}
-          onAfterChange={handleAfterChange}
+          onChange={handleSliderChange}
+          onAfterChange={handleSliderAfterChange}
           ariaLabel={['Lower thumb', 'Upper thumb']}
           pearling
           minDistance={1}
         />
       </div>
-      <div className="flex justify-between">
-        <span>{rangeValues[0]}</span>
-        <span>{rangeValues[1]}</span>
+      <div className="flex justify-between items-center">
+        <input
+          type="number"
+          value={rangeValues[0]}
+          onChange={handleMinInputChange}
+          onBlur={handleInputBlur}
+          className="w-1/2 rounded p-2 mr-2"
+        />
+        <input
+          type="number"
+          value={rangeValues[1]}
+          onChange={handleMaxInputChange}
+          onBlur={handleInputBlur}
+          className="w-1/2 rounded p-2 ml-2 text-right"
+        />
       </div>
     </div>
   );
