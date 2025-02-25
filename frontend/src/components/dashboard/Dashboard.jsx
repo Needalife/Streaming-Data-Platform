@@ -1,5 +1,5 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { useWebSocket } from './hooks/useWebSocket';
+import React, { useState, useEffect } from 'react';
+import { useDashboard } from './DashboardContext';
 import TotalTransactionsChart from './sub_components/TotalTransactionChart';
 import SuccessTransactionsChart from './sub_components/SuccessTransactionChart';
 import PendingTransactionsChart from './sub_components/PendingTransactionChart';
@@ -7,81 +7,19 @@ import FailedTransactionsChart from './sub_components/FailedTransactionChart';
 import GradientSummaryCard from './sub_components/GradientSummaryCard';
 import { formatDate } from './utils/dateFormatter';
 
-const MAX_WINDOW = 5 * 60 * 1000; // 5 minutes in milliseconds
-
 // Helper to calculate the available height for the second row of charts.
 const calculateChartsHeight = () => {
-  const reservedSpace = 670; // For header, TotalTransactionsChart, and GradientSummaryCard
+  const reservedSpace = 670;
   const availableHeight = window.innerHeight - reservedSpace;
-  return availableHeight
+  return availableHeight;
 };
 
 const Dashboard = () => {
-  // Timestamp of the first data point using a ref.
-  const initialTimestampRef = useRef(null);
-
-  // State for the x-axis window boundaries.
-  const [windowStart, setWindowStart] = useState(Date.now());
-  const [windowEnd, setWindowEnd] = useState(Date.now());
-  const [summaryData, setSummaryData] = useState([]);
-  const [cumulativeTotal, setCumulativeTotal] = useState(0);
-
-  // Calculate and store the dynamic height for the second row (charts).
+  const { summaryData, windowStart, windowEnd, cumulativeTotal } = useDashboard();
   const [chartsHeight, setChartsHeight] = useState(() => calculateChartsHeight());
-
-  useWebSocket(
-    (rawData) => {
-      // No need for now
-    },
-    (structuredData) => {
-      if (structuredData.summary) {
-        const newSummary = {
-          // Convert Unix seconds to milliseconds.
-          timestamp: structuredData.summary.timestamp * 1000,
-          totalTransactions: structuredData.summary.totalTransactions,
-          successTransactions: structuredData.summary.successTransactions,
-          ongoingTransactions: structuredData.summary.ongoingTransactions,
-          failedTransactions: structuredData.summary.failedTransactions,
-        };
-
-        // If this is the first data point, store its timestamp.
-        if (initialTimestampRef.current === null) {
-          initialTimestampRef.current = newSummary.timestamp;
-        }
-        const initialTimestamp = initialTimestampRef.current;
-
-        // Update the cumulative total.
-        setCumulativeTotal(prev => prev + newSummary.totalTransactions);
-
-        let newWindowStart, newWindowEnd;
-        const elapsed = newSummary.timestamp - initialTimestamp;
-        if (elapsed < MAX_WINDOW) {
-          // Before reaching 5 minutes, the window grows gradually.
-          newWindowStart = initialTimestamp;
-          newWindowEnd = newSummary.timestamp;
-        } else {
-          // Once 5 minutes have passed, keep a fixed 5-minute window.
-          newWindowStart = newSummary.timestamp - MAX_WINDOW;
-          newWindowEnd = newSummary.timestamp;
-        }
-
-        // Update the window boundaries.
-        setWindowStart(newWindowStart);
-        setWindowEnd(newWindowEnd);
-
-        // Add the new summary and keep only points within the current window.
-        setSummaryData(prevData =>
-          [...prevData.filter(item => item.timestamp >= newWindowStart), newSummary]
-        );
-      }
-    }
-  );
-
-  // The x-axis domain for the charts.
-  const domain = [windowStart, windowEnd];
   const currentDate = formatDate(new Date());
+  const domain = [windowStart, windowEnd];
 
-  // Update chartsHeight on window resize.
   useEffect(() => {
     const updateChartsHeight = () => {
       setChartsHeight(calculateChartsHeight());
@@ -101,7 +39,6 @@ const Dashboard = () => {
           <GradientSummaryCard totalTransactions={cumulativeTotal} date={currentDate} />
         </div>
       </div>
-      {/* Second row: Three charts in a grid that fills the remaining screen height */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4" style={{ height: chartsHeight }}>
         <SuccessTransactionsChart data={summaryData} domain={domain} chartHeight={chartsHeight} />
         <PendingTransactionsChart data={summaryData} domain={domain} chartHeight={chartsHeight} />
