@@ -8,6 +8,7 @@ import {
   import { Link, useNavigate, useLocation } from 'react-router-dom';
   import { VscGraph } from 'react-icons/vsc';
   import { RiMenuSearchLine, RiLogoutBoxLine } from 'react-icons/ri';
+  import { CgProfile } from "react-icons/cg";
   import { BsBoundingBox } from 'react-icons/bs';
   import { FiSettings } from 'react-icons/fi';
   import NavItem from './sub_components/NavItem';
@@ -77,6 +78,16 @@ import {
             as={Link} 
             to="/queryboard" 
             active={location.pathname === '/queryboard'}
+            activeBg={activeBg}
+          />
+          <NavItem 
+            navSize={navSize} 
+            icon={CgProfile} 
+            title="About" 
+            description="About Page" 
+            as={Link} 
+            to="/about" 
+            active={location.pathname === '/about'}
             activeBg={activeBg}
           />
           {/*

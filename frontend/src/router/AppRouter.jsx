@@ -2,6 +2,7 @@ import React, { Suspense } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import HomePage from "../pages/HomePage";
 import QueryPage from "../pages/QueryPage";
+import AboutPage from "../pages/AboutPage";
 import MetricsPage from "../pages/MetricsPage";
 import SettingsPage from "../pages/SettingsPage";
 import SignIn from "../components/authentication/SignIn";
@@ -16,8 +17,9 @@ const AppRouter = () => {
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/queryboard" element={<QueryPage />} />
+          <Route path="/about" element={<AboutPage />} />
 
-          {/* Protected routes */}
+          {/* Protected routes
           <Route
             path="/metrics"
             element={
@@ -33,10 +35,10 @@ const AppRouter = () => {
                 <SettingsPage />
               // </RequireAuth>
             }
-          />
+          /> */}
 
-          <Route path="/signup" element={<SignUp />} />
-          <Route path="/signin" element={<SignIn />} />
+          {/* <Route path="/signup" element={<SignUp />} />
+          <Route path="/signin" element={<SignIn />} /> */}
 
           {/* Optional: Redirect unknown routes */}
           <Route path="*" element={<Navigate to="/" replace />} />

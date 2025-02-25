@@ -73,7 +73,7 @@ const Dashboard = () => {
   const currentDate = formatDate(new Date());
 
   return (
-    <div className="p-4">
+    <div className="p-4 h-screen overflow-y-scroll">
       <h1 className="text-3xl font-bold mb-10">Dashboard</h1>
       <div className="flex flex-col sm:flex-row items-start justify-between mb-4">
         <div className="flex-1 mr-4">
