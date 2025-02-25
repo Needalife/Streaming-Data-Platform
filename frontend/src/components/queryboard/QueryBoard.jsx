@@ -63,7 +63,8 @@ const QueryBoard = () => {
       }
       setData(fetchedData);
     } else {
-      setError("Error fetching data");
+      setError("No Data");
+      setData([]);
     }
     setLoading(false);
   };
@@ -112,10 +113,6 @@ const QueryBoard = () => {
     setCurrentPage(page);
   };
 
-  if (error) {
-    return <div>Error: {error}</div>;
-  }
-
   return (
     <div className="relative">
       {/* Main Content */}
@@ -124,7 +121,7 @@ const QueryBoard = () => {
           <h1 className="text-3xl font-bold">Queryboard</h1>
           <SearchBar placeholder="Search by ID" onSearch={handleSearch} />
         </div>
-        <div className="">
+        <div>
           <Filters
             onStatusChange={handleStatusChange}
             onAmountChange={handleAmountChange}
@@ -133,13 +130,31 @@ const QueryBoard = () => {
             selectedMaxAmount={maxAmount}
           />
         </div>
+
+        {/* Error message in red text */}
+        {error && (
+          <p className="text-red-500 text-center my-4">
+            {error}
+          </p>
+        )}
+
+        {/* Data table container */}
         <div className="p-6 rounded-lg shadow-md mt-6 bg-white">
-          <DataTable
-            data={data}
-            currentPage={currentPage}
-            hasNextPage={hasNextPage}
-            onPageChange={handlePageChange}
-          />
+          {data && data.length > 0 ? (
+            <DataTable
+              data={data}
+              currentPage={currentPage}
+              hasNextPage={hasNextPage}
+              onPageChange={handlePageChange}
+            />
+          ) : (
+            // When there is no data, show an empty state.
+            !loading && !error && (
+              <div className="text-center p-4">
+                <p>No transactions found</p>
+              </div>
+            )
+          )}
         </div>
       </div>
 
