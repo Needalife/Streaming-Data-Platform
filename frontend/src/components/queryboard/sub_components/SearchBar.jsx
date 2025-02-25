@@ -28,7 +28,7 @@ const SearchBar = ({ placeholder, onSearch }) => {
                 />
                 <button
                     type="submit"
-                    className="absolute right-0 top-1/2 transform -translate-y-1/2 bg-blue-500 text-white p-2 rounded-full hover:bg-blue-600 focus:outline-none flex justify-center items-center"
+                    className="absolute right-0 top-1/2 transform -translate-y-1/2 bg-gradient-to-r from-blue-500 to-purple-600 text-white p-2 rounded-full hover:bg-blue-600 focus:outline-none flex justify-center items-center"
                 >
                     <IoSearchOutline size={35} />
                 </button>

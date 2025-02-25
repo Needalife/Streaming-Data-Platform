@@ -43,35 +43,40 @@ const Pagination = ({ currentPage, hasNextPage, onPageChange }) => {
       <button 
         onClick={handlePrev} 
         disabled={currentPage === 1}
-        className={`px-3 py-2 rounded ${currentPage === 1 ? 'bg-gray-300' : 'bg-blue-500 text-white'}`}
+        className={`px-3 py-2 rounded-full ${currentPage === 1 ? 'bg-gray-300 text-gray-500 cursor-not-allowed' : 'bg-blue-500 text-white hover:bg-blue-600'}`}
       >
         <MdOutlineKeyboardArrowLeft />
       </button>
-
+  
       {/* Page Numbers */}
       {pages.map((page) => (
         <button 
           key={page}
           onClick={() => onPageChange(page)}
-          className={`w-10 h-10 flex items-center justify-center rounded ${page === currentPage ? 'border-2 border-blue-500' : 'bg-gray-200'}`}
+          className={`w-10 h-10 flex items-center justify-center rounded-full transition-all duration-300 
+            ${page === currentPage 
+              ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white' 
+              : 'bg-gray-200 text-black hover:bg-gray-300'}
+          `}
         >
           {page}
         </button>
       ))}
-
+  
       {/* Ellipsis if there is a next page beyond the range */}
       {hasNextPage && <span>...</span>}
-
+  
       {/* Next Button */}
       <button 
         onClick={handleNext} 
         disabled={!hasNextPage}
-        className={`px-3 py-2 rounded ${!hasNextPage ? 'bg-gray-300' : 'bg-blue-500 text-white'}`}
+        className={`px-3 py-2 rounded-full ${!hasNextPage ? 'bg-gray-300 text-gray-500 cursor-not-allowed' : 'bg-blue-500 text-white hover:bg-blue-600'}`}
       >
         <MdOutlineKeyboardArrowRight />
       </button>
     </div>
   );
+  
 };
 
 export default Pagination;

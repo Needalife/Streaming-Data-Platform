@@ -55,9 +55,9 @@ import {
         flexDir="column"
         justifyContent="space-between"
       >
-        <Flex p={paddingValue} flexDir="column" w="100%" alignItems="center">
+        {/* <Flex p={paddingValue} flexDir="column" w="100%" alignItems="center">
           <Avatar size="sm" src="avatar-1.jpg" mb={5} />
-        </Flex>
+        </Flex> */}
   
         <Flex flexDir="column" alignItems="center" justifyContent="center" flex="1">
           <NavItem 

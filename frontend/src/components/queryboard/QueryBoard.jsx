@@ -125,12 +125,12 @@ const QueryBoard = () => {
   }
 
   return (
-    <div className="bg-gray-100">
+    <div className="">
       <div className="flex justify-between items-center">
-        <h1 className="text-3xl p-8">Queryboard</h1>
+        <h1 className="text-3xl font-bold">Queryboard</h1>
         <SearchBar placeholder="Search by ID" onSearch={handleSearch} />
       </div>
-      <div className="p-6 rounded-lg shadow-md">
+      <div className="">
         <Filters
           onStatusChange={handleStatusChange}
           onAmountChange={handleAmountChange}
@@ -139,7 +139,7 @@ const QueryBoard = () => {
           selectedMaxAmount={maxAmount}
         />
       </div>
-      <div className="p-6 rounded-lg shadow-md">
+      <div className="p-6 rounded-lg shadow-md mt-6 bg-white">
         <DataTable
           data={data}
           currentPage={currentPage}

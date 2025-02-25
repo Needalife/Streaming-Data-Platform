@@ -48,7 +48,7 @@ const AmountFilter = ({ onAmountChange, selectedMinAmount, selectedMaxAmount }) 
         />
         <button
           onClick={handleApply}
-          className="bg-blue-500 text-white rounded p-2"
+          className="bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded p-2"
         >
           Apply
         </button>
