@@ -4,6 +4,15 @@ import DataTable from './sub_components/DataTable';
 import SearchBar from '../queryboard/sub_components/SearchBar';
 import { getTransactions, getTransactionById, searchTransactions } from './api/transaction';
 
+// Helper to calculate rows per page based on window height
+const calculateRowsPerPage = () => {
+  const reservedSpace = 400; // space for header, filters, etc.
+  const availableHeight = window.innerHeight - reservedSpace;
+  const estimatedRowHeight = 70;
+  const calculatedRows = Math.floor(availableHeight / estimatedRowHeight);
+  return calculatedRows > 0 ? calculatedRows : 1;
+};
+
 const QueryBoard = () => {
   // Data & loading states
   const [data, setData] = useState([]);
@@ -15,32 +24,24 @@ const QueryBoard = () => {
   const [minAmount, setMinAmount] = useState('');
   const [maxAmount, setMaxAmount] = useState('');
 
-  // Pagination state
+  // Pagination state using lazy initialization for dynamic row count
+  const [rowsPerPage, setRowsPerPage] = useState(() => calculateRowsPerPage());
   const [currentPage, setCurrentPage] = useState(1);
-  const [rowsPerPage, setRowsPerPage] = useState(13);
   const [hasNextPage, setHasNextPage] = useState(false);
 
-  // Dynamically calculate rows per page based on available window height
+  // Update rows per page on window resize
   useEffect(() => {
     const updateRowsPerPage = () => {
-      // Header/search/filters take up spaces.
-      const reservedSpace = 400;
-      const availableHeight = window.innerHeight - reservedSpace;
-      // Estimated height per row in pixels
-      const estimatedRowHeight = 70;
-      const calculatedRows = Math.floor(availableHeight / estimatedRowHeight);
-      setRowsPerPage(calculatedRows > 0 ? calculatedRows : 1);
+      setRowsPerPage(calculateRowsPerPage());
     };
 
-    updateRowsPerPage();
     window.addEventListener('resize', updateRowsPerPage);
     return () => window.removeEventListener('resize', updateRowsPerPage);
   }, []);
 
   // Build filter parameters for the backend query
   const buildFilterParams = () => {
-    const params = {};
-    params.all = false;
+    const params = { all: false };
     if (!selectedStatuses.includes('All') && selectedStatuses.length > 0) {
       params.status = selectedStatuses.join(',');
     }
@@ -59,7 +60,6 @@ const QueryBoard = () => {
 
     const skip = (currentPage - 1) * rowsPerPage;
     const filterParams = buildFilterParams();
-    // Use dynamic rowsPerPage (plus one to check if there's a next page)
     const response = await getTransactions({ ...filterParams, limit: rowsPerPage + 1, skip });
     
     if (response) {
@@ -94,7 +94,6 @@ const QueryBoard = () => {
 
   const handleSearch = async (term) => {
     if (term.trim() === '') {
-      // If empty, re-run fetchData with current filters.
       fetchData();
       return;
     }
@@ -152,7 +151,7 @@ const QueryBoard = () => {
   return (
     <div className="h-screen overflow-y-scroll">
       <div className={`transition-all duration-300 ${loading ? 'blur-sm' : 'blur-0'}`}>
-        <div className="h-[100px] flex justify-between items-center">
+        <div className="flex justify-between items-center">
           <h1 className="text-3xl font-bold">Queryboard</h1>
           <SearchBar placeholder="Search by ID or keyword" onSearch={handleSearch} />
         </div>
