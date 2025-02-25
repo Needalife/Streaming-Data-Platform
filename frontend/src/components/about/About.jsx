@@ -146,8 +146,8 @@ const About = () => {
   );
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6 md:p-12">
-    <h1 className="text-3xl font-bold mb-6">About us</h1>
+    <div className="min-h-screen bg-gray-50">
+    <h1 className="text-3xl font-bold mt-6 mb-6">About us</h1>
       <div className="max-w mx-auto bg-white rounded-xl p-6 md:p-8 shadow-lg">
         <div className="flex space-x-4 mb-8">
           <button
