@@ -25,10 +25,10 @@ const Table = ({ data }) => {
                 <span
                   className={`inline-block px-3 py-1 rounded-full font-bold ${
                     item.status === 'completed'
-                      ? 'bg-green-200 text-green-700'
+                      ? 'bg-blue-200 text-blue-700'     // Success (Blue Purple)
                       : item.status === 'failed'
-                      ? 'bg-red-200 text-red-700'
-                      : 'bg-yellow-200 text-yellow-700'
+                      ? 'bg-red-200 text-red-700'       // Failed (Red)
+                      : 'bg-pink-200 text-pink-700'     // Pending (Pink Red)
                   }`}
                 >
                   {formatStatus(item.status)}

@@ -42,43 +42,56 @@ const About = () => {
   };
 
   const ProjectTab = () => (
-    <div className="space-y-6">
-      <h2 className="text-3xl font-bold mb-4 text-gray-800">Transactions Real-Time Tracking</h2>
+    <div className="space-y-8">
+      <h2 className="text-4xl font-bold mb-6 text-gray-800 bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-purple-600">Transactions Real-Time Tracking</h2>
       
-      <section className="space-y-4">
-        <div>
-          <h3 className="text-xl font-semibold mb-2 text-gray-800">Project Overview</h3>
+      <section className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300">
+          <h3 className="text-xl font-semibold mb-3 text-gray-800 flex items-center">
+            <span className="w-2 h-2 bg-blue-500 rounded-full mr-2"></span>
+            Project Overview
+          </h3>
           <p className="text-gray-600">A comprehensive real-time transaction tracking system designed to monitor and analyze financial transactions across multiple platforms.</p>
         </div>
 
-        <div>
-          <h3 className="text-xl font-semibold mb-2 text-gray-800">Key Features</h3>
-          <ul className="list-disc list-inside text-gray-600">
-            <li>Real-time transaction monitoring</li>
-            <li>Advanced analytics dashboard</li>
-            <li>Multi-platform integration</li>
-            <li>Automated reporting system</li>
+        <div className="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300">
+          <h3 className="text-xl font-semibold mb-3 text-gray-800 flex items-center">
+            <span className="w-2 h-2 bg-purple-500 rounded-full mr-2"></span>
+            Key Features
+          </h3>
+          <ul className="space-y-2 text-gray-600">
+            {["Real-time transaction monitoring", "Advanced analytics charts in dashboard", "Multi-platform integration"].map((feature) => (
+              <li key={feature} className="flex items-center">
+                <span className="w-1.5 h-1.5 bg-purple-400 rounded-full mr-2"></span>
+                {feature}
+              </li>
+            ))}
           </ul>
         </div>
 
-        <div>
-          <h3 className="text-xl font-semibold mb-2 text-gray-800">Technology Stack</h3>
-          <ul className="list-disc list-inside text-gray-600">
-            <li>Frontend: React, Tailwind CSS</li>
-            <li>Backend: Node.js, Express, Golang</li>
-            <li>Database: MongoDB</li>
-            <li>Real-time: Socket.io</li>
-          </ul>
+        <div className="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300">
+          <h3 className="text-xl font-semibold mb-3 text-gray-800 flex items-center">
+            <span className="w-2 h-2 bg-pink-500 rounded-full mr-2"></span>
+            Technology Stack
+          </h3>
+          <div className="grid grid-cols-2 gap-3">
+            {["Frontend: React, Tailwind CSS", "Backend: Golang", "Database: MongoDB", "Real-time: Socket.io"].map((tech) => (
+              <div key={tech} className="bg-gradient-to-r from-blue-50 to-purple-50 p-2 rounded-lg text-gray-700 text-sm">
+                {tech}
+              </div>
+            ))}
+          </div>
         </div>
 
-        <div>
-          <h3 className="text-xl font-semibold mb-2 text-gray-800">Project Goals</h3>
-          <p className="text-gray-600">To provide a robust, scalable solution for real-time transaction tracking while ensuring security and performance.</p>
-        </div>
-
-        <div>
-          <h3 className="text-xl font-semibold mb-2 text-gray-800">Problem Statement Solved</h3>
-          <p className="text-gray-600">Addressed the challenge of monitoring and analyzing high-volume transactions across multiple platforms in real-time.</p>
+        <div className="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300">
+          <h3 className="text-xl font-semibold mb-3 text-gray-800 flex items-center">
+            <span className="w-2 h-2 bg-indigo-500 rounded-full mr-2"></span>
+            Project Goals & Solutions
+          </h3>
+          <div className="space-y-3">
+            <p className="text-gray-600">To provide a robust, scalable solution for real-time transaction tracking while ensuring security and performance.</p>
+            <p className="text-gray-600">Addressed the challenge of monitoring and analyzing high-volume transactions across multiple platforms in real-time.</p>
+          </div>
         </div>
       </section>
     </div>
