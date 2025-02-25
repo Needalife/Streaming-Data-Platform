@@ -1,57 +1,55 @@
 import React, { useState, useEffect } from 'react';
+import ReactSlider from 'react-slider';
+import '../../../../App.css';
 
-const AmountFilter = ({ onAmountChange, selectedMinAmount, selectedMaxAmount }) => {
-  // Local state for the amount inputs
-  const [localMin, setLocalMin] = useState(selectedMinAmount);
-  const [localMax, setLocalMax] = useState(selectedMaxAmount);
+const AmountFilter = ({
+  onAmountChange,
+  selectedMinAmount,
+  selectedMaxAmount,
+  minPossible = 0,
+  maxPossible = 999999,
+}) => {
+  const [rangeValues, setRangeValues] = useState([
+    selectedMinAmount !== '' ? selectedMinAmount : minPossible,
+    selectedMaxAmount !== '' ? selectedMaxAmount : maxPossible,
+  ]);
 
-  // Update local state if parent values change
   useEffect(() => {
-    setLocalMin(selectedMinAmount);
-  }, [selectedMinAmount]);
+    setRangeValues([
+      selectedMinAmount !== '' ? selectedMinAmount : minPossible,
+      selectedMaxAmount !== '' ? selectedMaxAmount : maxPossible,
+    ]);
+  }, [selectedMinAmount, selectedMaxAmount, minPossible, maxPossible]);
 
-  useEffect(() => {
-    setLocalMax(selectedMaxAmount);
-  }, [selectedMaxAmount]);
-
-  const handleMinChange = (e) => {
-    setLocalMin(e.target.value);
+  const handleChange = (values) => {
+    setRangeValues(values);
   };
 
-  const handleMaxChange = (e) => {
-    setLocalMax(e.target.value);
-  };
-
-  const handleApply = () => {
-    console.log("AmountFilter: Applying filter with values:", localMin, localMax);
-    // Pass the current local state values to the parent handler
-    onAmountChange({ min: localMin, max: localMax });
+  const handleAfterChange = (values) => {
+    onAmountChange({ min: values[0], max: values[1] });
   };
 
   return (
     <div>
-      <label className="block mb-2 font-semibold">Filter by Amount</label>
-      <div className="flex space-x-2">
-        <input
-          type="number"
-          placeholder="Min Amount"
-          value={localMin}
-          onChange={handleMinChange}
-          className="w-full border border-gray-300 rounded p-2"
+      <label className="block mb-6 font-semibold">Filter by Amount</label>
+      <div className="mb-2">
+        <ReactSlider
+          className="horizontal-slider"
+          thumbClassName="example-thumb"
+          trackClassName="example-track"
+          min={minPossible}
+          max={maxPossible}
+          value={rangeValues}
+          onChange={handleChange}
+          onAfterChange={handleAfterChange}
+          ariaLabel={['Lower thumb', 'Upper thumb']}
+          pearling
+          minDistance={1}
         />
-        <input
-          type="number"
-          placeholder="Max Amount"
-          value={localMax}
-          onChange={handleMaxChange}
-          className="w-full border border-gray-300 rounded p-2"
-        />
-        <button
-          onClick={handleApply}
-          className="bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded p-2"
-        >
-          Apply
-        </button>
+      </div>
+      <div className="flex justify-between">
+        <span>{rangeValues[0]}</span>
+        <span>{rangeValues[1]}</span>
       </div>
     </div>
   );
