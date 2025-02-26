@@ -11,7 +11,7 @@ COPY . .
 RUN go mod tidy
 
 # Build the application
-RUN go build -o live-data cmd/main.go
+RUN go build -o live-data ./cmd
 
 # Expose WebSocket port
 EXPOSE 8091

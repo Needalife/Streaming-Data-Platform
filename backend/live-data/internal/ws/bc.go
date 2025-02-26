@@ -15,9 +15,9 @@ func broadcastMessage(data interface{}, clients map[*websocket.Conn]bool) {
 	defer mutex.Unlock()
 
 	for client := range clients {
-	    if err := client.WriteJSON(data); err != nil {
-	        client.Close()
-	        delete(clients, client)
-	    }
-    }
+		if err := client.WriteJSON(data); err != nil {
+			client.Close()
+			delete(clients, client)
+		}
+	}
 }
