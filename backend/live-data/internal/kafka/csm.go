@@ -19,8 +19,8 @@ import (
 type Consumer struct{}
 
 var (
-	mutex              = sync.Mutex{}
-	transactionBuffer  []map[string]interface{}
+	mutex             = sync.Mutex{}
+	transactionBuffer []map[string]interface{}
 )
 
 func (c Consumer) Setup(_ sarama.ConsumerGroupSession) error   { return nil }
@@ -55,12 +55,11 @@ func handleMessage(message *sarama.ConsumerMessage, session sarama.ConsumerGroup
 
 func StartConsumer(broker, topic, groupID string) {
 	config := sarama.NewConfig()
-	config.Consumer.Group.Rebalance.Strategy = sarama.BalanceStrategyRoundRobin
 	config.Consumer.Offsets.Initial = -2
 	config.Consumer.Return.Errors = true
 	config.Consumer.Fetch.Min = 1
-	config.Consumer.Fetch.Default = 1048576 
-	config.ChannelBufferSize = 1024         
+	config.Consumer.Fetch.Default = 1048576
+	config.ChannelBufferSize = 1024
 
 	consumerGroup, err := sarama.NewConsumerGroup([]string{broker}, groupID, config)
 	if err != nil {

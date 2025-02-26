@@ -1,4 +1,4 @@
-package deps
+package config
 
 import (
 	"github.com/go-redis/redis/v8"

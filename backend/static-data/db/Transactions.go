@@ -241,3 +241,20 @@ func FetchAvailableDates(client *mongo.Client) ([]string, error) {
 	}
 	return collections, nil
 }
+
+// CountToday returns the total number of transactions in today's collection.
+func CountToday(client *mongo.Client) (int64, error) {
+	ctx := context.Background()
+	dbInstance := client.Database("static_data")
+
+	// Build today's collection name using the format "collection_YYYY-MM-DD"
+	today := time.Now().Format("2006-01-02")
+	collectionName := "collection_" + today
+
+	// Count all documents in the collection.
+	count, err := dbInstance.Collection(collectionName).CountDocuments(ctx, bson.M{})
+	if err != nil {
+		return 0, fmt.Errorf("error counting documents in %s: %v", collectionName, err)
+	}
+	return count, nil
+}
