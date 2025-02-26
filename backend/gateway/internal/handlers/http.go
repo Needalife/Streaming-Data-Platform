@@ -9,7 +9,7 @@ import (
 	"strings"
 	"time"
 
-	"gateway/internal/deps"
+	"gateway/internal/config"
 	myredis "gateway/internal/redis"
 )
 
@@ -19,7 +19,7 @@ func buildCacheKey(path, rawQuery string) string {
 	return fmt.Sprintf("gwcache:%s?%s", path, rawQuery)
 }
 
-func ForwardHTTPRequestWithCache(d *deps.Deps) http.HandlerFunc {
+func ForwardHTTPRequestWithCache(d *config.Deps) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		// 1. Remove the "/gateway/v1/static" prefix.
 		backendPath := strings.TrimPrefix(r.URL.Path, "/gateway/v1/static")

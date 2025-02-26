@@ -3,8 +3,8 @@ package main
 import (
 	"fmt"
 	"gateway/internal/config"
-	"gateway/internal/deps"
 	"gateway/internal/handlers"
+	"gateway/internal/redis"
 	"net/http"
 	"time"
 
@@ -14,7 +14,22 @@ import (
 
 type application struct {
 	appConfig config.AppConfig
-	deps      *deps.Deps
+	deps      *config.Deps
+}
+
+func Application(cfg config.AppConfig) *application {
+
+	redisClient := redis.NewRedisClient()
+	fmt.Println("Redis client is ready:", redisClient)
+
+	depsStruct := &config.Deps{
+		RedisClient: redisClient,
+	}
+
+	return &application{
+		appConfig: cfg,
+		deps:      depsStruct,
+	}
 }
 
 func (app *application) mount() http.Handler {
@@ -28,13 +43,13 @@ func (app *application) mount() http.Handler {
 	r.Route("/gateway/v1", func(r chi.Router) {
 		r.Get("/health", app.healthCheckHandler)
 
-		//static-data api
+		// Static-data API endpoints with caching.
 		r.HandleFunc("/static/transactions", handlers.ForwardHTTPRequestWithCache(app.deps))
 		r.HandleFunc("/static/transactions/filters", handlers.ForwardHTTPRequestWithCache(app.deps))
 		r.HandleFunc("/static/transactions/dates", handlers.ForwardHTTPRequestWithCache(app.deps))
 		r.HandleFunc("/static/transactions/{id}", handlers.ForwardHTTPRequestWithCache(app.deps))
 
-		//live-data ws connection
+		// Live-data WS connection.
 		r.HandleFunc("/live", handlers.ForwardWSConnection)
 	})
 
@@ -50,7 +65,6 @@ func (app *application) run(mux http.Handler) error {
 		IdleTimeout:  time.Minute,
 	}
 
-	fmt.Printf("Server has started at port%s \n", app.appConfig.Port)
-
+	fmt.Printf("Server has started at port %s\n", app.appConfig.Port)
 	return srv.ListenAndServe()
 }
