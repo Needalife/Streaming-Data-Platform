@@ -41,6 +41,7 @@ func main() {
 	// Static routes (order matters: static routes first)
 	router.HandleFunc("/transactions/search", api.SearchTransactions(client)).Methods("GET")
 	router.HandleFunc("/transactions/dates", api.GetAvailableDates(client)).Methods("GET")
+	router.HandleFunc("/transactions/count", api.GetTodayCount(client)).Methods("GET")
 
 	// Dynamic route with constraint
 	router.HandleFunc("/transactions/{id:[0-9a-fA-F]{24}}", api.GetTransactionByID(client)).Methods("GET")

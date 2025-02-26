@@ -85,3 +85,20 @@ func GetAvailableDates(client *mongo.Client) http.HandlerFunc {
 		json.NewEncoder(w).Encode(dates)
 	}
 }
+
+// GetTodayCount returns the total number of transactions in today's collection.
+func GetTodayCount(client *mongo.Client) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		count, err := db.CountToday(client)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		// Return the count in a JSON object.
+		response := map[string]interface{}{
+			"todayCount": count,
+		}
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(response)
+	}
+}

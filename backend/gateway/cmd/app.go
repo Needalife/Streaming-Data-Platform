@@ -49,6 +49,9 @@ func (app *application) mount() http.Handler {
 		r.HandleFunc("/static/transactions/dates", handlers.ForwardHTTPRequestWithCache(app.deps))
 		r.HandleFunc("/static/transactions/{id}", handlers.ForwardHTTPRequestWithCache(app.deps))
 
+		// Static-data API endpoints without caching.
+		r.Get("/static/transactions/count", handlers.ForwardHTTPRequestNoCache())
+
 		// Live-data WS connection.
 		r.HandleFunc("/live", handlers.ForwardWSConnection)
 	})
