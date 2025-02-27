@@ -11,7 +11,8 @@ const Table = ({ data }) => {
             <th className="py-2 px-4 text-center w-1/5">Time & Date</th>
             <th className="py-2 px-4 text-center w-1/5">Status</th>
             <th className="py-2 px-4 text-center w-1/5">Type</th>
-            <th className="py-2 px-4 text-center w-1/5">Amount</th>
+            <th className="py-2 px-4 text-center w-1/5">Amount (USD)</th>
+            {/* <th className="py-2 px-4 text-center w-1/5">Currency</th> */}
           </tr>
         </thead>
         <tbody>
@@ -36,6 +37,7 @@ const Table = ({ data }) => {
               </td>
               <td className="py-2 px-4 text-center w-1/5">{item.type}</td>
               <td className="py-2 px-4 text-center w-1/5">{item.amount}</td>
+              {/* <td className="py-2 px-4 text-center w-1/5">{item.currency}</td> */}
             </tr>
           ))}
         </tbody>
