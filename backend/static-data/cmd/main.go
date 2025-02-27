@@ -6,9 +6,9 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"static-data/api"
-	"static-data/db"
-	"static-data/kafka"
+	"static-data/internal/api"
+	"static-data/internal/db"
+	"static-data/internal/kafka"
 
 	"github.com/gorilla/mux"
 	"github.com/joho/godotenv"

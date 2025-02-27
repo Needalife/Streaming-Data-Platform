@@ -3,7 +3,7 @@ package api
 import (
 	"encoding/json"
 	"net/http"
-	"static-data/db"
+	"static-data/internal/db"
 	"time"
 
 	"github.com/gorilla/mux"

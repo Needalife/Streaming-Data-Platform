@@ -7,7 +7,7 @@ import (
 	"log"
 	"os"
 	"os/signal"
-	"static-data/db"
+	"static-data/internal/db"
 	"syscall"
 	"time"
 
