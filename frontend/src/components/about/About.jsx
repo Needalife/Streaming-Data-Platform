@@ -151,8 +151,9 @@ const About = () => {
     const isMobile = width < 768 || height < 700;
 
     if (isMobile) {
+      //MemberCard mobile branch
       return (
-        <div className="bg-white shadow-lg rounded-lg p-6 transition-transform hover:scale-105">
+        <div className="flex flex-col bg-white shadow-lg rounded-lg p-6 transition-transform hover:scale-105">
           <img
             src={member.image}
             alt={member.name}
@@ -161,7 +162,9 @@ const About = () => {
               e.target.src = "https://images.unsplash.com/photo-1518791841217-8f162f1e1131";
             }}
           />
-          <h3 className="text-xl font-semibold text-center mb-2 text-gray-800">{member.name}</h3>
+          <h3 className="text-xl font-semibold text-center mb-2 text-gray-800">
+            {member.name}
+          </h3>
           <p className="text-gray-600 text-center mb-2">{member.role}</p>
           {member.summary && (
             <p className="text-gray-500 text-center mb-3">{member.summary}</p>
@@ -169,9 +172,7 @@ const About = () => {
           {member.specialization && (
             <p className="text-gray-500 text-center mb-3">{member.specialization}</p>
           )}
-          {member.description && (
-            <p className="text-gray-500 text-center mb-3">{member.description}</p>
-          )}
+          {/* Omit description in mobile mode */}
           {member.skills && (
             <div className="flex flex-wrap justify-center gap-2 mb-3">
               {member.skills.map((skill) => (
@@ -184,16 +185,27 @@ const About = () => {
               ))}
             </div>
           )}
-          <div className="flex justify-center space-x-4">
-            <a href={member.github} target="_blank" rel="noopener noreferrer" className="text-gray-600 hover:text-gray-800">
+          <div className="mt-auto flex justify-center space-x-4">
+            <a
+              href={member.github}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-gray-600 hover:text-gray-800"
+            >
               <FaGithub size={24} />
             </a>
-            <a href={member.linkedin} target="_blank" rel="noopener noreferrer" className="text-gray-600 hover:text-gray-800">
+            <a
+              href={member.linkedin}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-gray-600 hover:text-gray-800"
+            >
               <FaLinkedin size={24} />
             </a>
           </div>
         </div>
       );
+      //MemberCard Desktop branch
     } else {
       return (
         <div
@@ -210,16 +222,21 @@ const About = () => {
               }}
             />
           </div>
-          <div className="h-1/2 p-6 flex flex-col justify-start">
+          <div className="h-1/2 p-6 flex flex-col">
             <h3 className="text-2xl font-semibold text-center mb-2 text-gray-800">
               {member.name}
             </h3>
             <p className="text-gray-600 text-center mb-2">{member.role}</p>
             {member.summary && (
-              <p className="text-gray-500 text-center mb-3">{member.summary}</p>
+              <p className="text-gray-500 text-justify mb-3">{member.summary}</p>
             )}
             {member.specialization && (
-              <p className="text-gray-500 text-center mb-3">{member.specialization}</p>
+              <p className="text-gray-500 text-justify mb-3">{member.specialization}</p>
+            )}
+            {member.description && (
+              <p className="text-gray-500 text-justify mb-3 line-clamp-3">
+                {member.description}
+              </p>
             )}
             {member.skills && (
               <div className="flex flex-wrap justify-center gap-2 mb-3">
@@ -233,10 +250,8 @@ const About = () => {
                 ))}
               </div>
             )}
-            {member.description && (
-              <p className="text-gray-500 text-center text-justify mb-3">{member.description}</p>
-            )}
-            <div className="flex justify-center mt-auto space-x-4">
+            {/* Links always remain at the bottom */}
+            <div className="mt-auto flex justify-center space-x-4">
               <a
                 href={member.github}
                 target="_blank"
@@ -255,6 +270,7 @@ const About = () => {
               </a>
             </div>
           </div>
+
         </div>
       );
     }
@@ -280,21 +296,19 @@ const About = () => {
         <div className="flex space-x-4 mb-8">
           <button
             onClick={() => setActiveTab("project")}
-            className={`px-6 py-3 rounded-lg font-semibold transition-all ${
-              activeTab === "project"
-                ? "bg-gradient-to-r from-blue-500 to-purple-600 text-white"
-                : "text-gray-600 hover:bg-gray-100"
-            }`}
+            className={`px-6 py-3 rounded-lg font-semibold transition-all ${activeTab === "project"
+              ? "bg-gradient-to-r from-blue-500 to-purple-600 text-white"
+              : "text-gray-600 hover:bg-gray-100"
+              }`}
           >
             Project
           </button>
           <button
             onClick={() => setActiveTab("members")}
-            className={`px-6 py-3 rounded-lg font-semibold transition-all ${
-              activeTab === "members"
-                ? "bg-gradient-to-r from-blue-500 to-purple-600 text-white"
-                : "text-gray-600 hover:bg-gray-100"
-            }`}
+            className={`px-6 py-3 rounded-lg font-semibold transition-all ${activeTab === "members"
+              ? "bg-gradient-to-r from-blue-500 to-purple-600 text-white"
+              : "text-gray-600 hover:bg-gray-100"
+              }`}
           >
             Team Members
           </button>
