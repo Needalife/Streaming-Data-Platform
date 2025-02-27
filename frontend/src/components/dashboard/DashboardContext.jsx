@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useRef, useState, useEffect } from 'react';
 import { useWebSocket } from './hooks/useWebSocket';
+import { fetchTransactionCount } from './hooks/useTotalCount';
 
 const DashboardContext = createContext();
 
@@ -13,6 +14,21 @@ export const DashboardProvider = ({ children }) => {
   const [windowEnd, setWindowEnd] = useState(Date.now());
   const [summaryData, setSummaryData] = useState([]);
   const [cumulativeTotal, setCumulativeTotal] = useState(0);
+
+  // On mount, fetch the initial transaction count and set cumulativeTotal.
+  useEffect(() => {
+    const fetchInitialCount = async () => {
+      try {
+        const initialCountResponse = await fetchTransactionCount();
+        // Assuming the response is { todayCount: number }
+        setCumulativeTotal(initialCountResponse.todayCount);
+      } catch (error) {
+        console.error('Failed to fetch initial transaction count:', error);
+      }
+    };
+    fetchInitialCount();
+  }, []);
+  
 
   useWebSocket(
     (rawData) => {
@@ -34,7 +50,7 @@ export const DashboardProvider = ({ children }) => {
         }
         const initialTimestamp = initialTimestampRef.current;
 
-        // Update the cumulative total.
+        // Update the cumulative total by adding the new transactions.
         setCumulativeTotal(prev => prev + newSummary.totalTransactions);
 
         let newWindowStart, newWindowEnd;
