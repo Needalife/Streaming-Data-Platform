@@ -20,29 +20,28 @@ export const getTransactions = async ({ all = true, status, minAmount, maxAmount
     try {
       const params = { all, status, minAmount, maxAmount, limit, skip };
       const response = await axios.get(`${API_BASE_URL}`, { params });
-      const transactions = response.data;
-  
-      // Convert each transaction's amount to USD
-      const convertedTransactions = transactions.map(item => {
-        // If already in USD, no conversion is needed.
-        if (item.currency === 'USD') {
-          return item;
-        }
-        const rate = exchangeRatesToUSD[item.currency];
-        if (rate) {
-          const convertedAmount = item.amount * rate;
-          return {
-            ...item,
-            amount: convertedAmount,
-            currency: 'USD'
-          };
-        }
-        // If there’s no conversion rate defined, you might choose to leave it unchanged,
-        // throw an error, or handle it as you see fit.
-        return item;
-      });
-  
-      return convertedTransactions;
+      return response.data;
+    //   const transactions = response.data;
+    //   // Convert each transaction's amount to USD
+    //   const convertedTransactions = transactions.map(item => {
+    //     // If already in USD, no conversion is needed.
+    //     if (item.currency === 'USD') {
+    //       return item;
+    //     }
+    //     const rate = exchangeRatesToUSD[item.currency];
+    //     if (rate) {
+    //       const convertedAmount = item.amount * rate;
+    //       return {
+    //         ...item,
+    //         amount: convertedAmount,
+    //         currency: 'USD'
+    //       };
+    //     }
+    //     // If there’s no conversion rate defined, you might choose to leave it unchanged,
+    //     // throw an error, or handle it as you see fit.
+    //     return item;
+    //   });
+    //   return convertedTransactions;
     } catch (error) {
       console.error('Error fetching transactions:', error);
       return null;
