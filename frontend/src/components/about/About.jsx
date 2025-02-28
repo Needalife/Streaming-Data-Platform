@@ -217,15 +217,14 @@ const About = () => {
             <h2 className="text-4xl font-bold mb-6 text-gray-800 bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-purple-600">
               Transactions Real-Time Tracking
             </h2>
-            <section className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <section className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300">
                 <h3 className="text-xl font-semibold mb-3 text-gray-800 flex items-center">
                   <span className="w-2 h-2 bg-blue-500 rounded-full mr-2"></span>
                   Project Overview
                 </h3>
-                <p className="text-gray-600">
-                  A comprehensive real-time transaction tracking system designed to
-                  monitor and analyze financial transactions across multiple platforms.
+                <p className="text-gray-600 text-justify">
+                Our project is a state-of-the-art financial transaction tracking system that monitors and analyzes real-time transactions from multiple platforms with exceptional accuracy. Built on modern cloud infrastructure and advanced analytics, it delivers instant insights to help businesses detect trends and anomalies quickly. Its intuitive interface and robust security measures empower users to make informed, data-driven decisions in today’s fast-paced financial environment.
                 </p>
               </div>
               <div className="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300">
@@ -293,11 +292,8 @@ const About = () => {
                   Project Goals & Solutions
                 </h3>
                 <div className="space-y-3">
-                  <p className="text-gray-600">
-                    To provide a robust, scalable solution for real-time transaction tracking while ensuring security and performance.
-                  </p>
-                  <p className="text-gray-600">
-                    Addressed the challenge of monitoring and analyzing high-volume transactions across multiple platforms in real-time.
+                  <p className="text-gray-600 text-justify">
+                  Our goal is to transform financial monitoring by offering a scalable, real-time solution that handles high transaction volumes without compromising security or accuracy. We integrate advanced analytical tools, dynamic dashboards, and predictive modeling to turn complex data into actionable insights. This approach not only simplifies financial management but also supports proactive decision-making, driving operational excellence and sustainable business growth.
                   </p>
                 </div>
               </div>
@@ -317,7 +313,7 @@ const About = () => {
     }
   };
 
-  // MemberCard (code remains unchanged from previous version)
+  // MemberCard
   const MemberCard = ({ member }) => {
     const { width, height } = useWindowDimensions();
     const isMobile = width < 768 || height < 700;
@@ -377,6 +373,7 @@ const About = () => {
           </div>
         </div>
       );
+      //Member Desktop
     } else {
       return (
         <div
@@ -400,10 +397,10 @@ const About = () => {
             </h3>
             <p className="text-gray-600 text-center mb-2">{member.role}</p>
             {member.summary && (
-              <p className="text-gray-500 text-justify mb-3">{member.summary}</p>
+              <p className="text-gray-500 text-center mb-3">{member.summary}</p>
             )}
             {member.specialization && (
-              <p className="text-gray-500 text-justify mb-3">{member.specialization}</p>
+              <p className="text-gray-500 text-center mb-3">{member.specialization}</p>
             )}
             {member.description && (
               <TruncatedDescription text={member.description} lines={3} />
