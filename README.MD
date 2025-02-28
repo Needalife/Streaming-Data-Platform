@@ -29,3 +29,6 @@ This project consists of a backend and frontend setup to manage and visualize da
     docker-compose down -v
 
 ## Frontend Setup
+
+## License
+This project is licensed under the [MIT License](LICENSE).
