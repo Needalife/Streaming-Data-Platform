@@ -2,7 +2,7 @@
 
 This project consists of a backend and frontend setup to manage and visualize data.
 
-## Simulates real data
+## Simulates real-time data
 1. Navigate to the data-pipeline dirctory:
    ```bash
    cd data-pipeline
@@ -12,7 +12,6 @@ This project consists of a backend and frontend setup to manage and visualize da
    docker-compose up -d --build
 
 3. To shut docker container down:
-
     ```bash
     docker-compose down -v
 
@@ -26,7 +25,6 @@ This project consists of a backend and frontend setup to manage and visualize da
    docker-compose up -d --build
 
 3. To shut docker container down:
-
     ```bash
     docker-compose down -v
 
