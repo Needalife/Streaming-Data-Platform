@@ -335,10 +335,10 @@ const About = () => {
           </h3>
           <p className="text-gray-600 text-center mb-2">{member.role}</p>
           {member.summary && (
-            <p className="text-gray-500 text-justify mb-3">{member.summary}</p>
+            <p className="text-gray-500 text-center mb-3">{member.summary}</p>
           )}
           {member.specialization && (
-            <p className="text-gray-500 text-justify mb-3">{member.specialization}</p>
+            <p className="text-gray-500 text-center mb-3">{member.specialization}</p>
           )}
           {/* Omit description in mobile */}
           {member.skills && (
