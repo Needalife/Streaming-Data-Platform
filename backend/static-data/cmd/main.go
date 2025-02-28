@@ -6,9 +6,9 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"static-data/api"
-	"static-data/db"
-	"static-data/kafka"
+	"static-data/internal/api"
+	"static-data/internal/db"
+	"static-data/internal/kafka"
 
 	"github.com/gorilla/mux"
 	"github.com/joho/godotenv"
@@ -42,6 +42,7 @@ func main() {
 	router.HandleFunc("/transactions/search", api.SearchTransactions(client)).Methods("GET")
 	router.HandleFunc("/transactions/dates", api.GetAvailableDates(client)).Methods("GET")
 	router.HandleFunc("/transactions/count", api.GetTodayCount(client)).Methods("GET")
+	router.HandleFunc("/transactions/archive", api.GetArchiveCount(client)).Methods("GET")
 
 	// Dynamic route with constraint
 	router.HandleFunc("/transactions/{id:[0-9a-fA-F]{24}}", api.GetTransactionByID(client)).Methods("GET")
