@@ -1,5 +1,15 @@
-import { useState, useEffect } from "react";
-import { FaGithub, FaLinkedin } from "react-icons/fa";
+import { useState, useEffect, useRef } from "react";
+import { FaGithub, FaLinkedin, FaWifi } from "react-icons/fa";
+import {
+  SiReact,
+  SiTailwindcss,
+  SiGo,
+  SiMongodb,
+  SiSocketdotio,
+  SiRedis,
+  SiDocker,
+  SiPython,
+} from "react-icons/si";
 
 // Custom hook to get current window dimensions
 function useWindowDimensions() {
@@ -21,6 +31,29 @@ function useWindowDimensions() {
 
   return windowDimensions;
 }
+
+// Custom component that conditionally truncates text if it overflows.
+const TruncatedDescription = ({ text, lines = 3 }) => {
+  const ref = useRef(null);
+  const [isOverflowing, setIsOverflowing] = useState(false);
+
+  useEffect(() => {
+    if (ref.current) {
+      // Compare scrollHeight with clientHeight to determine if text is overflowing.
+      setIsOverflowing(ref.current.scrollHeight > ref.current.clientHeight);
+    }
+  }, [text]);
+
+  return (
+    <p
+      ref={ref}
+      className={`text-gray-500 text-justify mb-3 ${isOverflowing ? `line-clamp-${lines}` : ""
+        }`}
+    >
+      {text}
+    </p>
+  );
+};
 
 const About = () => {
   const [activeTab, setActiveTab] = useState("project");
@@ -75,92 +108,210 @@ const About = () => {
     ],
   };
 
-  const ProjectTab = () => (
-    <div className="space-y-8">
-      <h2 className="text-4xl font-bold mb-6 text-gray-800 bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-purple-600">
-        Transactions Real-Time Tracking
-      </h2>
+  // ProjectTab now fills the screen similar to the Member layout.
+  const ProjectTab = () => {
+    const { width, height } = useWindowDimensions();
+    const isMobile = width < 768 || height < 700;
 
-      <section className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300">
-          <h3 className="text-xl font-semibold mb-3 text-gray-800 flex items-center">
-            <span className="w-2 h-2 bg-blue-500 rounded-full mr-2"></span>
-            Project Overview
-          </h3>
-          <p className="text-gray-600">
-            A comprehensive real-time transaction tracking system designed to
-            monitor and analyze financial transactions across multiple platforms.
-          </p>
-        </div>
-
-        <div className="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300">
-          <h3 className="text-xl font-semibold mb-3 text-gray-800 flex items-center">
-            <span className="w-2 h-2 bg-purple-500 rounded-full mr-2"></span>
-            Key Features
-          </h3>
-          <ul className="space-y-2 text-gray-600">
-            {[
-              "Real-time transaction monitoring",
-              "Advanced analytics charts in dashboard",
-              "Multi-platform integration",
-            ].map((feature) => (
-              <li key={feature} className="flex items-center">
-                <span className="w-1.5 h-1.5 bg-purple-400 rounded-full mr-2"></span>
-                {feature}
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        <div className="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300">
-          <h3 className="text-xl font-semibold mb-3 text-gray-800 flex items-center">
-            <span className="w-2 h-2 bg-pink-500 rounded-full mr-2"></span>
-            Technology Stack
-          </h3>
-          <div className="grid grid-cols-2 gap-3">
-            {[
-              "Frontend: React, Tailwind CSS",
-              "Backend: Golang",
-              "Database: MongoDB",
-              "Real-time: Socket.io",
-            ].map((tech) => (
-              <div
-                key={tech}
-                className="bg-gradient-to-r from-blue-50 to-purple-50 p-2 rounded-lg text-gray-700 text-sm"
-              >
-                {tech}
+    if (isMobile) {
+      return (
+        <div className="space-y-8">
+          <h2 className="text-4xl font-bold mb-6 text-gray-800 bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-purple-600">
+            Transactions Real-Time Tracking
+          </h2>
+          <section className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300">
+              <h3 className="text-xl font-semibold mb-3 text-gray-800 flex items-center">
+                <span className="w-2 h-2 bg-blue-500 rounded-full mr-2"></span>
+                Project Overview
+              </h3>
+              <p className="text-gray-600">
+                A comprehensive real-time transaction tracking system designed to
+                monitor and analyze financial transactions across multiple platforms.
+              </p>
+            </div>
+            <div className="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300">
+              <h3 className="text-xl font-semibold mb-3 text-gray-800 flex items-center">
+                <span className="w-2 h-2 bg-purple-500 rounded-full mr-2"></span>
+                Key Features
+              </h3>
+              <ul className="space-y-2 text-gray-600">
+                {[
+                  "Real-time transaction monitoring",
+                  "Advanced analytics charts in dashboard",
+                  "Multi-platform integration",
+                ].map((feature) => (
+                  <li key={feature} className="flex items-center">
+                    <span className="w-1.5 h-1.5 bg-purple-400 rounded-full mr-2"></span>
+                    {feature}
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div className="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300">
+              <h3 className="text-xl font-semibold mb-3 text-gray-800 flex items-center">
+                <span className="w-2 h-2 bg-pink-500 rounded-full mr-2"></span>
+                Technology Stack
+              </h3>
+              <div className="grid grid-cols-4 gap-3 justify-center items-center">
+                <div className="flex flex-col items-center">
+                  <SiReact size={32} className="text-blue-500" />
+                  <span className="mt-1 text-xs">React</span>
+                </div>
+                <div className="flex flex-col items-center">
+                  <SiTailwindcss size={32} className="text-teal-500" />
+                  <span className="mt-1 text-xs">Tailwind</span>
+                </div>
+                <div className="flex flex-col items-center">
+                  <SiGo size={32} className="text-blue-600" />
+                  <span className="mt-1 text-xs">Golang</span>
+                </div>
+                <div className="flex flex-col items-center">
+                  <SiMongodb size={32} className="text-green-500" />
+                  <span className="mt-1 text-xs">MongoDB</span>
+                </div>
+                <div className="flex flex-col items-center">
+                  <SiSocketdotio size={32} className="text-gray-600" />
+                  <span className="mt-1 text-xs">Socket.io</span>
+                </div>
+                <div className="flex flex-col items-center">
+                  <SiRedis size={32} className="text-red-500" />
+                  <span className="mt-1 text-xs">Redis</span>
+                </div>
+                <div className="flex flex-col items-center">
+                  <SiDocker size={32} className="text-blue-400" />
+                  <span className="mt-1 text-xs">Docker</span>
+                </div>
+                <div className="flex flex-col items-center">
+                  <SiPython size={32} className="text-yellow-500" />
+                  <span className="mt-1 text-xs">Python</span>
+                </div>
               </div>
-            ))}
+            </div>
+            <div className="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300">
+              <h3 className="text-xl font-semibold mb-3 text-gray-800 flex items-center">
+                <span className="w-2 h-2 bg-indigo-500 rounded-full mr-2"></span>
+                Project Goals & Solutions
+              </h3>
+              <div className="space-y-3">
+                <p className="text-gray-600">
+                  To provide a robust, scalable solution for real-time transaction tracking while ensuring security and performance.
+                </p>
+                <p className="text-gray-600">
+                  Addressed the challenge of monitoring and analyzing high-volume transactions across multiple platforms in real-time.
+                </p>
+              </div>
+            </div>
+          </section>
+        </div>
+      );
+    } else {
+      return (
+        <div
+          className="flex flex-col bg-white rounded-xl shadow-lg overflow-hidden transition-all"
+          style={{ height: "calc(100vh - 16rem)" }}
+        >
+          <div className="p-6 flex-1 overflow-auto">
+            <h2 className="text-4xl font-bold mb-6 text-gray-800 bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-purple-600">
+              Transactions Real-Time Tracking
+            </h2>
+            <section className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300">
+                <h3 className="text-xl font-semibold mb-3 text-gray-800 flex items-center">
+                  <span className="w-2 h-2 bg-blue-500 rounded-full mr-2"></span>
+                  Project Overview
+                </h3>
+                <p className="text-gray-600">
+                  A comprehensive real-time transaction tracking system designed to
+                  monitor and analyze financial transactions across multiple platforms.
+                </p>
+              </div>
+              <div className="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300">
+                <h3 className="text-xl font-semibold mb-3 text-gray-800 flex items-center">
+                  <span className="w-2 h-2 bg-purple-500 rounded-full mr-2"></span>
+                  Key Features
+                </h3>
+                <ul className="space-y-2 text-gray-600">
+                  {[
+                    "Real-time transaction monitoring",
+                    "Advanced analytics charts in dashboard",
+                    "Multi-platform integration",
+                  ].map((feature) => (
+                    <li key={feature} className="flex items-center">
+                      <span className="w-1.5 h-1.5 bg-purple-400 rounded-full mr-2"></span>
+                      {feature}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <div className="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300">
+                <h3 className="text-xl font-semibold mb-3 text-gray-800 flex items-center">
+                  <span className="w-2 h-2 bg-pink-500 rounded-full mr-2"></span>
+                  Technology Stack
+                </h3>
+                <div className="grid grid-cols-4 gap-3 justify-center items-center">
+                  <div className="flex flex-col items-center">
+                    <SiReact size={48} className="text-blue-500" />
+                    <span className="mt-1 text-sm">React</span>
+                  </div>
+                  <div className="flex flex-col items-center">
+                    <SiTailwindcss size={48} className="text-teal-500" />
+                    <span className="mt-1 text-sm">Tailwind</span>
+                  </div>
+                  <div className="flex flex-col items-center">
+                    <SiGo size={48} className="text-blue-600" />
+                    <span className="mt-1 text-sm">Golang</span>
+                  </div>
+                  <div className="flex flex-col items-center">
+                    <SiMongodb size={48} className="text-green-500" />
+                    <span className="mt-1 text-sm">MongoDB</span>
+                  </div>
+                  <div className="flex flex-col items-center">
+                    <FaWifi size={48} className="text-gray-600" />
+                    <span className="mt-1 text-sm">Websocket</span>
+                  </div>
+                  <div className="flex flex-col items-center">
+                    <SiRedis size={48} className="text-red-500" />
+                    <span className="mt-1 text-sm">Redis</span>
+                  </div>
+                  <div className="flex flex-col items-center">
+                    <SiDocker size={48} className="text-blue-400" />
+                    <span className="mt-1 text-sm">Docker</span>
+                  </div>
+                  <div className="flex flex-col items-center">
+                    <SiPython size={48} className="text-yellow-500" />
+                    <span className="mt-1 text-sm">Python</span>
+                  </div>
+                </div>
+
+              </div>
+              <div className="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300">
+                <h3 className="text-xl font-semibold mb-3 text-gray-800 flex items-center">
+                  <span className="w-2 h-2 bg-indigo-500 rounded-full mr-2"></span>
+                  Project Goals & Solutions
+                </h3>
+                <div className="space-y-3">
+                  <p className="text-gray-600">
+                    To provide a robust, scalable solution for real-time transaction tracking while ensuring security and performance.
+                  </p>
+                  <p className="text-gray-600">
+                    Addressed the challenge of monitoring and analyzing high-volume transactions across multiple platforms in real-time.
+                  </p>
+                </div>
+              </div>
+            </section>
           </div>
         </div>
+      );
+    }
+  };
 
-        <div className="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300">
-          <h3 className="text-xl font-semibold mb-3 text-gray-800 flex items-center">
-            <span className="w-2 h-2 bg-indigo-500 rounded-full mr-2"></span>
-            Project Goals & Solutions
-          </h3>
-          <div className="space-y-3">
-            <p className="text-gray-600">
-              To provide a robust, scalable solution for real-time transaction
-              tracking while ensuring security and performance.
-            </p>
-            <p className="text-gray-600">
-              Addressed the challenge of monitoring and analyzing high-volume
-              transactions across multiple platforms in real-time.
-            </p>
-          </div>
-        </div>
-      </section>
-    </div>
-  );
-
-  // MemberCard conditionally renders mobile or desktop design based on viewport dimensions.
+  // MemberCard (code remains unchanged from previous version)
   const MemberCard = ({ member }) => {
     const { width, height } = useWindowDimensions();
     const isMobile = width < 768 || height < 700;
 
     if (isMobile) {
-      // MemberCard mobile branch
       return (
         <div className="flex flex-col bg-white shadow-lg rounded-lg p-6 transition-transform hover:scale-105">
           <img
@@ -168,7 +319,8 @@ const About = () => {
             alt={member.name}
             className="w-32 h-32 rounded-full mx-auto mb-4 object-cover"
             onError={(e) => {
-              e.target.src = "https://images.unsplash.com/photo-1518791841217-8f162f1e1131";
+              e.target.src =
+                "https://images.unsplash.com/photo-1518791841217-8f162f1e1131";
             }}
           />
           <h3 className="text-xl font-semibold text-center mb-2 text-gray-800">
@@ -181,7 +333,7 @@ const About = () => {
           {member.specialization && (
             <p className="text-gray-500 text-justify mb-3">{member.specialization}</p>
           )}
-          {/* Omit description in mobile mode */}
+          {/* Omit description in mobile */}
           {member.skills && (
             <div className="flex flex-wrap justify-center gap-2 mb-3">
               {member.skills.map((skill) => (
@@ -214,7 +366,6 @@ const About = () => {
           </div>
         </div>
       );
-
     } else {
       return (
         <div
@@ -238,10 +389,13 @@ const About = () => {
             </h3>
             <p className="text-gray-600 text-center mb-2">{member.role}</p>
             {member.summary && (
-              <p className="text-gray-500 text-center mb-3">{member.summary}</p>
+              <p className="text-gray-500 text-justify mb-3">{member.summary}</p>
             )}
             {member.specialization && (
-              <p className="text-gray-500 text-center mb-3">{member.specialization}</p>
+              <p className="text-gray-500 text-justify mb-3">{member.specialization}</p>
+            )}
+            {member.description && (
+              <TruncatedDescription text={member.description} lines={3} />
             )}
             {member.skills && (
               <div className="flex flex-wrap justify-center gap-2 mb-3">
@@ -255,10 +409,6 @@ const About = () => {
                 ))}
               </div>
             )}
-            {member.description && (
-              <p className="text-gray-500 text-justify mb-3">{member.description}</p>
-            )}
-            {/* Links pushed to bottom */}
             <div className="mt-auto flex justify-center space-x-4">
               <a
                 href={member.github}
@@ -304,8 +454,8 @@ const About = () => {
           <button
             onClick={() => setActiveTab("project")}
             className={`px-6 py-3 rounded-lg font-semibold transition-all ${activeTab === "project"
-              ? "bg-gradient-to-r from-blue-500 to-purple-600 text-white"
-              : "text-gray-600 hover:bg-gray-100"
+                ? "bg-gradient-to-r from-blue-500 to-purple-600 text-white"
+                : "text-gray-600 hover:bg-gray-100"
               }`}
           >
             Project
@@ -313,8 +463,8 @@ const About = () => {
           <button
             onClick={() => setActiveTab("members")}
             className={`px-6 py-3 rounded-lg font-semibold transition-all ${activeTab === "members"
-              ? "bg-gradient-to-r from-blue-500 to-purple-600 text-white"
-              : "text-gray-600 hover:bg-gray-100"
+                ? "bg-gradient-to-r from-blue-500 to-purple-600 text-white"
+                : "text-gray-600 hover:bg-gray-100"
               }`}
           >
             Team Members
