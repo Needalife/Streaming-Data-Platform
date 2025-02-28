@@ -1,15 +1,15 @@
 import diagram from "../../assets/diagram1.png";
 import { useState, useEffect, useRef } from "react";
-import { FaGithub, FaLinkedin, FaWifi } from "react-icons/fa";
+import { FaGithub, FaLinkedin } from "react-icons/fa";
 import {
   SiReact,
   SiTailwindcss,
   SiGo,
   SiMongodb,
-  SiSocketdotio,
   SiRedis,
   SiDocker,
   SiPython,
+  SiApachekafka,
 } from "react-icons/si";
 
 // Custom hook to get current window dimensions
@@ -70,7 +70,7 @@ const About = () => {
       image:
         "https://wallpapers.com/images/high/giga-chad-sticks-and-stones-yc8k7c062j9c8d6p.webp",
       github: "https://github.com/Needalife",
-      linkedin: "https://linkedin.com",
+      linkedin: "https://www.linkedin.com/in/nda-vally/",
     },
     frontend: {
       name: "Sean Nguyen",
@@ -93,7 +93,7 @@ const About = () => {
         image:
           "https://wallpapers.com/images/high/handsome-giga-chad-hmsvijj0ji4dhedr.webp",
         github: "https://github.com/LeTranTrongPhuoc",
-        linkedin: "https://linkedin.com",
+        linkedin: "https://www.linkedin.com/in/le-tran-trong-phuoc-7b2b0b328/",
       },
       {
         name: "Cuong Vo",
@@ -172,8 +172,8 @@ const About = () => {
                   <span className="mt-1 text-xs">MongoDB</span>
                 </div>
                 <div className="flex flex-col items-center">
-                  <SiSocketdotio size={32} className="text-gray-600" />
-                  <span className="mt-1 text-xs">Socket.io</span>
+                  <SiApachekafka size={32} className="text-gray-600" />
+                  <span className="mt-1 text-xs">Kafka</span>
                 </div>
                 <div className="flex flex-col items-center">
                   <SiRedis size={32} className="text-red-500" />
@@ -268,8 +268,8 @@ const About = () => {
                     <span className="mt-1 text-sm">MongoDB</span>
                   </div>
                   <div className="flex flex-col items-center">
-                    <FaWifi size={48} className="text-gray-600" />
-                    <span className="mt-1 text-sm">Websocket</span>
+                    <SiApachekafka size={48} className="text-gray-600" />
+                    <span className="mt-1 text-sm">Kafka</span>
                   </div>
                   <div className="flex flex-col items-center">
                     <SiRedis size={48} className="text-red-500" />
