@@ -102,3 +102,30 @@ func GetTodayCount(client *mongo.Client) http.HandlerFunc {
 		json.NewEncoder(w).Encode(response)
 	}
 }
+
+// GetArchiveCount returns the total number of transactions in an archive collection.
+func GetArchiveCount(client *mongo.Client) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		date := r.URL.Query().Get("date")
+		if date == "" {
+			http.Error(w, "Date parameter is required (format: YYYY-MM-DD)", http.StatusBadRequest)
+			return
+		}
+
+		// Call the database function to get the archive record.
+		archiveDoc, err := db.ArchivedCount(client, date)
+		if err != nil {
+			http.Error(w, "No archive record found for the given date", http.StatusNotFound)
+			return
+		}
+
+		// Prepare the response.
+		response := map[string]interface{}{
+			"collectionName": archiveDoc["collectionName"],
+			"archivedCount":  archiveDoc["docCount"],
+			"lastUpdated":    archiveDoc["lastUpdated"],
+		}
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(response)
+	}
+}

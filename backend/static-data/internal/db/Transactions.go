@@ -36,9 +36,19 @@ func FetchTransactions(client *mongo.Client, r *http.Request) ([]bson.M, error) 
 
 	// Build filter from query parameters.
 	filter := bson.M{}
-	if status := r.URL.Query().Get("status"); status != "" {
-		filter["status"] = status
+
+	// Updated status filter: support comma-separated values.
+	if statusStr := r.URL.Query().Get("status"); statusStr != "" {
+		// Split the status string by comma and trim spaces.
+		statuses := strings.Split(statusStr, ",")
+		for i, s := range statuses {
+			statuses[i] = strings.TrimSpace(s)
+		}
+		// Use the $in operator for an array match.
+		filter["status"] = bson.M{"$in": statuses}
 	}
+
+	// Filter by price range (amount).
 	if minAmountStr := r.URL.Query().Get("minAmount"); minAmountStr != "" {
 		if minVal, err := strconv.ParseFloat(minAmountStr, 64); err == nil {
 			filter["amount"] = bson.M{"$gte": minVal}
@@ -54,6 +64,7 @@ func FetchTransactions(client *mongo.Client, r *http.Request) ([]bson.M, error) 
 		}
 	}
 
+	// Snapshot filtering.
 	snapshotTime := r.URL.Query().Get("snapshotTime")
 	if snapshotTime == "" {
 		snapshotTime = time.Now().Format("2006-01-02T15:04:05Z07:00")
@@ -72,8 +83,7 @@ func FetchTransactions(client *mongo.Client, r *http.Request) ([]bson.M, error) 
 	var relevantCollections []string
 	snapshotDate, _ := time.Parse("2006-01-02T15:04:05Z07:00", snapshotTime)
 	for _, collName := range allCollections {
-		// Assume the date is at the end of the collection name like "collection_2025-02-24".
-		// Extract the date portion.
+		// Extract the date portion from collection name "collection_YYYY-MM-DD".
 		datePart := strings.TrimPrefix(collName, "collection_")
 		collDate, err := time.Parse("2006-01-02", datePart)
 		if err != nil {
@@ -90,13 +100,11 @@ func FetchTransactions(client *mongo.Client, r *http.Request) ([]bson.M, error) 
 	}
 
 	// Sort relevantCollections in descending order so the most recent is first.
-	// (You can adjust this if needed.)
 	sort.Slice(relevantCollections, func(i, j int) bool {
 		return relevantCollections[i] > relevantCollections[j]
 	})
 
 	// Build the aggregation pipeline.
-	// Use the first collection in the sorted list as the base.
 	pipeline := mongo.Pipeline{
 		{{Key: "$match", Value: filter}},
 	}
@@ -257,4 +265,21 @@ func CountToday(client *mongo.Client) (int64, error) {
 		return 0, fmt.Errorf("error counting documents in %s: %v", collectionName, err)
 	}
 	return count, nil
+}
+
+// ArchivedCount returns the archived document for a given date.
+func ArchivedCount(client *mongo.Client, date string) (bson.M, error) {
+	ctx := context.Background()
+	dbInstance := client.Database("static_data")
+	archiveColl := dbInstance.Collection("collection_archive")
+
+	// Build the expected collection name.
+	collName := "collection_" + date
+
+	var result bson.M
+	err := archiveColl.FindOne(ctx, bson.M{"collectionName": collName}).Decode(&result)
+	if err != nil {
+		return nil, err
+	}
+	return result, nil
 }
