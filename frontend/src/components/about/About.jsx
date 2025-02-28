@@ -1,3 +1,4 @@
+import diagram from "../../assets/diagram1.png";
 import { useState, useEffect, useRef } from "react";
 import { FaGithub, FaLinkedin, FaWifi } from "react-icons/fa";
 import {
@@ -205,6 +206,7 @@ const About = () => {
           </section>
         </div>
       );
+      //Project Tab Desktop mode
     } else {
       return (
         <div
@@ -301,6 +303,15 @@ const About = () => {
               </div>
             </section>
           </div>
+          <div className="flex-1 flex items-center justify-center overflow-hidden mt-4 mb-4">
+            <img
+              src= {diagram}
+              alt="Project Diagram"
+              className="max-h-full max-w-full object-contain"
+            />  
+          </div>
+
+
         </div>
       );
     }
@@ -454,8 +465,8 @@ const About = () => {
           <button
             onClick={() => setActiveTab("project")}
             className={`px-6 py-3 rounded-lg font-semibold transition-all ${activeTab === "project"
-                ? "bg-gradient-to-r from-blue-500 to-purple-600 text-white"
-                : "text-gray-600 hover:bg-gray-100"
+              ? "bg-gradient-to-r from-blue-500 to-purple-600 text-white"
+              : "text-gray-600 hover:bg-gray-100"
               }`}
           >
             Project
@@ -463,8 +474,8 @@ const About = () => {
           <button
             onClick={() => setActiveTab("members")}
             className={`px-6 py-3 rounded-lg font-semibold transition-all ${activeTab === "members"
-                ? "bg-gradient-to-r from-blue-500 to-purple-600 text-white"
-                : "text-gray-600 hover:bg-gray-100"
+              ? "bg-gradient-to-r from-blue-500 to-purple-600 text-white"
+              : "text-gray-600 hover:bg-gray-100"
               }`}
           >
             Team Members
