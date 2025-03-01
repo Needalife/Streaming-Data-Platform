@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Filters from './sub_components/filters/Filters';
 import DataTable from './sub_components/DataTable';
 import SearchBar from '../queryboard/sub_components/SearchBar';
-import { getTransactions, getTransactionById, searchTransactions } from './api/transaction';
+import { getTransactions, getTransactionById, searchTransactions } from './hooks/useTransaction';
 
 // Helper to calculate rows per page based on window height
 const calculateRowsPerPage = () => {
