@@ -3,10 +3,7 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import HomePage from "../pages/HomePage";
 import QueryPage from "../pages/QueryPage";
 import AboutPage from "../pages/AboutPage";
-import SignIn from "../components/authentication/SignIn";
-import SignUp from "../components/authentication/SignUp";
 import { Loader } from 'rsuite';
-import RequireAuth from "./RequireAuth";
 
 const AppRouter = () => {
   return (
@@ -16,9 +13,6 @@ const AppRouter = () => {
           <Route path="/" element={<HomePage />} />
           <Route path="/queryboard" element={<QueryPage />} />
           <Route path="/about" element={<AboutPage />} />
-
-          {/* <Route path="/signup" element={<SignUp />} />
-          <Route path="/signin" element={<SignIn />} /> */}
 
           {/* Redirect unknown routes */}
           <Route path="*" element={<Navigate to="/" replace />} />
