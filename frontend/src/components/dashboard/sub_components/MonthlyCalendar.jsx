@@ -1,7 +1,7 @@
 // src/dashboard/sub-components/MonthlyCalendar.jsx
 import React, { useState } from 'react';
 
-const MonthlyCalendar = () => {
+const MonthlyCalendar = ({ onDateSelect }) => {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedDay, setSelectedDay] = useState(null);
 
@@ -12,7 +12,7 @@ const MonthlyCalendar = () => {
   const firstDayOfMonth = new Date(year, month, 1);
   const lastDayOfMonth = new Date(year, month + 1, 0);
   const totalDays = lastDayOfMonth.getDate();
-  const startWeekDay = firstDayOfMonth.getDay(); // 0 (Sun) to 6 (Sat)
+  const startWeekDay = firstDayOfMonth.getDay();
 
   // Build weeks array, filling in null for empty cells.
   const weeks = [];
@@ -53,6 +53,16 @@ const MonthlyCalendar = () => {
     setSelectedDay(null);
   };
 
+// When a day is clicked, update the selected day and call the parent's callback.
+const handleDayClick = (day) => {
+  if (day) {
+    setSelectedDay(day);
+    // Manually format the date as yyyy-mm-dd (using local date values).
+    const formattedDate = `${year}-${(month + 1).toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
+    onDateSelect(formattedDate);
+  }
+};
+
   return (
     <div className="mt-4 w-full max-w-md bg-white rounded p-4 shadow">
       <div className="flex justify-between items-center mb-2">
@@ -60,7 +70,6 @@ const MonthlyCalendar = () => {
           onClick={handlePrevMonth}
           className="bg-indigo-500 text-white p-2 rounded"
         >
-          {/* Left Arrow Icon */}
           <svg
             xmlns="http://www.w3.org/2000/svg"
             className="w-5 h-5"
@@ -78,7 +87,6 @@ const MonthlyCalendar = () => {
           onClick={handleNextMonth}
           className="bg-indigo-500 text-white p-2 rounded"
         >
-          {/* Right Arrow Icon */}
           <svg
             xmlns="http://www.w3.org/2000/svg"
             className="w-5 h-5"
@@ -111,7 +119,7 @@ const MonthlyCalendar = () => {
                   ${day ? 'bg-gray-100 hover:bg-gray-200' : ''}
                   ${todayFlag ? 'border-2 border-indigo-500' : ''}
                   ${isSelected ? 'bg-indigo-500 text-white' : ''}`}
-                onClick={() => day && setSelectedDay(day)}
+                onClick={() => handleDayClick(day)}
               >
                 {day || ''}
               </div>
