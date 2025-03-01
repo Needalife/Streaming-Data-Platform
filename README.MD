@@ -34,13 +34,12 @@ This project consists of a backend and frontend setup to manage and visualize da
    cd frontend
 
 2. Run and build Frontend on Docker:
-   2.1. If you are using Window OS:
+   ### 2.1. If you are using Window OS:
 
    ```bash
    ./setup.bat
-   ```bash
 
-   2.2. If you are using Mac OS:
+   ### 2.2. If you are using Mac OS:
 
    ```bash
    chmod +x setup.sh
