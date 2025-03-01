@@ -53,7 +53,7 @@ const AmountFilter = ({
 
   return (
     <div>
-      <label className="block mb-2 font-semibold">Filter by Amount</label>
+      <label className="block mb-4 font-semibold">Filter by Amount</label>
       <div className="mb-4">
         <ReactSlider
           className="horizontal-slider"
