@@ -109,26 +109,25 @@ const About = () => {
     ],
   };
 
-  // ProjectTab now fills the screen similar to the Member layout.
+  // ProjectTab
   const ProjectTab = () => {
-    const { width, height } = useWindowDimensions();
-    const isMobile = width < 768 || height < 700;
-
-    if (isMobile) {
-      return (
-        <div className="space-y-8">
-          <h2 className="text-4xl font-bold mb-6 text-gray-800 bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-purple-600">
+    return (
+      <div
+        className="flex flex-col bg-white rounded-xl overflow-hidden transition-all"
+        style={{ height: "calc(100vh - 16rem)" }}
+      >
+        <div className="p-4 flex-1 overflow-auto">
+          <h2 className="text-4xl font-bold leading-relaxed mb-6 text-gray-800 bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-purple-600">
             Transactions Real-Time Tracking
           </h2>
-          <section className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <section className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300">
               <h3 className="text-xl font-semibold mb-3 text-gray-800 flex items-center">
                 <span className="w-2 h-2 bg-blue-500 rounded-full mr-2"></span>
                 Project Overview
               </h3>
-              <p className="text-gray-600">
-                A comprehensive real-time transaction tracking system designed to
-                monitor and analyze financial transactions across multiple platforms.
+              <p className="text-gray-600 text-justify">
+              Our cutting-edge system monitors real-time financial transactions across platforms with high accuracy. Using cloud infrastructure and advanced analytics, it delivers instant insights, detects trends and anomalies, and empowers informed decisions with an intuitive interface and robust security.
               </p>
             </div>
             <div className="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300">
@@ -156,36 +155,36 @@ const About = () => {
               </h3>
               <div className="grid grid-cols-4 gap-3 justify-center items-center">
                 <div className="flex flex-col items-center">
-                  <SiReact size={32} className="text-blue-500" />
-                  <span className="mt-1 text-xs">React</span>
+                  <SiReact size={40} className="text-blue-500" />
+                  <span className="mt-1 text-sm">React</span>
                 </div>
                 <div className="flex flex-col items-center">
-                  <SiTailwindcss size={32} className="text-teal-500" />
-                  <span className="mt-1 text-xs">Tailwind</span>
+                  <SiTailwindcss size={40} className="text-teal-500" />
+                  <span className="mt-1 text-sm">Tailwind</span>
                 </div>
                 <div className="flex flex-col items-center">
-                  <SiGo size={32} className="text-blue-600" />
-                  <span className="mt-1 text-xs">Golang</span>
+                  <SiGo size={40} className="text-blue-600" />
+                  <span className="mt-1 text-sm">Golang</span>
                 </div>
                 <div className="flex flex-col items-center">
-                  <SiMongodb size={32} className="text-green-500" />
-                  <span className="mt-1 text-xs">MongoDB</span>
+                  <SiMongodb size={40} className="text-green-500" />
+                  <span className="mt-1 text-sm">MongoDB</span>
                 </div>
                 <div className="flex flex-col items-center">
-                  <SiApachekafka size={32} className="text-gray-600" />
-                  <span className="mt-1 text-xs">Kafka</span>
+                  <SiApachekafka size={40} className="text-gray-600" />
+                  <span className="mt-1 text-sm">Kafka</span>
                 </div>
                 <div className="flex flex-col items-center">
-                  <SiRedis size={32} className="text-red-500" />
-                  <span className="mt-1 text-xs">Redis</span>
+                  <SiRedis size={40} className="text-red-500" />
+                  <span className="mt-1 text-sm">Redis</span>
                 </div>
                 <div className="flex flex-col items-center">
-                  <SiDocker size={32} className="text-blue-400" />
-                  <span className="mt-1 text-xs">Docker</span>
+                  <SiDocker size={40} className="text-blue-400" />
+                  <span className="mt-1 text-sm">Docker</span>
                 </div>
                 <div className="flex flex-col items-center">
-                  <SiPython size={32} className="text-yellow-500" />
-                  <span className="mt-1 text-xs">Python</span>
+                  <SiPython size={40} className="text-yellow-500" />
+                  <span className="mt-1 text-sm">Python</span>
                 </div>
               </div>
             </div>
@@ -195,123 +194,24 @@ const About = () => {
                 Project Goals & Solutions
               </h3>
               <div className="space-y-3">
-                <p className="text-gray-600">
-                  To provide a robust, scalable solution for real-time transaction tracking while ensuring security and performance.
-                </p>
-                <p className="text-gray-600">
-                  Addressed the challenge of monitoring and analyzing high-volume transactions across multiple platforms in real-time.
+                <p className="text-gray-600 text-justify">
+                Our goal is to revolutionize financial monitoring with a scalable, real-time solution that securely handles high volumes. Using advanced analytics, dynamic dashboards, and predictive modeling, we turn complex data into actionable insights for proactive decision-making and sustainable growth.
                 </p>
               </div>
             </div>
           </section>
         </div>
-      );
-      //Project Tab Desktop mode
-    } else {
-      return (
-        <div
-          className="flex flex-col bg-white rounded-xl shadow-lg overflow-hidden transition-all"
-          style={{ height: "calc(100vh - 16rem)" }}
-        >
-          <div className="p-6 flex-1 overflow-auto">
-            <h2 className="text-4xl font-bold mb-6 text-gray-800 bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-purple-600">
-              Transactions Real-Time Tracking
-            </h2>
-            <section className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300">
-                <h3 className="text-xl font-semibold mb-3 text-gray-800 flex items-center">
-                  <span className="w-2 h-2 bg-blue-500 rounded-full mr-2"></span>
-                  Project Overview
-                </h3>
-                <p className="text-gray-600 text-justify">
-                Our project is a state-of-the-art financial transaction tracking system that monitors and analyzes real-time transactions from multiple platforms with exceptional accuracy. Built on modern cloud infrastructure and advanced analytics, it delivers instant insights to help businesses detect trends and anomalies quickly. Its intuitive interface and robust security measures empower users to make informed, data-driven decisions in today’s fast-paced financial environment.
-                </p>
-              </div>
-              <div className="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300">
-                <h3 className="text-xl font-semibold mb-3 text-gray-800 flex items-center">
-                  <span className="w-2 h-2 bg-purple-500 rounded-full mr-2"></span>
-                  Key Features
-                </h3>
-                <ul className="space-y-2 text-gray-600">
-                  {[
-                    "Real-time transaction monitoring",
-                    "Advanced analytics charts in dashboard",
-                    "Multi-platform integration",
-                  ].map((feature) => (
-                    <li key={feature} className="flex items-center">
-                      <span className="w-1.5 h-1.5 bg-purple-400 rounded-full mr-2"></span>
-                      {feature}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-              <div className="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300">
-                <h3 className="text-xl font-semibold mb-3 text-gray-800 flex items-center">
-                  <span className="w-2 h-2 bg-pink-500 rounded-full mr-2"></span>
-                  Technology Stack
-                </h3>
-                <div className="grid grid-cols-4 gap-3 justify-center items-center">
-                  <div className="flex flex-col items-center">
-                    <SiReact size={48} className="text-blue-500" />
-                    <span className="mt-1 text-sm">React</span>
-                  </div>
-                  <div className="flex flex-col items-center">
-                    <SiTailwindcss size={48} className="text-teal-500" />
-                    <span className="mt-1 text-sm">Tailwind</span>
-                  </div>
-                  <div className="flex flex-col items-center">
-                    <SiGo size={48} className="text-blue-600" />
-                    <span className="mt-1 text-sm">Golang</span>
-                  </div>
-                  <div className="flex flex-col items-center">
-                    <SiMongodb size={48} className="text-green-500" />
-                    <span className="mt-1 text-sm">MongoDB</span>
-                  </div>
-                  <div className="flex flex-col items-center">
-                    <SiApachekafka size={48} className="text-gray-600" />
-                    <span className="mt-1 text-sm">Kafka</span>
-                  </div>
-                  <div className="flex flex-col items-center">
-                    <SiRedis size={48} className="text-red-500" />
-                    <span className="mt-1 text-sm">Redis</span>
-                  </div>
-                  <div className="flex flex-col items-center">
-                    <SiDocker size={48} className="text-blue-400" />
-                    <span className="mt-1 text-sm">Docker</span>
-                  </div>
-                  <div className="flex flex-col items-center">
-                    <SiPython size={48} className="text-yellow-500" />
-                    <span className="mt-1 text-sm">Python</span>
-                  </div>
-                </div>
-
-              </div>
-              <div className="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300">
-                <h3 className="text-xl font-semibold mb-3 text-gray-800 flex items-center">
-                  <span className="w-2 h-2 bg-indigo-500 rounded-full mr-2"></span>
-                  Project Goals & Solutions
-                </h3>
-                <div className="space-y-3">
-                  <p className="text-gray-600 text-justify">
-                  Our goal is to transform financial monitoring by offering a scalable, real-time solution that handles high transaction volumes without compromising security or accuracy. We integrate advanced analytical tools, dynamic dashboards, and predictive modeling to turn complex data into actionable insights. This approach not only simplifies financial management but also supports proactive decision-making, driving operational excellence and sustainable business growth.
-                  </p>
-                </div>
-              </div>
-            </section>
-          </div>
-          <div className="flex-1 flex items-center justify-center overflow-hidden mt-4 mb-4">
-            <img
-              src= {diagram}
-              alt="Project Diagram"
-              className="max-h-full max-w-full object-contain"
-            />  
-          </div>
-
-
+        <div className="flex-1 flex items-center justify-center overflow-hidden mt-4 mb-4">
+          <img
+            src={diagram}
+            alt="Project Diagram"
+            className="max-h-full max-w-full object-contain"
+          />
         </div>
-      );
-    }
+      </div>
+    );
   };
+
 
   // MemberCard
   const MemberCard = ({ member }) => {
@@ -375,6 +275,7 @@ const About = () => {
       );
       //Member Desktop
     } else {
+      // MemberCard Desktop
       return (
         <div
           className="hidden md:flex flex-col bg-white shadow-lg rounded-lg overflow-hidden transition-transform hover:scale-105"
@@ -392,18 +293,13 @@ const About = () => {
             />
           </div>
           <div className="h-1/2 p-6 flex flex-col">
+            {/* Scrollable text area */}
             <h3 className="text-2xl font-semibold text-center mb-2 text-gray-800">
               {member.name}
             </h3>
             <p className="text-gray-600 text-center mb-2">{member.role}</p>
             {member.summary && (
               <p className="text-gray-500 text-center mb-3">{member.summary}</p>
-            )}
-            {member.specialization && (
-              <p className="text-gray-500 text-center mb-3">{member.specialization}</p>
-            )}
-            {member.description && (
-              <TruncatedDescription text={member.description} lines={3} />
             )}
             {member.skills && (
               <div className="flex flex-wrap justify-center gap-2 mb-3">
@@ -417,7 +313,16 @@ const About = () => {
                 ))}
               </div>
             )}
-            <div className="mt-auto flex justify-center space-x-4">
+            {member.specialization && (
+              <p className="text-gray-500 text-center mb-3">{member.specialization}</p>
+            )}
+            <div className="flex-1 overflow-auto">
+              {member.description && (
+                <TruncatedDescription text={member.description} lines={3} />
+              )}
+            </div>
+            {/* Fixed links area */}
+            <div className="mt-4 flex justify-center space-x-4">
               <a
                 href={member.github}
                 target="_blank"
@@ -438,6 +343,7 @@ const About = () => {
           </div>
         </div>
       );
+
     }
   };
 
