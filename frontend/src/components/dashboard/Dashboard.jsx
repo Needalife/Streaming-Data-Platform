@@ -31,15 +31,15 @@ const Dashboard = () => {
   return (
     <div className="h-screen overflow-y-scroll">
       <h1 className="text-3xl font-bold mt-6 mb-6">Dashboard</h1>
-      <div className="flex flex-col sm:flex-row items-start justify-between mb-4 h-[450px]">
-        <div className="flex-1 mr-4">
+      <div className="grid grid-cols-[1fr_auto] gap-4 mb-4 h-[450px]">
+        <div>
           <TotalTransactionsChart data={summaryData} domain={domain} />
         </div>
-        <div className="w-full sm:w-auto max-w-sm mt-4 sm:mt-0">
+        <div>
           <GradientSummaryCard totalTransactions={cumulativeTotal} date={currentDate} />
         </div>
       </div>
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4" style={{ height: chartsHeight }}>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mt-10" style={{ height: chartsHeight }}>
         <SuccessTransactionsChart data={summaryData} domain={domain} chartHeight={chartsHeight} />
         <PendingTransactionsChart data={summaryData} domain={domain} chartHeight={chartsHeight} />
         <FailedTransactionsChart data={summaryData} domain={domain} chartHeight={chartsHeight} />
