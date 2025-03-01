@@ -1,5 +1,3 @@
-// src/components/sub_components/MemberTab.jsx
-
 import React, { useState, useEffect, useRef } from "react";
 import { FaGithub, FaLinkedin } from "react-icons/fa";
 import teamData from "./TeamData";

@@ -1,5 +1,3 @@
-// src/components/sub_components/TeamData.js
-
 const teamData = {
     leader: {
       name: "Vally Nguyen",

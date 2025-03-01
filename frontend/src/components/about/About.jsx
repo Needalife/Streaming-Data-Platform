@@ -1,5 +1,3 @@
-// src/components/About.jsx
-
 import React, { useState } from "react";
 import ProjectTab from "./sub_components/ProjectTab";
 import MemberTab from "./sub_components/MembersTab";

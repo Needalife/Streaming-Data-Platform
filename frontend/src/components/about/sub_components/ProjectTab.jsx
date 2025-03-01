@@ -1,5 +1,3 @@
-// src/components/sub_components/ProjectTab.jsx
-
 import React from "react";
 import diagram from "../../../assets/diagram1.png";
 import {
