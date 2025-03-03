@@ -1,0 +1,1 @@
+export const API_BASE_URL = '/gateway/v1/static/transactions';

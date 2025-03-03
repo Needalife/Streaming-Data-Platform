@@ -1,0 +1,1 @@
+export const TOTAL_TRANSACTION = '/gateway/v1/static/transactions/count';
