@@ -1,0 +1,1 @@
+export const ARCHIVED_DATA = '/gateway/v1/static/transactions/archive';
