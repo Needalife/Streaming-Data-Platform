@@ -1,4 +1,4 @@
-# Data Engineering Project
+# Streaming Data Platform
 
 This project consists of a backend and frontend setup to manage and visualize data.
 ![C4](./c2.jpg)
