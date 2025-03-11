@@ -1,10 +1,13 @@
 # Streaming Data Platform
 
-<div align="center">
-  <img src="./pics/dashboard.png" alt="Dashboard" width="200" style="margin: 0 20px;">
-  <img src="./pics/queryboard.png" alt="Queryboard" width="200" style="margin: 0 20px;">
-  <img src="./pics/about.png" alt="About" width="200" style="margin: 0 20px;">
-</div>
+<figure style="width: 100%; text-align: center;">
+  <div style="display: flex; justify-content: space-around; align-items: center; width: 100%;">
+    <img src="./pics/dashboard.png" alt="Dashboard" style="width: 32%;">
+    <img src="./pics/queryboard.png" alt="Queryboard" style="width: 32%;">
+    <img src="./pics/about.png" alt="About" style="width: 32%;">
+  </div>
+  <figcaption style="font-style: italic; margin-top: 10px;">Project Screenshots</figcaption>
+</figure>
 
 This project consists of a backend and frontend setup to manage and visualize data.
 ![C4](./c2.jpg)
