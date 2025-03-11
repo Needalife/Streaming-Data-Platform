@@ -1,8 +1,17 @@
 # Streaming Data Platform
 
-|                        Dashboard                         |                         Queryboard                         |                      About                       |
-| :------------------------------------------------------: | :--------------------------------------------------------: | :----------------------------------------------: |
-| <img src="./dashboard.png" alt="Dashboard" width="200"/> | <img src="./queryboard.png" alt="Queryboard" width="200"/> | <img src="./about.png" alt="About" width="200"/> |
+<table>
+  <tr>
+    <th style="text-align: center;">Dashboard</th>
+    <th style="text-align: center;">Queryboard</th>
+    <th style="text-align: center;">About</th>
+  </tr>
+  <tr>
+    <td align="center"><img src="./dashboard.png" alt="Dashboard" width="300"/></td>
+    <td align="center"><img src="./queryboard.png" alt="Queryboard" width="300"/></td>
+    <td align="center"><img src="./about.png" alt="About" width="300"/></td>
+  </tr>
+</table>
 
 This project consists of a backend and frontend setup to manage and visualize data.
 ![C4](./c2.jpg)
