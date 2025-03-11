@@ -2,9 +2,9 @@
 
 <figure style="width: 100%; text-align: center;">
   <div style="display: flex; justify-content: space-around; align-items: center; width: 100%;">
-    <img src="./pics/dashboard.png" alt="Dashboard" style="width: 33%;">
-    <img src="./pics/queryboard.png" alt="Queryboard" style="width: 33%;">
-    <img src="./pics/about.png" alt="About" style="width: 33%;">
+    <img src="./pics/dashboard.png" alt="Dashboard" style="width: 32%;">
+    <img src="./pics/queryboard.png" alt="Queryboard" style="width: 32%;">
+    <img src="./pics/about.png" alt="About" style="width: 32%;">
   </div>
   <figcaption style="font-style: italic; margin-top: 10px; text-align: center">Project Screenshots: Dashboard, Queryboard, About</figcaption>
 </figure>
