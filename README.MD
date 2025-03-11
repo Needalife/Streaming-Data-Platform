@@ -9,8 +9,8 @@
   <figcaption style="font-style: italic; margin-top: 10px; text-align: center">Project Screenshots: Dashboard, Queryboard, About</figcaption>
 </figure>
 
-This project consists of a backend and frontend setup to manage and visualize data.
 ![C4](./c2.jpg)
+This project consists of a backend and frontend setup to manage and visualize data.
 
 ## Simulates real-time data
 
