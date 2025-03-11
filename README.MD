@@ -6,7 +6,7 @@
     <img src="./pics/queryboard.png" alt="Queryboard" style="width: 32%;">
     <img src="./pics/about.png" alt="About" style="width: 32%;">
   </div>
-  <figcaption style="font-style: italic; margin-top: 10px; text-center">Project Screenshots: Dashboard, Queryboard, About</figcaption>
+  <figcaption style="font-style: italic; margin-top: 10px; text-align: center">Project Screenshots: Dashboard, Queryboard, About</figcaption>
 </figure>
 
 This project consists of a backend and frontend setup to manage and visualize data.
